@@ -49,11 +49,31 @@ export const categoryTeasers = [
   {
     slug: "herbal-extracts",
     title: "Herbal Extracts",
-    summary: "Standardized extracts for nutraceutical, ayurvedic, and wellness formulations.",
+    summary: "Standardized botanicals for nutraceutical and ayurvedic formulations.",
     media: {
       title: "Botanical ingredient photography",
       note: "Use dried herb, extract powder, or capsule-ready ingredient imagery here.",
       tone: "botanical",
+    } satisfies MediaSlot,
+  },
+  {
+    slug: "mushroom-extracts",
+    title: "Mushroom Extracts",
+    summary: "Functional mushroom ingredients for immunity and wellness products.",
+    media: {
+      title: "Functional mushroom photography",
+      note: "Use mushroom biomass, extract powder, or lab release imagery here.",
+      tone: "catalog",
+    } satisfies MediaSlot,
+  },
+  {
+    slug: "specialty-botanicals",
+    title: "Specialty Botanicals",
+    summary: "Polyphenols and plant actives for targeted formulation programs.",
+    media: {
+      title: "Polyphenols and specialty actives",
+      note: "Use bioactive ingredient, QC, or packaging photography here.",
+      tone: "lab",
     } satisfies MediaSlot,
   },
   {
@@ -231,13 +251,33 @@ export const categoryContentBySlug: Record<
   }
 > = {
   "herbal-extracts": {
-    overview: "Standardized extracts for herbal, nutraceutical, and ayurvedic product development.",
+    overview: "Standardized botanicals for nutraceutical, ayurvedic, and wellness development.",
     applications: ["Capsules and tablets", "Functional blends", "Traditional wellness formulas"],
     trustNote: "This page keeps the technical table central while giving buyers enough context to stay oriented.",
     media: {
       title: "Herbal extract category image",
       note: "Replace with herb and finished extract photography.",
       tone: "botanical",
+    },
+  },
+  "mushroom-extracts": {
+    overview: "Functional mushroom ingredients for immunity, cognition, and wellness products.",
+    applications: ["Immune support", "Cognitive support", "Functional blends"],
+    trustNote: "A simple category page keeps mushroom ingredients easy to compare.",
+    media: {
+      title: "Mushroom extract category image",
+      note: "Replace with mushroom biomass or finished extract imagery.",
+      tone: "catalog",
+    },
+  },
+  "specialty-botanicals": {
+    overview: "Polyphenols, bioactives, and targeted plant actives for formulation programs.",
+    applications: ["Antioxidant blends", "Targeted wellness formulas", "Private label ingredients"],
+    trustNote: "This category groups the more specialized bioactives into one clear view.",
+    media: {
+      title: "Specialty botanical category image",
+      note: "Replace with QC, active ingredient, or packaging imagery.",
+      tone: "lab",
     },
   },
   "amino-acids": {
