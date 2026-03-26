@@ -11,7 +11,7 @@ export function SiteHeader() {
   const closeMenu = () => setOpen(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(255,255,255,0.96)] backdrop-blur-md">
+    <header className="relative sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(255,255,255,0.96)] backdrop-blur-md">
       <div className="hidden border-b border-[var(--line)] bg-[var(--green-950)] text-white lg:block">
         <div className="section-shell flex flex-wrap items-center justify-between gap-3 py-2 text-xs">
           <div className="flex flex-wrap gap-4 text-white/80">
@@ -77,11 +77,11 @@ export function SiteHeader() {
 
       <div
         id="mobile-navigation"
-        className={`border-t border-[var(--line)] bg-white lg:hidden ${
-          open ? "max-h-[28rem] opacity-100" : "max-h-0 overflow-hidden opacity-0"
-        } transition-all duration-200`}
+        className={`absolute inset-x-0 top-full z-50 border-t border-[var(--line)] bg-white shadow-[0_16px_40px_rgba(18,33,25,0.12)] lg:hidden ${
+          open ? "max-h-[calc(100dvh-4.75rem)] opacity-100" : "pointer-events-none max-h-0 opacity-0"
+        } overflow-y-auto transition-[max-height,opacity] duration-200`}
       >
-        <div className="section-shell py-4">
+        <div className="section-shell min-h-[calc(100dvh-4.75rem)] pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4 sm:pb-[calc(2rem+env(safe-area-inset-bottom))]">
           <nav className="grid gap-2">
             <Link
               href="/"
@@ -102,7 +102,7 @@ export function SiteHeader() {
             ))}
           </nav>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid gap-3 pb-10 sm:grid-cols-2 sm:pb-12">
             <Link href="/contact" className="button-secondary">
               Contact
             </Link>
