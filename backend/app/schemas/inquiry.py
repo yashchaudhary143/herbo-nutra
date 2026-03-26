@@ -9,7 +9,7 @@ class InquiryCreate(BaseModel):
     company_name: str = Field(min_length=2, max_length=255)
     email: EmailStr
     phone: str = Field(min_length=7, max_length=50)
-    product_requirement: str = Field(min_length=2, max_length=255)
+    product_requirement: str = Field(default="", max_length=255)
     message: str = Field(min_length=10, max_length=4000)
     turnstile_token: str | None = None
 
@@ -47,4 +47,3 @@ class InquirySubmissionResponse(BaseModel):
     message: str
     email_status: str
     whatsapp_status: str
-

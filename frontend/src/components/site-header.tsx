@@ -54,12 +54,9 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/contact" className="button-secondary">
+        <div className="hidden items-center lg:flex">
+          <Link href="/contact" className="button-primary">
             Contact
-          </Link>
-          <Link href="/inquiry" className="button-primary">
-            Send Inquiry
           </Link>
         </div>
 
@@ -102,12 +99,9 @@ export function SiteHeader() {
             ))}
           </nav>
 
-          <div className="mt-4 grid gap-3 pb-10 sm:grid-cols-2 sm:pb-12">
-            <Link href="/contact" className="button-secondary">
+          <div className="mt-4 pb-10 sm:pb-12">
+            <Link href="/contact" onClick={closeMenu} className="button-primary w-full">
               Contact
-            </Link>
-            <Link href="/inquiry" className="button-primary">
-              Send Inquiry
             </Link>
           </div>
         </div>

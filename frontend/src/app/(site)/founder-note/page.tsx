@@ -38,7 +38,7 @@ export default function FounderNotePage() {
             ))}
           </div>
           <div className="mt-6">
-            <Link href="/inquiry" className="button-link">
+            <Link href="/contact" className="button-link">
               Start a conversation
               <ArrowRight className="h-4 w-4" />
             </Link>

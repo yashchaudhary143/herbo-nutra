@@ -8,6 +8,7 @@ from app.models import Inquiry
 
 
 def _format_inquiry_message(settings: Settings, inquiry: Inquiry) -> str:
+    requirement = inquiry.product_requirement.strip() or "Not specified"
     return (
         f"New inquiry for {settings.company_name}\n\n"
         f"Source: {inquiry.source}\n"
@@ -15,7 +16,7 @@ def _format_inquiry_message(settings: Settings, inquiry: Inquiry) -> str:
         f"Company: {inquiry.company_name}\n"
         f"Email: {inquiry.email}\n"
         f"Phone: {inquiry.phone}\n"
-        f"Requirement: {inquiry.product_requirement}\n\n"
+        f"Requirement: {requirement}\n\n"
         f"Message:\n{inquiry.message}"
     )
 
@@ -70,4 +71,3 @@ def send_whatsapp_notification(settings: Settings, inquiry: Inquiry) -> str:
         return "failed"
 
     return "sent"
-

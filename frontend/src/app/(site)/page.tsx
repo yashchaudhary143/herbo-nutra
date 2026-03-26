@@ -44,8 +44,8 @@ export default async function HomePage() {
                 Clear product categories, visible manufacturing context, and a direct inquiry path.
               </p>
               <div className="mt-8">
-                <Link href="/inquiry" className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]">
-                  Send Inquiry
+                <Link href="/contact" className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]">
+                  Contact
                 </Link>
               </div>
               </div>
@@ -142,18 +142,15 @@ export default async function HomePage() {
       <section className="section-shell">
         <div className="grid gap-6 border-t border-[var(--line)] pt-8 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="eyebrow">Inquiry</p>
-            <h2 className="section-title mt-3">Need a product, specification, or quote?</h2>
-            <p className="section-text mt-4 max-w-2xl">
-              Send the requirement directly and the team can respond with the next step.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/inquiry" className="button-primary">
-              Send Inquiry
-            </Link>
-            <Link href="/contact" className="button-secondary">
-              Contact Us
+          <p className="eyebrow">Contact</p>
+          <h2 className="section-title mt-3">Need a product, specification, or quote?</h2>
+          <p className="section-text mt-4 max-w-2xl">
+            Send the requirement directly and the team can respond with the next step.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+            <Link href="/contact" className="button-primary">
+              Contact
             </Link>
           </div>
         </div>

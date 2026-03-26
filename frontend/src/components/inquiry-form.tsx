@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { TurnstileWidget } from "@/components/turnstile-widget";
+import { ProductRequirementPicker, type ProductRequirementGroup } from "@/components/product-requirement-picker";
 import { clientApiFetch } from "@/lib/api";
 
 const inquirySchema = z.object({
@@ -13,7 +14,7 @@ const inquirySchema = z.object({
   company_name: z.string().min(2, "Company name is required."),
   email: z.email("Enter a valid email address."),
   phone: z.string().min(7, "Phone number is required."),
-  product_requirement: z.string().min(2, "Product requirement is required."),
+  product_requirement: z.string().max(255),
   message: z.string().min(10, "Please add a more detailed requirement."),
 });
 
@@ -21,7 +22,7 @@ type InquiryFormValues = z.infer<typeof inquirySchema>;
 
 type InquiryFormProps = {
   source: "inquiry" | "contact";
-  productOptions: string[];
+  productGroups: ProductRequirementGroup[];
   compact?: boolean;
 };
 
@@ -33,14 +34,16 @@ function FieldError({ message }: { message?: string }) {
   return <p className="mt-2 text-sm text-[var(--danger)]">{message}</p>;
 }
 
-export function InquiryForm({ source, productOptions, compact = false }: InquiryFormProps) {
+export function InquiryForm({ source, productGroups, compact = false }: InquiryFormProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const [serverMessage, setServerMessage] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [pickerKey, setPickerKey] = useState(0);
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
     formState: { errors, isSubmitSuccessful },
   } = useForm<InquiryFormValues>({
@@ -55,7 +58,7 @@ export function InquiryForm({ source, productOptions, compact = false }: Inquiry
     },
   });
 
-  const submitLabel = source === "contact" ? "Send message" : "Submit inquiry";
+  const submitLabel = "Send Inquiry";
 
   const onSubmit = handleSubmit((values) => {
     setServerMessage(null);
@@ -63,10 +66,18 @@ export function InquiryForm({ source, productOptions, compact = false }: Inquiry
 
     startTransition(async () => {
       try {
+        const composedMessage = [
+          values.product_requirement ? `Products: ${values.product_requirement}` : null,
+          values.message,
+        ]
+          .filter(Boolean)
+          .join("\n\n");
+
         const response = await clientApiFetch<{ message: string }>("/api/inquiries", {
           method: "POST",
           body: JSON.stringify({
             ...values,
+            message: composedMessage,
             source,
             turnstile_token: turnstileToken,
           }),
@@ -74,6 +85,7 @@ export function InquiryForm({ source, productOptions, compact = false }: Inquiry
         setServerMessage(response.message);
         reset();
         setTurnstileToken(null);
+        setPickerKey((current) => current + 1);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Something went wrong.";
         setServerMessage(message);
@@ -109,19 +121,18 @@ export function InquiryForm({ source, productOptions, compact = false }: Inquiry
           </div>
         </div>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">Product Requirement</label>
-          <input
-            className="field"
-            list="product-requirements"
-            placeholder="Product requirement"
-            {...register("product_requirement")}
+        <div className="relative">
+          <input type="hidden" {...register("product_requirement")} />
+          <ProductRequirementPicker
+            key={pickerKey}
+            groups={productGroups}
+            onChange={(value) =>
+              setValue("product_requirement", value, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
           />
-          <datalist id="product-requirements">
-            {productOptions.map((option) => (
-              <option key={option} value={option} />
-            ))}
-          </datalist>
           <FieldError message={errors.product_requirement?.message} />
         </div>
 
@@ -129,7 +140,7 @@ export function InquiryForm({ source, productOptions, compact = false }: Inquiry
           <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">Message</label>
           <textarea
             className="field min-h-40 resize-y"
-            placeholder="Share specification, quantity, packaging, target market, or timeline."
+            placeholder="Share specification, packaging, target market, or timeline."
             {...register("message")}
           />
           <FieldError message={errors.message?.message} />

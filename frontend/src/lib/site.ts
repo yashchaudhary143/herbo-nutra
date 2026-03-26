@@ -128,7 +128,7 @@ export const homeContent = {
     },
     {
       title: "Direct commercial path",
-      text: "Inquiry forms are visible where buyers actually decide to contact a supplier.",
+      text: "Contact forms are visible where buyers actually decide to contact a supplier.",
     },
   ],
   processMedia: {
@@ -237,7 +237,7 @@ export const productPageCopy = {
   categoryTrustPoints: [
     "Common name, botanical name, and specification shown together",
     "Category pages keep context visible without adding clutter",
-    "Inquiry links stay close to the product data",
+    "Contact links stay close to the product data",
   ],
 };
 

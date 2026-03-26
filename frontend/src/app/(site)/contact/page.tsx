@@ -1,7 +1,8 @@
-import { fetchCategories } from "@/lib/api";
+import { fetchCategories, fetchProducts } from "@/lib/api";
 import { InquiryForm } from "@/components/inquiry-form";
+import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
-import { buildMetadata, categoryTeasers, company, contactCopy, seoDescriptions } from "@/lib/site";
+import { buildMetadata, categoryTeasers, seoDescriptions } from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Contact Us",
@@ -10,45 +11,42 @@ export const metadata = buildMetadata({
 });
 
 export default async function ContactPage() {
-  const categories = await fetchCategories();
-  const productOptions = categories.length
-    ? categories.map((category) => category.name)
-    : categoryTeasers.map((category) => category.title);
+  const [categories, productCatalog] = await Promise.all([fetchCategories(), fetchProducts()]);
+  const catalogGroups = categories
+    .map((category) => ({
+      category,
+      products: productCatalog.items.filter((product) => product.category_id === category.id),
+    }))
+    .filter((group) => group.products.length > 0);
 
   return (
     <div className="page-frame page-gap">
       <PublicHero
         eyebrow="Contact"
-        title="Visible company details and a direct contact form."
-        description={contactCopy.prompt}
-        media={categoryTeasers[2].media}
+        title="Share your requirement and the team can respond directly."
+        description="Use this page for product, specification, quantity, sampling, and pricing discussions."
+        media={categoryTeasers[0].media}
       />
 
-      <section className="section-shell grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="section-shell grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <div className="space-y-6">
           <div>
-            <h2 className="section-title text-2xl md:text-4xl">Get in touch</h2>
-            <div className="mt-5 space-y-3 text-base leading-8 text-[var(--muted)]">
-              <p>{company.address}</p>
-              <p>{company.phone}</p>
-              <p>{company.email}</p>
+            <h2 className="section-title text-2xl md:text-4xl">What to include</h2>
+            <div className="mt-6 grid gap-4">
+              <div className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
+                Product name or ingredient type
+              </div>
+              <div className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
+                Required specification or strength
+              </div>
+              <div className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
+                Quantity, packaging, and target market
+              </div>
             </div>
           </div>
-
-          <div className="grid gap-4">
-            {contactCopy.details.map((item) => (
-              <div key={item} className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
-                {item}
-              </div>
-            ))}
-          </div>
-
-          <div className="aspect-video overflow-hidden border border-[var(--line)]">
-            <iframe src={company.mapEmbedUrl} title="Company location" className="h-full w-full" loading="lazy" />
-          </div>
+          <MediaPlaceholder media={categoryTeasers[1].media} className="min-h-[260px]" badge="Product Image" />
         </div>
-
-        <InquiryForm source="contact" productOptions={productOptions} compact />
+        <InquiryForm source="contact" productGroups={catalogGroups} />
       </section>
     </div>
   );
