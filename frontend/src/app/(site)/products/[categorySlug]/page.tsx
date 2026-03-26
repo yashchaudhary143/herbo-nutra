@@ -1,0 +1,99 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { notFound } from "next/navigation";
+
+import { fetchCategories, fetchCategoryProducts } from "@/lib/api";
+import { MediaPlaceholder } from "@/components/media-placeholder";
+import { ProductCatalog } from "@/components/product-catalog";
+import { PublicHero } from "@/components/public-hero";
+import { SectionIntro } from "@/components/section-intro";
+import { buildMetadata, categoryContentBySlug, productPageCopy } from "@/lib/site";
+
+type CategoryPageProps = {
+  params: Promise<{ categorySlug: string }>;
+};
+
+export async function generateMetadata({ params }: CategoryPageProps) {
+  const { categorySlug } = await params;
+  const readableName = categorySlug
+    .split("-")
+    .map((segment) => segment[0].toUpperCase() + segment.slice(1))
+    .join(" ");
+
+  return buildMetadata({
+    title: `${readableName} Catalog`,
+    description: `Browse ${readableName} products from Herbo Nutra Extract with common name, botanical name, and specification data.`,
+    path: `/products/${categorySlug}`,
+  });
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { categorySlug } = await params;
+  const [categories, response] = await Promise.all([
+    fetchCategories(),
+    fetchCategoryProducts(categorySlug),
+  ]);
+
+  if (!response) {
+    notFound();
+  }
+
+  const content = categoryContentBySlug[categorySlug] ?? {
+    overview:
+      response.category.description ??
+      "Category overview and product data are kept short and readable on this page.",
+    applications: ["Sourcing review", "Technical comparison", "Direct inquiry handoff"],
+    trustNote: "The main job of this page is to keep the table easy to review.",
+    media: {
+      title: `${response.category.name} category image`,
+      note: "Replace with real category photography.",
+      tone: "catalog" as const,
+    },
+  };
+
+  return (
+    <div className="page-frame page-gap">
+      <PublicHero
+        eyebrow={response.category.name}
+        title={`${response.category.name} product range`}
+        description={content.overview}
+        media={content.media}
+      />
+
+      <section className="section-shell grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <SectionIntro title="Typical applications" text={content.trustNote} />
+          <div className="mt-6 grid gap-3">
+            {content.applications.map((item) => (
+              <div key={item} className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
+                {item}
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {productPageCopy.categoryTrustPoints.map((item) => (
+              <span key={item} className="border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--foreground)]">
+                {item}
+              </span>
+            ))}
+          </div>
+          <div className="mt-6">
+            <Link href="/inquiry" className="button-link">
+              Request this category
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+        <MediaPlaceholder media={content.media} className="min-h-[360px]" badge="Category Image" />
+      </section>
+
+      <section className="section-shell">
+        <ProductCatalog
+          categories={categories}
+          initialData={response}
+          lockedCategorySlug={response.category.slug}
+        />
+      </section>
+    </div>
+  );
+}

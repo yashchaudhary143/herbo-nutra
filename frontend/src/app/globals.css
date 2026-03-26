@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --background-alt: #f8fcf7;
+  --surface: #ffffff;
+  --surface-muted: #f5faf5;
+  --foreground: #1d3f2c;
+  --muted: #5f7466;
+  --line: rgba(20, 40, 29, 0.12);
+  --line-strong: rgba(20, 40, 29, 0.22);
+  --green-950: #1f5937;
+  --green-900: #2f7347;
+  --green-800: #4c9464;
+  --green-100: #e4f2e5;
+  --gold-500: #b6924d;
+  --gold-100: #f3e7cc;
+  --danger: #b63e24;
+  --shadow-soft: 0 18px 40px rgba(18, 33, 25, 0.05);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-green-950: var(--green-950);
+  --color-green-900: var(--green-900);
+  --color-green-800: var(--green-800);
+  --color-green-100: var(--green-100);
+  --color-gold-500: var(--gold-500);
+  --color-gold-100: var(--gold-100);
+  --font-sans: var(--font-plus-jakarta);
+  --font-display: var(--font-outfit);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(228, 242, 229, 0.42) 0%, transparent 14rem),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-plus-jakarta), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(35, 72, 48, 0.26);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(182, 146, 77, 0.18);
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
+}
+
+.page-frame {
+  @apply pb-12 md:pb-16;
+}
+
+.page-gap {
+  @apply space-y-14 md:space-y-20;
+}
+
+.eyebrow {
+  @apply text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[var(--green-800)];
+}
+
+.section-title {
+  @apply font-display text-3xl font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)] md:text-5xl;
+}
+
+.section-text {
+  @apply text-base leading-8 text-[var(--muted)];
+}
+
+.button-primary {
+  @apply inline-flex items-center justify-center border border-[var(--green-950)] bg-[var(--green-950)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--green-900)];
+}
+
+.button-secondary {
+  @apply inline-flex items-center justify-center border border-[var(--line-strong)] bg-white px-5 py-3 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--green-900)];
+}
+
+.button-link {
+  @apply inline-flex items-center gap-2 text-sm font-semibold text-[var(--green-950)] transition hover:text-[var(--green-800)];
+}
+
+.plain-panel {
+  @apply border border-[var(--line)] bg-white shadow-[var(--shadow-soft)];
+}
+
+.soft-panel {
+  @apply border border-[var(--line)] bg-[var(--surface-muted)];
+}
+
+.field {
+  @apply w-full border border-[var(--line-strong)] bg-white px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--green-900)] focus:outline-none focus:ring-2 focus:ring-[rgba(35,72,48,0.1)];
+}
+
+.catalog-table {
+  @apply w-full min-w-[680px] border-collapse;
+}
+
+.catalog-table thead th {
+  @apply border-b border-[var(--line-strong)] bg-[var(--surface-muted)] px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--foreground)];
+}
+
+.catalog-table tbody td {
+  @apply border-b border-[var(--line)] bg-white px-5 py-4 align-top text-sm leading-7 text-[var(--muted)];
+}
+
+.catalog-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.editorial-copy {
+  @apply max-w-3xl text-base leading-8 text-[var(--muted)];
+}
+
+.admin-card {
+  @apply rounded-[1.75rem] border border-[var(--line)] bg-white/90 p-6 shadow-[0_18px_40px_rgba(18,53,36,0.08)];
+}
+
+.admin-grid {
+  @apply grid gap-4 md:grid-cols-2 xl:grid-cols-4;
+}
+
+.admin-shell-link {
+  @apply rounded-2xl px-4 py-3 text-sm font-medium text-[var(--muted)] transition hover:bg-[var(--green-100)] hover:text-[var(--green-900)];
+}
+
+.admin-shell-link-active {
+  @apply bg-[var(--green-900)] text-white hover:bg-[var(--green-900)] hover:text-white;
+}
