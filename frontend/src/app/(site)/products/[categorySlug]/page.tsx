@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { notFound } from "next/navigation";
 
 import { fetchCategories, fetchCategoryProducts } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
@@ -34,18 +33,31 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     fetchCategoryProducts(categorySlug),
   ]);
 
-  if (!response) {
-    notFound();
-  }
+  const fallbackName = categorySlug
+    .split("-")
+    .map((segment) => segment[0].toUpperCase() + segment.slice(1))
+    .join(" ");
+
+  const category = response?.category ?? {
+    id: 0,
+    name: categoryContentBySlug[categorySlug] ? fallbackName : fallbackName,
+    slug: categorySlug,
+    description: null,
+    sort_order: 0,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    product_count: 0,
+  };
 
   const content = categoryContentBySlug[categorySlug] ?? {
     overview:
-      response.category.description ??
+      category.description ??
       "Category overview and product data are kept short and readable on this page.",
     applications: ["Sourcing review", "Technical comparison", "Direct inquiry handoff"],
     trustNote: "The main job of this page is to keep the table easy to review.",
     media: {
-      title: `${response.category.name} category image`,
+      title: `${category.name} category image`,
       note: "Replace with real category photography.",
       tone: "catalog" as const,
     },
@@ -54,8 +66,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <div className="page-frame page-gap">
       <PublicHero
-        eyebrow={response.category.name}
-        title={`${response.category.name} product range`}
+        eyebrow={category.name}
+        title={`${category.name} product range`}
         description={content.overview}
         media={content.media}
       />
@@ -90,8 +102,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <section className="section-shell">
         <ProductCatalog
           categories={categories}
-          initialData={response}
-          lockedCategorySlug={response.category.slug}
+          initialData={
+            response ?? {
+              items: [],
+              total: 0,
+              page: 1,
+              limit: 100,
+              category,
+            }
+          }
+          lockedCategorySlug={category.slug}
         />
       </section>
     </div>
