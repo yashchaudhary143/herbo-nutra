@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import type { MediaSlot, MediaTone } from "@/lib/site";
 
@@ -15,29 +17,27 @@ type MediaPlaceholderProps = {
   media: MediaSlot;
   className?: string;
   badge?: string;
-  hideContent?: boolean;
 };
 
-export function MediaPlaceholder({ media, className, badge, hideContent = false }: MediaPlaceholderProps) {
+export function MediaPlaceholder({ media, className, badge }: MediaPlaceholderProps) {
   return (
-    <div className={cn("relative overflow-hidden border border-[var(--line)]", toneStyles[media.tone], className)}>
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(25,33,29,0.08))]" />
+    <div className={cn("relative overflow-hidden border border-[var(--line)] bg-white", toneStyles[media.tone], className)}>
+      {media.src ? (
+        <Image
+          src={media.src}
+          alt={media.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+          priority={media.tone === "hero"}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(25,33,29,0.08))]" />
+      )}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(25,33,29,0.16))]" />
       {badge ? (
         <div className="absolute left-5 top-5 z-10 border border-white/70 bg-white/80 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[var(--foreground)] backdrop-blur">
           {badge}
-        </div>
-      ) : null}
-      {!hideContent ? (
-        <div className="relative flex h-full min-h-[260px] items-end p-5 md:p-7">
-          <div className="max-w-sm bg-white/88 p-4 backdrop-blur-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--green-800)]">
-              Image Placeholder
-            </p>
-            <h3 className="mt-2 font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--foreground)]">
-              {media.title}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{media.note}</p>
-          </div>
         </div>
       ) : null}
     </div>

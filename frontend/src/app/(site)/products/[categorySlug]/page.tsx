@@ -58,7 +58,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     trustNote: "The main job of this page is to keep the table easy to review.",
     media: {
       title: `${category.name} category image`,
-      note: "Replace with real category photography.",
+      note: "Category photography appears here when available.",
       tone: "catalog" as const,
     },
   };

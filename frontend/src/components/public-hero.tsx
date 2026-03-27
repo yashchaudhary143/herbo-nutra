@@ -14,7 +14,7 @@ export function PublicHero({ eyebrow, title, description, media, actions, stats 
   return (
     <section className="pt-0">
       <div className="relative overflow-hidden">
-        <MediaPlaceholder media={media} className="min-h-[320px] md:min-h-[420px]" hideContent />
+        <MediaPlaceholder media={media} className="min-h-[320px] md:min-h-[420px]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,89,55,0.68)_0%,rgba(31,89,55,0.38)_42%,rgba(31,89,55,0.12)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 top-0 flex items-center">
           <div className="section-shell w-full">

@@ -21,7 +21,7 @@ export default function ExtractionProcessPage() {
     <div className="page-frame page-gap">
       <PublicHero
         eyebrow="Manufacturing"
-        title="A simple process page with visible stages and less marketing noise."
+        title="Extraction and processing workflow"
         description="Show the production flow clearly: raw material, extraction, filtration, drying, and packaging."
         media={extractionContent.heroMedia}
       />
@@ -29,7 +29,7 @@ export default function ExtractionProcessPage() {
       <section className="section-shell">
         <SectionIntro
           title="Process stages"
-          text="Each stage is kept short so the page reads like a manufacturing overview, not a brochure."
+          text="Each stage outlines how materials move from intake to finished packed ingredients."
         />
         <div className="mt-8 grid gap-6">
           {processSteps.map((step, index) => (
@@ -48,26 +48,12 @@ export default function ExtractionProcessPage() {
           ))}
         </div>
       </section>
-
       <section className="section-shell grid gap-6 lg:grid-cols-[1fr_1fr]">
         <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[360px]" badge="Quality And Packing" />
         <div className="flex flex-col justify-center">
           <SectionIntro
-            title="Why this page matters"
-            text="Buyers want to understand how a supplier thinks about quality, handling, and shipment readiness."
-          />
-        </div>
-      </section>
-
-      <section className="section-shell">
-        <SectionIntro title={extractionContent.videoTitle} />
-        <div className="mt-6 aspect-video overflow-hidden border border-[var(--line)] bg-black">
-          <iframe
-            src={extractionContent.videoUrl}
-            title={extractionContent.videoTitle}
-            className="h-full w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
+            title="Quality and packing"
+            text="Quality checks, handling controls, and packing readiness support consistent supply and dispatch."
           />
         </div>
       </section>

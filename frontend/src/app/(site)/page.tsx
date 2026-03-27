@@ -29,25 +29,25 @@ export default async function HomePage() {
     <div className="page-frame page-gap">
       <section className="pt-0">
         <div className="relative overflow-hidden">
-          <MediaPlaceholder media={homeContent.heroMedia} className="min-h-[520px] md:min-h-[680px]" hideContent />
+          <MediaPlaceholder media={homeContent.heroMedia} className="min-h-[520px] md:min-h-[680px]" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,89,55,0.68)_0%,rgba(31,89,55,0.34)_42%,rgba(31,89,55,0.08)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 top-0 flex items-center">
             <div className="section-shell w-full">
               <div className="max-w-2xl py-4 md:py-6 lg:py-8">
-              <p className="text-sm font-medium tracking-[0.08em] text-white/82">
-                Herbo Nutra Extract Pvt. Ltd.
-              </p>
-              <h1 className="mt-3 font-display text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-white md:text-6xl lg:text-7xl">
-                Herbal and nutraceutical ingredients for B2B supply.
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-8 text-white/82 md:text-lg">
-                Clear product categories, visible manufacturing context, and a direct inquiry path.
-              </p>
-              <div className="mt-8">
-                <Link href="/contact" className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]">
-                  Contact
-                </Link>
-              </div>
+                <p className="text-sm font-medium tracking-[0.08em] text-white/82">
+                  Herbo Nutra Extract Pvt. Ltd.
+                </p>
+                <h1 className="mt-3 font-display text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-white md:text-6xl lg:text-7xl">
+                  Herbal and nutraceutical ingredients for B2B supply.
+                </h1>
+                <div className="mt-8">
+                  <Link
+                    href="/contact"
+                    className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]"
+                  >
+                    Contact
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ export default async function HomePage() {
         <SectionIntro
           label="Product Categories"
           title="Browse by category."
-          text="Move from category overview into the product table without extra noise."
+          text="Review the product range by category, then move into the specification table."
           align="split"
         />
         <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -119,7 +119,7 @@ export default async function HomePage() {
         <div className="flex flex-col justify-center">
           <SectionIntro
             label="Founder"
-            title="A simple founder note."
+            title="Founder's Note"
             text={founderContent.summary}
           />
           <div className="mt-6 flex flex-wrap gap-2">

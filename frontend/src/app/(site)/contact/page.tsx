@@ -2,7 +2,7 @@ import { fetchCategories, fetchProducts } from "@/lib/api";
 import { InquiryForm } from "@/components/inquiry-form";
 import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
-import { buildMetadata, categoryTeasers, seoDescriptions } from "@/lib/site";
+import { buildMetadata, contactCopy, seoDescriptions } from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Contact Us",
@@ -24,8 +24,8 @@ export default async function ContactPage() {
       <PublicHero
         eyebrow="Contact"
         title="Share your requirement and the team can respond directly."
-        description="Use this page for product, specification, quantity, sampling, and pricing discussions."
-        media={categoryTeasers[0].media}
+        description={contactCopy.prompt}
+        media={contactCopy.heroMedia}
       />
 
       <section className="section-shell grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -44,7 +44,7 @@ export default async function ContactPage() {
               </div>
             </div>
           </div>
-          <MediaPlaceholder media={categoryTeasers[1].media} className="min-h-[260px]" badge="Product Image" />
+          <MediaPlaceholder media={contactCopy.sideMedia} className="min-h-[260px]" badge="Product Support" />
         </div>
         <InquiryForm source="contact" productGroups={catalogGroups} />
       </section>
