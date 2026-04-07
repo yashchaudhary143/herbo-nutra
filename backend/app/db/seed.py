@@ -2,43 +2,132 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.core.security import hash_password
-from app.models import AdminUser, Category, Product
+from app.models import AdminUser, Category, Form, Product
 
 CATEGORY_DEFINITIONS = [
     {
         "name": "Herbal Extracts",
         "slug": "herbal-extracts",
-        "description": "Standardized botanical extracts for nutraceutical and ayurvedic formulations.",
+        "description": "Standardized and ratio-based botanical extracts managed through controlled sourcing and processing.",
         "sort_order": 1,
     },
     {
-        "name": "Mushroom Extracts",
-        "slug": "mushroom-extracts",
-        "description": "Functional mushroom ingredients for immunity, cognition, and wellness formulations.",
+        "name": "Botanical Salts",
+        "slug": "botanical-salts",
+        "description": "Botanical salt ingredients positioned for formulation use, sourcing review, and application-specific blending.",
         "sort_order": 2,
     },
     {
-        "name": "Specialty Botanicals",
-        "slug": "specialty-botanicals",
-        "description": "Polyphenols, bioactives, and plant actives for targeted formulation programs.",
+        "name": "Food Ingredients",
+        "slug": "food-ingredients",
+        "description": "Ingredient formats intended for food, seasoning, and general functional food applications.",
         "sort_order": 3,
+    },
+    {
+        "name": "Nutraceutical Ingredients",
+        "slug": "nutraceutical-ingredients",
+        "description": "Botanical and functional ingredients for nutraceutical and wellness-focused formulations.",
+        "sort_order": 4,
+    },
+    {
+        "name": "Natural Sourced Vitamins & Minerals",
+        "slug": "natural-sourced-vitamins-minerals",
+        "description": "Naturally derived vitamin and mineral ingredients aligned with label-friendly formulation needs.",
+        "sort_order": 5,
+    },
+    {
+        "name": "Ammino Acids",
+        "slug": "ammino-acids",
+        "description": "Amino acid ingredients produced for nutritional, functional, and specialty applications.",
+        "sort_order": 6,
+    },
+    {
+        "name": "Cosmetic Ingredients",
+        "slug": "cosmetic-ingredients",
+        "description": "Bioactive and botanical ingredients suitable for cosmetic and personal care positioning.",
+        "sort_order": 7,
+    },
+    {
+        "name": "Nucleotide Blends",
+        "slug": "nucleotide-blends",
+        "description": "Nucleotide-oriented ingredient systems for nutritional and specialty blend applications.",
+        "sort_order": 8,
+    },
+    {
+        "name": "Sport Nutrition Ingredients",
+        "slug": "sport-nutrition-ingredients",
+        "description": "Ingredients aligned with active nutrition, performance, and recovery-focused formulations.",
+        "sort_order": 9,
+    },
+    {
+        "name": "Fruit Powers & Vegetables",
+        "slug": "fruit-powers-vegetables",
+        "description": "Fruit and vegetable-derived ingredient formats for functional, food, and nutrition applications.",
+        "sort_order": 10,
+    },
+]
+
+FORM_DEFINITIONS = [
+    {
+        "name": "Herbal Extracts",
+        "slug": "herbal-extracts",
+        "description": "We employ advanced hydro-alcoholic extraction and precision concentration technologies to isolate bioactive compounds from selected botanical sources while preserving heat-sensitive phytoconstituents and delivering stable, highly dispersible extracts.",
+        "sort_order": 1,
+        "is_npd_featured": False,
+    },
+    {
+        "name": "Natural Sourced Vitamins & Minerals",
+        "slug": "natural-sourced-vitamins-minerals",
+        "description": "Our vitamins and minerals are derived using selective extraction and purification technologies from natural plant and mineral sources, maintaining nutrient structure, purity, stability, and label-friendly positioning.",
+        "sort_order": 2,
+        "is_npd_featured": False,
     },
     {
         "name": "Amino Acids",
         "slug": "amino-acids",
-        "description": "High-purity amino acid ingredients for functional blends.",
-        "sort_order": 4,
+        "description": "We utilize controlled fermentation and enzymatic hydrolysis technologies followed by advanced purification and crystallization to deliver amino acids with high purity, consistency, and formulation performance.",
+        "sort_order": 3,
+        "is_npd_featured": False,
     },
     {
-        "name": "Vitamins & Minerals",
-        "slug": "vitamins-minerals",
-        "description": "Fortification ingredients aligned with export-ready compliance needs.",
+        "name": "Liposomal Technology",
+        "slug": "liposomal-technology",
+        "description": "Our liposomal technology uses phospholipid-based encapsulation, high-shear homogenization, and nano-sizing techniques to protect actives from degradation and improve stability, efficacy, and absorption.",
+        "sort_order": 4,
+        "is_npd_featured": True,
+    },
+    {
+        "name": "Micronization Technology",
+        "slug": "micronization-technology",
+        "description": "We apply micronization technologies including jet milling to reduce particle size with micro-level precision, improving surface area, dissolution, solubility, dispersion, and formulation compatibility.",
         "sort_order": 5,
+        "is_npd_featured": True,
+    },
+    {
+        "name": "Phytosome Technology",
+        "slug": "phytosome-technology",
+        "description": "Our phytosome technology integrates herbal actives with phospholipids to form bioavailable complexes that significantly improve the absorption, stability, and effective utilization of botanical ingredients.",
+        "sort_order": 6,
+        "is_npd_featured": True,
+    },
+    {
+        "name": "Granulation Technology",
+        "slug": "granulation-technology",
+        "description": "We use controlled granulation processes to transform fine powders into uniform, free-flowing granules that improve flowability, reduce dust, and support handling, compressibility, and process efficiency.",
+        "sort_order": 7,
+        "is_npd_featured": True,
+    },
+    {
+        "name": "Nucleotide Technology",
+        "slug": "nucleotide-technology",
+        "description": "Our nucleotide production is driven by advanced fermentation and enzymatic processing followed by multi-stage purification to deliver stable, bioactive nucleotide fractions for nutritional and functional formulations.",
+        "sort_order": 8,
+        "is_npd_featured": True,
     },
 ]
 
@@ -164,8 +253,17 @@ SEED_PRODUCTS = [
 def infer_category_slug(product: dict[str, str]) -> str:
     name = f"{product['common_name']} {product['botanical_name']} {product['specification']}".lower()
 
-    if "mushroom" in name or any(keyword in name for keyword in ("grifola frondosa", "ganoderma lucidum", "hericium erinaceus")):
-        return "mushroom-extracts"
+    if "salt" in name:
+        return "botanical-salts"
+
+    if any(keyword in name for keyword in ("arginine", "carnitine")):
+        return "ammino-acids"
+
+    if any(keyword in name for keyword in ("vitamin", "zinc")):
+        return "natural-sourced-vitamins-minerals"
+
+    if any(keyword in name for keyword in ("garlic", "ginger", "black pepper")):
+        return "food-ingredients"
 
     if any(
         keyword in name
@@ -173,18 +271,42 @@ def infer_category_slug(product: dict[str, str]) -> str:
             "grape seed",
             "resveratrol",
             "green tea",
-            "milk thistle",
-            "silymarin",
-            "proanthocyanidins",
-            "egcg",
+            "olive leaf",
+            "oleuropein",
         )
     ):
-        return "specialty-botanicals"
-
-    if any(keyword in name for keyword in ("arginine", "carnitine", "vitamin", "zinc")):
-        return "amino-acids" if "arginine" in name or "carnitine" in name else "vitamins-minerals"
+        return "cosmetic-ingredients"
 
     return "herbal-extracts"
+
+
+def infer_form_slugs(product: dict[str, str], category_slug: str) -> list[str]:
+    name = f"{product['common_name']} {product['botanical_name']} {product['specification']}".lower()
+    form_slugs: list[str] = []
+
+    if category_slug == "ammino-acids":
+        form_slugs.append("amino-acids")
+    elif category_slug == "natural-sourced-vitamins-minerals":
+        form_slugs.append("natural-sourced-vitamins-minerals")
+    else:
+        form_slugs.append("herbal-extracts")
+
+    if any(keyword in name for keyword in ("turmeric", "green tea", "vitamin c")):
+        form_slugs.append("liposomal-technology")
+    if any(keyword in name for keyword in ("turmeric", "ashwagandha", "arginine", "zinc", "bacopa")):
+        form_slugs.append("micronization-technology")
+    if any(keyword in name for keyword in ("turmeric", "milk thistle", "boswellia", "ginkgo", "green tea")):
+        form_slugs.append("phytosome-technology")
+    if any(keyword in name for keyword in ("vitamin c", "zinc", "carnitine", "garlic", "ginger")):
+        form_slugs.append("granulation-technology")
+    if any(keyword in name for keyword in ("vitamin c", "zinc gluconate")):
+        form_slugs.append("nucleotide-technology")
+
+    deduped: list[str] = []
+    for slug in form_slugs:
+        if slug not in deduped:
+            deduped.append(slug)
+    return deduped
 
 
 def bootstrap_admin(session: Session, settings: Settings) -> None:
@@ -216,39 +338,72 @@ def _upsert_category(session: Session, payload: dict[str, object]) -> Category:
     return category
 
 
-def _upsert_product(session: Session, category_id: int, payload: dict[str, object]) -> None:
+def _upsert_form(session: Session, payload: dict[str, object]) -> Form:
+    item = session.scalar(select(Form).where(Form.slug == payload["slug"]))
+    if item:
+        for key, value in payload.items():
+            setattr(item, key, value)
+        session.add(item)
+        return item
+
+    item = Form(**payload)
+    session.add(item)
+    session.flush()
+    return item
+
+
+def _upsert_product(
+    session: Session,
+    category_id: int,
+    payload: dict[str, object],
+    forms: list[Form],
+) -> None:
     product = session.scalar(
         select(Product).where(
-            Product.category_id == category_id,
             Product.common_name == payload["common_name"],
+            Product.botanical_name == payload["botanical_name"],
         )
     )
     if product:
+        product.category_id = category_id
         for key, value in payload.items():
             setattr(product, key, value)
+        product.forms = forms
         session.add(product)
         return
 
-    session.add(Product(category_id=category_id, **payload))
+    session.add(Product(category_id=category_id, forms=forms, **payload))
 
 
 def seed_sample_catalog(session: Session) -> None:
     categories: dict[str, Category] = {}
+    forms: dict[str, Form] = {}
+    active_slugs = {payload["slug"] for payload in CATEGORY_DEFINITIONS}
 
     for category_payload in CATEGORY_DEFINITIONS:
         category = _upsert_category(session, category_payload)
         categories[category.slug] = category
+
+    for legacy_category in session.scalars(select(Category)).all():
+        if legacy_category.slug not in active_slugs:
+            legacy_category.is_active = False
+            session.add(legacy_category)
+
+    for form_payload in FORM_DEFINITIONS:
+        item = _upsert_form(session, form_payload)
+        forms[item.slug] = item
 
     session.flush()
 
     for index, product_data in enumerate(SEED_PRODUCTS, start=1):
         category_slug = infer_category_slug(product_data)
         category = categories[category_slug]
+        product_forms = [forms[slug] for slug in infer_form_slugs(product_data, category_slug) if slug in forms]
         payload = {
             **product_data,
             "sort_order": index,
             "is_active": True,
         }
-        _upsert_product(session, category.id, payload)
+        _upsert_product(session, category.id, payload, product_forms)
 
     session.commit()

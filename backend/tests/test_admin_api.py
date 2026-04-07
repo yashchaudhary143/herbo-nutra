@@ -4,6 +4,21 @@ def test_dashboard_requires_auth(client):
 
 
 def test_category_and_product_crud(client, admin_cookie):
+    form_response = client.post(
+        "/api/admin/forms",
+        json={
+            "name": "Custom Granulation Technology",
+            "slug": "custom-granulation-technology",
+            "description": "Granulated format for improved handling.",
+            "sort_order": 20,
+            "is_active": True,
+            "is_npd_featured": True,
+        },
+        cookies=admin_cookie,
+    )
+    assert form_response.status_code == 201
+    form = form_response.json()
+
     category_response = client.post(
         "/api/admin/categories",
         json={
@@ -25,6 +40,7 @@ def test_category_and_product_crud(client, admin_cookie):
             "common_name": "Moringa Powder",
             "botanical_name": "Moringa oleifera",
             "specification": "80 mesh, low moisture",
+            "form_ids": [form["id"]],
             "sort_order": 1,
             "is_active": True,
         },
@@ -33,14 +49,49 @@ def test_category_and_product_crud(client, admin_cookie):
     assert product_response.status_code == 201
     product = product_response.json()
     assert product["category"]["slug"] == "botanical-powders"
+    assert product["forms"][0]["slug"] == "custom-granulation-technology"
 
     update_response = client.put(
         f"/api/admin/products/{product['id']}",
-        json={"specification": "100 mesh, low moisture"},
+        json={"specification": "100 mesh, low moisture", "form_ids": []},
         cookies=admin_cookie,
     )
     assert update_response.status_code == 200
     assert update_response.json()["specification"] == "100 mesh, low moisture"
+    assert update_response.json()["forms"] == []
+
+
+def test_form_crud(client, admin_cookie):
+    create_response = client.post(
+        "/api/admin/forms",
+        json={
+            "name": "Test Liposomal Technology",
+            "slug": "test-liposomal-technology",
+            "description": "Encapsulated delivery format for testing.",
+            "sort_order": 15,
+            "is_active": True,
+            "is_npd_featured": True,
+        },
+        cookies=admin_cookie,
+    )
+    assert create_response.status_code == 201
+    created = create_response.json()
+
+    list_response = client.get("/api/admin/forms", cookies=admin_cookie)
+    assert list_response.status_code == 200
+    assert any(item["slug"] == "test-liposomal-technology" for item in list_response.json())
+
+    update_response = client.put(
+        f"/api/admin/forms/{created['id']}",
+        json={"description": "Updated form description", "is_npd_featured": False},
+        cookies=admin_cookie,
+    )
+    assert update_response.status_code == 200
+    assert update_response.json()["description"] == "Updated form description"
+    assert update_response.json()["is_npd_featured"] is False
+
+    delete_response = client.delete(f"/api/admin/forms/{created['id']}", cookies=admin_cookie)
+    assert delete_response.status_code == 204
 
 
 def test_inquiry_status_update(client, admin_cookie):
@@ -66,4 +117,3 @@ def test_inquiry_status_update(client, admin_cookie):
     )
     assert update_response.status_code == 200
     assert update_response.json()["status"] == "contacted"
-

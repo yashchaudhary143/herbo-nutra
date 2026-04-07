@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session, joinedload
 from app.api.deps import get_settings_dependency
 from app.core.config import Settings
 from app.db.session import get_db
-from app.models import Category, Inquiry, Product
+from app.models import Category, Form, Inquiry, Product
 from app.schemas.category import CategoryRead
+from app.schemas.form import FormRead
 from app.schemas.inquiry import InquiryCreate, InquirySubmissionResponse
 from app.schemas.product import CategoryProductsResponse, PaginatedProducts, ProductRead
 from app.services import notifications
@@ -47,19 +48,33 @@ def list_categories(db: Session = Depends(get_db)) -> list[CategoryRead]:
     ]
 
 
+@router.get("/forms", response_model=list[FormRead])
+def list_forms(db: Session = Depends(get_db)) -> list[FormRead]:
+    items = (
+        db.query(Form)
+        .filter(Form.is_active.is_(True))
+        .order_by(Form.sort_order.asc(), Form.name.asc())
+        .all()
+    )
+    return [FormRead.model_validate(item) for item in items]
+
+
 @router.get("/products", response_model=PaginatedProducts)
 def list_products(
     search: str | None = None,
     category: str | None = None,
+    form: str | None = None,
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
 ) -> PaginatedProducts:
-    query = db.query(Product).options(joinedload(Product.category)).join(Category)
+    query = db.query(Product).options(joinedload(Product.category), joinedload(Product.forms)).join(Category)
     query = query.filter(Product.is_active.is_(True), Category.is_active.is_(True))
 
     if category:
         query = query.filter(Category.slug == category)
+    if form:
+        query = query.join(Product.forms).filter(Form.slug == form, Form.is_active.is_(True))
 
     search_clause = _search_filter(search)
     if search_clause is not None:
@@ -84,6 +99,7 @@ def list_products(
 def category_products(
     slug: str,
     search: str | None = None,
+    form: str | None = None,
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
@@ -94,9 +110,11 @@ def category_products(
 
     query = (
         db.query(Product)
-        .options(joinedload(Product.category))
+        .options(joinedload(Product.category), joinedload(Product.forms))
         .filter(Product.category_id == category.id, Product.is_active.is_(True))
     )
+    if form:
+        query = query.join(Product.forms).filter(Form.slug == form, Form.is_active.is_(True))
 
     search_clause = _search_filter(search)
     if search_clause is not None:

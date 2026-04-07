@@ -4,9 +4,10 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.api.deps import get_current_admin
 from app.db.session import get_db
-from app.models import Category, Inquiry, Product
+from app.models import Category, Form, Inquiry, Product
 from app.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
 from app.schemas.dashboard import DashboardStats
+from app.schemas.form import FormCreate, FormRead, FormUpdate
 from app.schemas.inquiry import InquiryRead, InquiryUpdate, PaginatedInquiries
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 
@@ -21,6 +22,61 @@ def dashboard(_: object = Depends(get_current_admin), db: Session = Depends(get_
         inquiries=db.query(func.count(Inquiry.id)).scalar() or 0,
         new_inquiries=db.query(func.count(Inquiry.id)).filter(Inquiry.status == "new").scalar() or 0,
     )
+
+
+@router.get("/forms", response_model=list[FormRead])
+def admin_forms(_: object = Depends(get_current_admin), db: Session = Depends(get_db)) -> list[FormRead]:
+    items = db.query(Form).order_by(Form.sort_order.asc(), Form.name.asc()).all()
+    return [FormRead.model_validate(item) for item in items]
+
+
+@router.post("/forms", response_model=FormRead, status_code=status.HTTP_201_CREATED)
+def create_form(
+    payload: FormCreate,
+    _: object = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> FormRead:
+    existing = db.query(Form).filter((Form.slug == payload.slug) | (Form.name == payload.name)).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Form name or slug already exists")
+
+    item = Form(**payload.model_dump())
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return FormRead.model_validate(item)
+
+
+@router.put("/forms/{form_id}", response_model=FormRead)
+def update_form(
+    form_id: int,
+    payload: FormUpdate,
+    _: object = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> FormRead:
+    item = db.get(Form, form_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Form not found")
+
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(item, key, value)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return FormRead.model_validate(item)
+
+
+@router.delete("/forms/{form_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_form(
+    form_id: int,
+    _: object = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> None:
+    item = db.get(Form, form_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Form not found")
+    db.delete(item)
+    db.commit()
 
 
 @router.get("/categories", response_model=list[CategoryRead])
@@ -95,7 +151,7 @@ def admin_products(
 ) -> list[ProductRead]:
     items = (
         db.query(Product)
-        .options(joinedload(Product.category))
+        .options(joinedload(Product.category), joinedload(Product.forms))
         .order_by(Product.sort_order.asc(), Product.common_name.asc())
         .all()
     )
@@ -112,13 +168,19 @@ def create_product(
     if not category:
         raise HTTPException(status_code=400, detail="Category not found")
 
-    product = Product(**payload.model_dump())
+    form_ids = payload.form_ids
+    forms = db.query(Form).filter(Form.id.in_(form_ids)).all() if form_ids else []
+    if form_ids and len(forms) != len(set(form_ids)):
+        raise HTTPException(status_code=400, detail="One or more forms were not found")
+
+    product = Product(**payload.model_dump(exclude={"form_ids"}))
+    product.forms = forms
     db.add(product)
     db.commit()
     db.refresh(product)
     product = (
         db.query(Product)
-        .options(joinedload(Product.category))
+        .options(joinedload(Product.category), joinedload(Product.forms))
         .filter(Product.id == product.id)
         .first()
     )
@@ -139,6 +201,12 @@ def update_product(
     updates = payload.model_dump(exclude_unset=True)
     if "category_id" in updates and not db.get(Category, updates["category_id"]):
         raise HTTPException(status_code=400, detail="Category not found")
+    if "form_ids" in updates:
+        form_ids = updates.pop("form_ids") or []
+        forms = db.query(Form).filter(Form.id.in_(form_ids)).all() if form_ids else []
+        if len(forms) != len(set(form_ids)):
+            raise HTTPException(status_code=400, detail="One or more forms were not found")
+        product.forms = forms
 
     for key, value in updates.items():
         setattr(product, key, value)
@@ -146,7 +214,7 @@ def update_product(
     db.commit()
     refreshed = (
         db.query(Product)
-        .options(joinedload(Product.category))
+        .options(joinedload(Product.category), joinedload(Product.forms))
         .filter(Product.id == product.id)
         .first()
     )
