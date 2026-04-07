@@ -3,19 +3,44 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProductCatalog } from "@/components/product-catalog";
-import type { Category, PaginatedProducts } from "@/lib/api";
+import type { Category, Form, PaginatedProducts } from "@/lib/api";
 
 const categories: Category[] = [
   {
     id: 1,
-    name: "Herbal Extracts",
-    slug: "herbal-extracts",
-    description: "Botanical extracts",
+    name: "Nutraceutical Ingredients",
+    slug: "nutraceutical-ingredients",
+    description: "Core nutraceutical ingredients",
     sort_order: 1,
     is_active: true,
     created_at: "",
     updated_at: "",
     product_count: 2,
+  },
+];
+
+const forms: Form[] = [
+  {
+    id: 1,
+    name: "Herbal Extracts",
+    slug: "herbal-extracts",
+    description: "Standardized botanical extract format.",
+    sort_order: 1,
+    is_active: true,
+    is_npd_featured: false,
+    created_at: "",
+    updated_at: "",
+  },
+  {
+    id: 2,
+    name: "Micronization Technology",
+    slug: "micronization-technology",
+    description: "Reduced particle size for improved dispersion.",
+    sort_order: 2,
+    is_active: true,
+    is_npd_featured: true,
+    created_at: "",
+    updated_at: "",
   },
 ];
 
@@ -35,6 +60,7 @@ const initialData: PaginatedProducts = {
       created_at: "",
       updated_at: "",
       category: categories[0],
+      forms: [forms[0], forms[1]],
     },
     {
       id: 2,
@@ -47,6 +73,7 @@ const initialData: PaginatedProducts = {
       created_at: "",
       updated_at: "",
       category: categories[0],
+      forms: [forms[0]],
     },
   ],
 };
@@ -74,7 +101,7 @@ describe("ProductCatalog", () => {
 
     vi.stubGlobal("fetch", fetchMock);
 
-    render(<ProductCatalog categories={categories} initialData={initialData} />);
+    render(<ProductCatalog categories={categories} forms={forms} initialData={initialData} />);
     await userEvent.type(
       screen.getByPlaceholderText(/search product details/i),
       "ashwa",
@@ -85,5 +112,6 @@ describe("ProductCatalog", () => {
     });
 
     expect(screen.getByText("Ashwagandha Extract")).toBeInTheDocument();
+    expect(screen.getAllByText("Micronization Technology").length).toBeGreaterThan(0);
   });
 });

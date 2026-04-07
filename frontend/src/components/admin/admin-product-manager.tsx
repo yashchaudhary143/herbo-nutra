@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ApiError, Category, clientApiFetch, Product } from "@/lib/api";
+import { ApiError, Category, Form, clientApiFetch, Product } from "@/lib/api";
 
 type ProductFormState = {
   id?: number;
@@ -11,6 +11,7 @@ type ProductFormState = {
   common_name: string;
   botanical_name: string;
   specification: string;
+  form_ids: number[];
   sort_order: number;
   is_active: boolean;
 };
@@ -20,6 +21,7 @@ const emptyProduct: ProductFormState = {
   common_name: "",
   botanical_name: "",
   specification: "",
+  form_ids: [],
   sort_order: 0,
   is_active: true,
 };
@@ -27,17 +29,20 @@ const emptyProduct: ProductFormState = {
 export function AdminProductManager() {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [forms, setForms] = useState<Form[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<ProductFormState>(emptyProduct);
   const [error, setError] = useState<string | null>(null);
 
   async function reloadProducts() {
     try {
-      const [categoryResponse, productResponse] = await Promise.all([
+      const [categoryResponse, formResponse, productResponse] = await Promise.all([
         clientApiFetch<Category[]>("/api/admin/categories"),
+        clientApiFetch<Form[]>("/api/admin/forms"),
         clientApiFetch<Product[]>("/api/admin/products"),
       ]);
       setCategories(categoryResponse);
+      setForms(formResponse);
       setProducts(productResponse);
     } catch (requestError) {
       if (requestError instanceof ApiError && requestError.status === 401) {
@@ -53,12 +58,14 @@ export function AdminProductManager() {
 
     async function loadOnMount() {
       try {
-        const [categoryResponse, productResponse] = await Promise.all([
+        const [categoryResponse, formResponse, productResponse] = await Promise.all([
           clientApiFetch<Category[]>("/api/admin/categories"),
+          clientApiFetch<Form[]>("/api/admin/forms"),
           clientApiFetch<Product[]>("/api/admin/products"),
         ]);
         if (!cancelled) {
           setCategories(categoryResponse);
+          setForms(formResponse);
           setProducts(productResponse);
         }
       } catch (requestError) {
@@ -159,6 +166,31 @@ export function AdminProductManager() {
             setForm((state) => ({ ...state, specification: event.target.value }))
           }
         />
+        <div className="grid gap-3">
+          <p className="text-sm font-medium text-[var(--foreground)]">Available forms</p>
+          <div className="grid gap-2 rounded-2xl border border-[var(--line)] bg-white p-4">
+            {forms.map((item) => (
+              <label key={item.id} className="flex items-start gap-3 text-sm text-[var(--muted)]">
+                <input
+                  type="checkbox"
+                  checked={form.form_ids.includes(item.id)}
+                  onChange={(event) =>
+                    setForm((state) => ({
+                      ...state,
+                      form_ids: event.target.checked
+                        ? [...state.form_ids, item.id]
+                        : state.form_ids.filter((id) => id !== item.id),
+                    }))
+                  }
+                />
+                <span>
+                  <span className="block font-medium text-[var(--foreground)]">{item.name}</span>
+                  <span className="block text-xs leading-6">{item.description}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
         <input
           className="field"
           type="number"
@@ -197,6 +229,7 @@ export function AdminProductManager() {
               <th>Botanical Name</th>
               <th>Specification</th>
               <th>Category</th>
+              <th>Forms</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -207,6 +240,7 @@ export function AdminProductManager() {
                 <td>{product.botanical_name}</td>
                 <td>{product.specification}</td>
                 <td>{product.category?.name ?? "-"}</td>
+                <td>{product.forms.length ? product.forms.map((item) => item.name).join(", ") : "-"}</td>
                 <td>
                   <div className="flex gap-3">
                     <button
@@ -219,6 +253,7 @@ export function AdminProductManager() {
                           common_name: product.common_name,
                           botanical_name: product.botanical_name,
                           specification: product.specification,
+                          form_ids: product.forms.map((item) => item.id),
                           sort_order: product.sort_order,
                           is_active: product.is_active,
                         })

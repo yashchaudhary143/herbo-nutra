@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import { fetchCategories, fetchCategoryProducts } from "@/lib/api";
+import { fetchCategories, fetchCategoryProducts, fetchForms } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
 import { ProductCatalog } from "@/components/product-catalog";
 import { PublicHero } from "@/components/public-hero";
@@ -10,6 +10,7 @@ import { buildMetadata, categoryContentBySlug, productPageCopy } from "@/lib/sit
 
 type CategoryPageProps = {
   params: Promise<{ categorySlug: string }>;
+  searchParams?: Promise<{ form?: string }>;
 };
 
 export async function generateMetadata({ params }: CategoryPageProps) {
@@ -26,11 +27,14 @@ export async function generateMetadata({ params }: CategoryPageProps) {
   });
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { categorySlug } = await params;
-  const [categories, response] = await Promise.all([
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const selectedForm = resolvedSearchParams?.form;
+  const [categories, forms, response] = await Promise.all([
     fetchCategories(),
-    fetchCategoryProducts(categorySlug),
+    fetchForms(),
+    fetchCategoryProducts(categorySlug, { form: selectedForm }),
   ]);
 
   const fallbackName = categorySlug
@@ -102,6 +106,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <section className="section-shell">
         <ProductCatalog
           categories={categories}
+          forms={forms}
           initialData={
             response ?? {
               items: [],
@@ -112,6 +117,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             }
           }
           lockedCategorySlug={category.slug}
+          initialFormSlug={selectedForm}
         />
       </section>
     </div>

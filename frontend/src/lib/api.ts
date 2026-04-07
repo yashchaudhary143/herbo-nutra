@@ -10,6 +10,18 @@ export type Category = {
   product_count: number;
 };
 
+export type Form = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  sort_order: number;
+  is_active: boolean;
+  is_npd_featured: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Product = {
   id: number;
   category_id: number;
@@ -21,6 +33,7 @@ export type Product = {
   created_at: string;
   updated_at: string;
   category?: Category | null;
+  forms: Form[];
 };
 
 export type Inquiry = {
@@ -94,7 +107,7 @@ export async function fetchCategories() {
   }
 }
 
-export async function fetchProducts(params?: { search?: string; category?: string }) {
+export async function fetchProducts(params?: { search?: string; category?: string; form?: string }) {
   const query = new URLSearchParams();
   query.set("limit", "100");
   if (params?.search) {
@@ -102,6 +115,9 @@ export async function fetchProducts(params?: { search?: string; category?: strin
   }
   if (params?.category) {
     query.set("category", params.category);
+  }
+  if ("form" in (params ?? {}) && params?.form) {
+    query.set("form", params.form);
   }
 
   try {
@@ -111,13 +127,27 @@ export async function fetchProducts(params?: { search?: string; category?: strin
   }
 }
 
-export async function fetchCategoryProducts(slug: string) {
+export async function fetchCategoryProducts(slug: string, params?: { form?: string }) {
+  const query = new URLSearchParams();
+  query.set("limit", "100");
+  if (params?.form) {
+    query.set("form", params.form);
+  }
+
   try {
     return await serverApiFetch<CategoryProductsResponse>(
-      `/api/categories/${slug}/products?limit=100`,
+      `/api/categories/${slug}/products?${query.toString()}`,
     );
   } catch {
     return null;
+  }
+}
+
+export async function fetchForms() {
+  try {
+    return await serverApiFetch<Form[]>("/api/forms");
+  } catch {
+    return [] as Form[];
   }
 }
 

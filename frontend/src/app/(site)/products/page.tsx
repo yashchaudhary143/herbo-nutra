@@ -1,4 +1,4 @@
-import { fetchCategories, fetchProducts } from "@/lib/api";
+import { fetchCategories, fetchForms, fetchProducts } from "@/lib/api";
 import { ProductCatalog } from "@/components/product-catalog";
 import { PublicHero } from "@/components/public-hero";
 import { buildMetadata, productPageCopy, seoDescriptions } from "@/lib/site";
@@ -9,8 +9,20 @@ export const metadata = buildMetadata({
   path: "/products",
 });
 
-export default async function ProductsPage() {
-  const [categories, initialData] = await Promise.all([fetchCategories(), fetchProducts()]);
+type ProductsPageProps = {
+  searchParams?: Promise<{
+    form?: string;
+  }>;
+};
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const selectedForm = resolvedSearchParams?.form;
+  const [categories, forms, initialData] = await Promise.all([
+    fetchCategories(),
+    fetchForms(),
+    fetchProducts({ form: selectedForm }),
+  ]);
 
   return (
     <div className="page-frame page-gap">
@@ -22,7 +34,12 @@ export default async function ProductsPage() {
       />
 
       <section className="section-shell">
-        <ProductCatalog categories={categories} initialData={initialData} />
+        <ProductCatalog
+          categories={categories}
+          forms={forms}
+          initialData={initialData}
+          initialFormSlug={selectedForm}
+        />
       </section>
     </div>
   );

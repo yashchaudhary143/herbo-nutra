@@ -6,8 +6,9 @@ const routes = [
   "",
   "/about",
   "/products",
+  "/npd",
+  "/sustainability",
   "/extraction-process",
-  "/founder-note",
   "/contact",
 ];
 

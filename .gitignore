@@ -17,6 +17,7 @@ __pycache__/
 .pytest_cache/
 .pytest_cache/
 backend/.pytest_cache/
+herbo_nutra.db
 backend/herbo_nutra.db
 backend/*.db
 backend/*.sqlite

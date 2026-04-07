@@ -1,17 +1,16 @@
-import Image from "next/image";
-
+import { ManufacturingFlowchartCard } from "@/components/manufacturing-flowchart-card";
 import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
 import { SectionIntro } from "@/components/section-intro";
 import {
   buildMetadata,
   extractionContent,
-  processSteps,
+  manufacturingFlowcharts,
   seoDescriptions,
 } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "Extraction Process",
+  title: "Manufacturing",
   description: seoDescriptions.process,
   path: "/extraction-process",
 });
@@ -21,40 +20,93 @@ export default function ExtractionProcessPage() {
     <div className="page-frame page-gap">
       <PublicHero
         eyebrow="Manufacturing"
-        title="Extraction and processing workflow"
-        description="Show the production flow clearly: raw material, extraction, filtration, drying, and packaging."
+        title={extractionContent.title}
+        description={extractionContent.summary}
         media={extractionContent.heroMedia}
       />
 
+      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="plain-panel p-6 md:p-8">
+          <SectionIntro
+            title="Designed for process stability"
+            text={extractionContent.sections[0]?.text ?? ""}
+          />
+          <div className="mt-8 grid gap-4">
+            {extractionContent.sections.slice(1).map((section) => (
+              <div key={section.title} className="border-t border-[var(--line)] pt-4">
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">{section.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-[var(--muted)]">{section.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[420px]" badge="Controlled Systems" />
+      </section>
+
       <section className="section-shell">
         <SectionIntro
-          title="Process stages"
-          text="Each stage outlines how materials move from intake to finished packed ingredients."
+          title={extractionContent.sections[1]?.title ?? ""}
+          text={extractionContent.sections[1]?.text ?? ""}
         />
-        <div className="mt-8 grid gap-6">
-          {processSteps.map((step, index) => (
-            <article key={step.title} className="grid gap-5 border-t border-[var(--line)] pt-6 md:grid-cols-[220px_1fr] md:items-center">
-              <div className="soft-panel flex items-center justify-center p-5">
-                <Image src={step.image} alt={step.title} width={600} height={420} className="h-auto w-full max-w-[200px]" />
-              </div>
-              <div>
-                <p className="eyebrow">Step {index + 1}</p>
-                <h2 className="mt-2 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
-                  {step.title}
-                </h2>
-                <p className="mt-3 text-base leading-8 text-[var(--muted)]">{step.description}</p>
-              </div>
-            </article>
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {extractionContent.sections.slice(2).map((section) => (
+            <div key={section.title} className="plain-panel p-6">
+              <h3 className="text-xl font-semibold text-[var(--foreground)]">{section.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{section.text}</p>
+            </div>
           ))}
         </div>
       </section>
+
       <section className="section-shell grid gap-6 lg:grid-cols-[1fr_1fr]">
-        <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[360px]" badge="Quality And Packing" />
+        <MediaPlaceholder
+          media={extractionContent.infrastructureMedia}
+          className="min-h-[420px]"
+          badge="Infrastructure / Unit"
+        />
         <div className="flex flex-col justify-center">
           <SectionIntro
-            title="Quality and packing"
-            text="Quality checks, handling controls, and packing readiness support consistent supply and dispatch."
+            title={extractionContent.infrastructure.title}
+            text={extractionContent.infrastructure.text}
           />
+        </div>
+      </section>
+
+      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="flex flex-col justify-center">
+          <SectionIntro
+            title={extractionContent.packaging.title}
+            text={extractionContent.packaging.text}
+          />
+        </div>
+        <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[420px]" badge="Packaging" />
+      </section>
+
+      <section className="section-shell">
+        <SectionIntro
+          label="Flowcharts"
+          title="Manufacturing flowcharts across all 8 forms"
+          text="Each process family follows a structured sequence designed to support consistency, stability, and application-ready output."
+        />
+        <div className="mt-8 grid gap-6">
+          {manufacturingFlowcharts.map((flow) => (
+            <ManufacturingFlowchartCard
+              key={flow.title}
+              title={flow.title}
+              subtitle={flow.subtitle}
+              image={flow.image}
+              steps={flow.steps}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="section-shell">
+        <div className="grid gap-6 border-t border-[var(--line)] pt-8 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="eyebrow">Output</p>
+            <h2 className="section-title mt-3">{extractionContent.closing}</h2>
+          </div>
         </div>
       </section>
     </div>

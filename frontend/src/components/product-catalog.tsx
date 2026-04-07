@@ -5,17 +5,21 @@ import { ArrowRight, Search } from "lucide-react";
 import { useDeferredValue, useEffect, useEffectEvent, useState } from "react";
 
 import {
+  ApiError,
   Category,
   CategoryProductsResponse,
   clientApiFetch,
+  Form,
   PaginatedProducts,
   Product,
 } from "@/lib/api";
 
 type ProductCatalogProps = {
   categories: Category[];
+  forms: Form[];
   initialData: PaginatedProducts | CategoryProductsResponse;
   lockedCategorySlug?: string;
+  initialFormSlug?: string;
 };
 
 function isCategoryResponse(
@@ -26,11 +30,14 @@ function isCategoryResponse(
 
 export function ProductCatalog({
   categories,
+  forms,
   initialData,
   lockedCategorySlug,
+  initialFormSlug = "",
 }: ProductCatalogProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(lockedCategorySlug ?? "");
+  const [selectedForm, setSelectedForm] = useState(initialFormSlug);
   const [response, setResponse] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +62,16 @@ export function ProductCatalog({
         }
       } catch (requestError) {
         if (active.current) {
+          if (lockedCategorySlug && requestError instanceof ApiError && requestError.status === 404) {
+            setResponse((current) =>
+              isCategoryResponse(current)
+                ? { ...current, items: [], total: 0 }
+                : current,
+            );
+            setError(null);
+            return;
+          }
+
           setError(requestError instanceof Error ? requestError.message : "Unable to load products.");
         }
       } finally {
@@ -72,6 +89,9 @@ export function ProductCatalog({
     if (deferredSearch) {
       params.set("search", deferredSearch);
     }
+    if (selectedForm) {
+      params.set("form", selectedForm);
+    }
 
     const endpoint = lockedCategorySlug
       ? `/api/categories/${lockedCategorySlug}/products?${params.toString()}`
@@ -87,7 +107,7 @@ export function ProductCatalog({
     return () => {
       active.current = false;
     };
-  }, [deferredSearch, lockedCategorySlug, selectedCategory]);
+  }, [deferredSearch, lockedCategorySlug, selectedCategory, selectedForm]);
 
   const items = response.items;
 
@@ -100,7 +120,7 @@ export function ProductCatalog({
             Search by common name, botanical name, or specification.
           </p>
         </div>
-        <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_220px]">
           <label className="relative block">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
             <input
@@ -130,6 +150,19 @@ export function ProductCatalog({
               ))}
             </select>
           )}
+          <select
+            value={selectedForm}
+            onChange={(event) => setSelectedForm(event.target.value)}
+            className="field"
+            aria-label="Filter by form"
+          >
+            <option value="">All forms</option>
+            {forms.map((form) => (
+              <option key={form.id} value={form.slug}>
+                {form.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -141,13 +174,14 @@ export function ProductCatalog({
         </div>
       ) : null}
 
-      <div className="overflow-x-auto border border-[var(--line)] bg-white">
+      <div className="catalog-card overflow-x-auto">
         <table className="catalog-table">
           <thead>
             <tr>
               <th>Common Name</th>
               <th>Botanical Name</th>
               <th>Specification</th>
+              <th>Forms</th>
               {!lockedCategorySlug ? <th>Category</th> : null}
             </tr>
           </thead>
@@ -158,6 +192,22 @@ export function ProductCatalog({
                   <td className="font-semibold text-[var(--foreground)]">{product.common_name}</td>
                   <td>{product.botanical_name}</td>
                   <td>{product.specification}</td>
+                  <td>
+                    {product.forms.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {product.forms.map((form) => (
+                          <span
+                            key={form.id}
+                            className="border border-[var(--line)] bg-[var(--surface-muted)] px-2 py-1 text-xs font-medium text-[var(--foreground)]"
+                          >
+                            {form.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
                   {!lockedCategorySlug ? (
                     <td>
                       {product.category ? (
@@ -175,7 +225,7 @@ export function ProductCatalog({
             ) : (
               <tr>
                 <td
-                  colSpan={lockedCategorySlug ? 3 : 4}
+                  colSpan={lockedCategorySlug ? 4 : 5}
                   className="bg-white px-5 py-10 text-center text-sm text-[var(--muted)]"
                 >
                   {isLoading ? "Loading products..." : "No products match the current search."}
