@@ -22,10 +22,10 @@ export function SectionIntro({ label, title, text, align = "left" }: SectionIntr
     return (
       <div className="max-w-2xl">
         {label ? <p className="eyebrow">{label}</p> : null}
-        <h2 className="mt-3 font-display text-[2rem] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--foreground)] md:text-[2.8rem]">
+        <h2 className="mt-2 font-display text-[3rem] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--foreground)] md:text-[4rem]">
           {title}
         </h2>
-        {text ? <p className="mt-4 text-base leading-7 text-[var(--muted)]">{text}</p> : null}
+        {text ? <p className="mt-3 text-xl leading-7 text-[var(--muted)]">{text}</p> : null}
       </div>
     );
   }

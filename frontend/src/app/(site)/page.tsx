@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle } from "lucide-react";
 
 import { fetchCategories } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
@@ -105,15 +105,15 @@ export default async function HomePage() {
             text={homeContent.productExperience.intro}
             align="compact"
           />
-          <div className="home-feature-grid">
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
             {homeContent.productExperience.points.map((item) => (
-              <div key={item} className="home-feature-row">
-                <span aria-hidden="true" className="home-feature-dot" />
-                <span>{item}</span>
+              <div key={item} className="flex items-start gap-4 rounded-xl bg-white/50 p-4 shadow-sm border border-gray-100">
+                <CheckCircle className="h-5 w-5 text-[var(--green-800)] mt-0.5 flex-shrink-0" />
+                <span className="text-sm leading-7 text-[var(--muted)] font-medium">{item}</span>
               </div>
             ))}
           </div>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--muted)]">
+          <p className="mt-8 max-w-3xl text-base leading-8 text-[var(--muted)]">
             {homeContent.productExperience.closing}
           </p>
         </div>
@@ -199,21 +199,21 @@ export default async function HomePage() {
 
       <section className="home-band-framed">
         <div className="section-shell home-band">
-          <div className="grid gap-8 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             <div>
               <SectionIntro
                 title={homeContent.sustainability.title}
                 text={homeContent.sustainability.text}
                 align="compact"
               />
-              <div className="mt-6">
+              <div className="mt-4">
                 <Link href="/sustainability" className="button-link">
                   Read sustainability approach
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
-            <div className="border-t border-[var(--line)] pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+            <div className="border-t border-[var(--line)] pt-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
               <SectionIntro
                 title={homeContent.global.title}
                 text={homeContent.global.text}
@@ -263,7 +263,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell py-14 md:py-20">
+      <section className="section-shell py-16 md:py-24">
         <div className="home-cta-panel">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
             <div>
