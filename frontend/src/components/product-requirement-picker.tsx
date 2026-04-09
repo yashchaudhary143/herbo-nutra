@@ -11,11 +11,13 @@ export type ProductRequirementGroup = {
 };
 
 type SelectedProduct = {
+  id: string;
   categoryId: number;
   categoryName: string;
   commonName: string;
   botanicalName: string;
   specification: string;
+  isCustom?: boolean;
 };
 
 type ProductRequirementPickerProps = {
@@ -62,6 +64,7 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [customProduct, setCustomProduct] = useState("");
   const [selected, setSelected] = useState<SelectedProduct[]>([]);
 
   useEffect(() => {
@@ -97,6 +100,7 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
       const nextSelected = [
         ...current,
         {
+          id: `catalog-${category.id}-${product.id}`,
           categoryId: category.id,
           categoryName: category.name,
           commonName: product.common_name,
@@ -112,16 +116,44 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
   function removeProduct(item: SelectedProduct) {
     setSelected((current) => {
       const nextSelected = current.filter(
-        (entry) =>
-          !(
-            entry.categoryId === item.categoryId &&
-            entry.commonName === item.commonName &&
-            entry.botanicalName === item.botanicalName
-          ),
+        (entry) => entry.id !== item.id,
       );
       onChange(buildRequirementValue(nextSelected));
       return nextSelected;
     });
+  }
+
+  function addCustomProduct() {
+    const value = customProduct.trim();
+    if (!value) {
+      return;
+    }
+
+    setSelected((current) => {
+      const duplicate = current.some(
+        (item) => item.isCustom && item.commonName.toLowerCase() === value.toLowerCase(),
+      );
+      if (duplicate) {
+        return current;
+      }
+
+      const nextSelected = [
+        ...current,
+        {
+          id: `custom-${value.toLowerCase()}`,
+          categoryId: 0,
+          categoryName: "Custom requirements",
+          commonName: value,
+          botanicalName: "",
+          specification: "",
+          isCustom: true,
+        },
+      ];
+      onChange(buildRequirementValue(nextSelected));
+      return nextSelected;
+    });
+
+    setCustomProduct("");
   }
 
   return (
@@ -150,7 +182,9 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
         onClick={() => setOpen((current) => !current)}
       >
         <span className={selected.length ? "text-[var(--foreground)]" : "text-[var(--muted)]"}>
-          {selected.length ? `${selected.length} product${selected.length === 1 ? "" : "s"} selected` : "Search and select products"}
+          {selected.length
+            ? `${selected.length} requirement${selected.length === 1 ? "" : "s"} selected`
+            : "Search and select products"}
         </span>
         <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
@@ -159,12 +193,17 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
         <div className="flex flex-wrap gap-2">
           {selected.map((item) => (
             <button
-              key={`${item.categoryId}-${item.commonName}-${item.botanicalName}`}
+              key={item.id}
               type="button"
               onClick={() => removeProduct(item)}
               className="inline-flex items-center gap-2 border border-[var(--line-strong)] bg-[var(--surface-muted)] px-3 py-2 text-xs font-medium text-[var(--foreground)]"
             >
               {item.commonName}
+              {item.isCustom ? (
+                <span className="rounded-full bg-white px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-[var(--green-950)]">
+                  Custom
+                </span>
+              ) : null}
               <X className="h-3 w-3" />
             </button>
           ))}
@@ -245,8 +284,32 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
                 </section>
               ))
             ) : (
-              <div className="rounded-2xl border border-dashed border-[var(--line-strong)] px-4 py-6 text-sm text-[var(--muted)]">
-                No products match your search.
+              <div className="rounded-2xl border border-dashed border-[var(--line-strong)] bg-[var(--surface-muted)] p-4">
+                <p className="text-sm font-semibold text-[var(--foreground)]">No matching product found</p>
+                <p className="mt-1 text-xs leading-6 text-[var(--muted)]">
+                  Add the product manually and include any required specification in the message field.
+                </p>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                  <input
+                    value={customProduct}
+                    onChange={(event) => setCustomProduct(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        addCustomProduct();
+                      }
+                    }}
+                    placeholder={query ? `Add "${query}" as a custom product` : "Add product name or requirement"}
+                    className="field min-w-0 flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomProduct}
+                    className="button-secondary whitespace-nowrap"
+                  >
+                    Add product
+                  </button>
+                </div>
               </div>
             )}
           </div>

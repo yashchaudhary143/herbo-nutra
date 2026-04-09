@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight, Search } from "lucide-react";
-import { useDeferredValue, useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 import {
   ApiError,
@@ -35,13 +33,11 @@ export function ProductCatalog({
   lockedCategorySlug,
   initialFormSlug = "",
 }: ProductCatalogProps) {
-  const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(lockedCategorySlug ?? "");
   const [selectedForm, setSelectedForm] = useState(initialFormSlug);
   const [response, setResponse] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const deferredSearch = useDeferredValue(search);
 
   const runCatalogSearch = useEffectEvent(
     async (
@@ -86,9 +82,6 @@ export function ProductCatalog({
     const active = { current: true };
     const params = new URLSearchParams({ limit: "100" });
 
-    if (deferredSearch) {
-      params.set("search", deferredSearch);
-    }
     if (selectedForm) {
       params.set("form", selectedForm);
     }
@@ -107,7 +100,7 @@ export function ProductCatalog({
     return () => {
       active.current = false;
     };
-  }, [deferredSearch, lockedCategorySlug, selectedCategory, selectedForm]);
+  }, [lockedCategorySlug, selectedCategory, selectedForm]);
 
   const items = response.items;
 
@@ -117,29 +110,19 @@ export function ProductCatalog({
         <div>
           <h2 className="section-title text-2xl md:text-4xl">Product table</h2>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
-            Search by common name, botanical name, or specification.
+            Browse products by category and format.
           </p>
         </div>
-        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_220px]">
-          <label className="relative block">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              className="field pl-11"
-              placeholder="Search product details"
-              aria-label="Search products"
-            />
-          </label>
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
           {lockedCategorySlug ? (
-            <div className="flex items-center border border-[var(--line-strong)] bg-[var(--surface-muted)] px-4 py-3 text-sm font-medium text-[var(--foreground)]">
+            <div className="flex min-h-13 items-center border border-[var(--line-strong)] bg-[var(--surface-muted)] px-5 py-4 text-sm font-medium text-[var(--foreground)]">
               {isCategoryResponse(response) ? response.category.name : "Category"}
             </div>
           ) : (
             <select
               value={selectedCategory}
               onChange={(event) => setSelectedCategory(event.target.value)}
-              className="field"
+              className="field min-h-13 px-5 py-4"
               aria-label="Filter by category"
             >
               <option value="">All categories</option>
@@ -153,7 +136,7 @@ export function ProductCatalog({
           <select
             value={selectedForm}
             onChange={(event) => setSelectedForm(event.target.value)}
-            className="field"
+            className="field min-h-13 px-5 py-4"
             aria-label="Filter by form"
           >
             <option value="">All forms</option>
@@ -211,10 +194,9 @@ export function ProductCatalog({
                   {!lockedCategorySlug ? (
                     <td>
                       {product.category ? (
-                        <Link href={`/products/${product.category.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-[var(--green-950)]">
+                        <span className="text-sm font-medium text-[var(--foreground)]">
                           {product.category.name}
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
+                        </span>
                       ) : (
                         "-"
                       )}
@@ -228,7 +210,7 @@ export function ProductCatalog({
                   colSpan={lockedCategorySlug ? 4 : 5}
                   className="bg-white px-5 py-10 text-center text-sm text-[var(--muted)]"
                 >
-                  {isLoading ? "Loading products..." : "No products match the current search."}
+                  {isLoading ? "Loading products..." : "No products match the current filters."}
                 </td>
               </tr>
             )}
