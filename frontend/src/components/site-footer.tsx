@@ -31,9 +31,6 @@ export function SiteFooter() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/admin/login" className="hover:text-white">
-              Admin Login
-            </Link>
           </div>
         </div>
 

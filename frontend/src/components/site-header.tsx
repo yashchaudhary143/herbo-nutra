@@ -1,34 +1,40 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-import { company, navigation, utilityBar } from "@/lib/site";
+import { company, navigation } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   return (
     <header className="relative sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(255,255,255,0.96)] backdrop-blur-md">
-      <div className="hidden border-b border-[var(--line)] bg-[var(--green-950)] text-white lg:block">
-        <div className="section-shell flex flex-wrap items-center justify-between gap-3 py-2 text-xs">
-          <div className="flex flex-wrap gap-4 text-white/80">
-            {utilityBar.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
-          </div>
-          <a href={`tel:${company.phone}`} className="font-medium text-white">
-            {company.phone}
-          </a>
-        </div>
-      </div>
-
       <div className="section-shell flex items-center justify-between gap-3 py-3 lg:py-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center border border-[var(--line-strong)] bg-white font-display text-base font-semibold text-[var(--green-950)] lg:h-12 lg:w-12 lg:text-lg">
-            HN
+          <div className="relative h-11 w-11 overflow-hidden rounded-sm border border-[var(--line-strong)] bg-white lg:h-12 lg:w-12">
+            <Image
+              src="/HerboNutraLogo.png"
+              alt={`${company.shortName} logo`}
+              width={48}
+              height={48}
+              unoptimized
+              priority
+              className="h-full w-full object-contain p-1"
+            />
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-[var(--foreground)] lg:text-base">
@@ -40,25 +46,32 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
-          <Link href="/" className="text-sm font-medium text-[var(--foreground)]">
+          <Link
+            href="/"
+            className={cn(
+              "rounded-full px-4 py-2 text-sm font-semibold transition",
+              isActive("/")
+                ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.14)]"
+                : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
+            )}
+          >
             Home
           </Link>
           {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
+              className={cn(
+                "rounded-full px-4 py-2 text-sm font-semibold transition",
+                isActive(item.href)
+                  ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.14)]"
+                  : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
+              )}
             >
               {item.label}
             </Link>
           ))}
         </nav>
-
-        <div className="hidden items-center lg:flex">
-          <Link href="/contact" className="button-primary">
-            Contact
-          </Link>
-        </div>
 
         <button
           type="button"
@@ -83,7 +96,12 @@ export function SiteHeader() {
             <Link
               href="/"
               onClick={closeMenu}
-              className="border border-[var(--line-strong)] bg-[var(--surface-muted)] px-4 py-3 text-sm font-medium text-[var(--foreground)]"
+              className={cn(
+                "border px-4 py-3 text-sm font-medium transition",
+                isActive("/")
+                  ? "border-[var(--green-900)] bg-[var(--surface-muted)] text-[var(--green-950)]"
+                  : "border-[var(--line-strong)] bg-white text-[var(--muted)] hover:text-[var(--foreground)]",
+              )}
             >
               Home
             </Link>
@@ -92,7 +110,12 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 onClick={closeMenu}
-                className="border border-[var(--line-strong)] bg-white px-4 py-3 text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
+                className={cn(
+                  "border px-4 py-3 text-sm font-medium transition",
+                  isActive(item.href)
+                    ? "border-[var(--green-900)] bg-[var(--surface-muted)] text-[var(--green-950)]"
+                    : "border-[var(--line-strong)] bg-white text-[var(--muted)] hover:text-[var(--foreground)]",
+                )}
               >
                 {item.label}
               </Link>

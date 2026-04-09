@@ -25,6 +25,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/HerboNutraLogo.png", type: "image/png" },
+    ],
+    shortcut: ["/HerboNutraLogo.png"],
+    apple: [
+      { url: "/HerboNutraLogo.png", type: "image/png" },
+    ],
+  },
   keywords: [
     "herbal extracts",
     "nutraceutical ingredients",
