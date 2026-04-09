@@ -1,4 +1,5 @@
 import { ManufacturingFlowchartCard } from "@/components/manufacturing-flowchart-card";
+import { MediaCarousel } from "@/components/media-carousel";
 import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
 import { SectionIntro } from "@/components/section-intro";
@@ -16,6 +17,33 @@ export const metadata = buildMetadata({
 });
 
 export default function ExtractionProcessPage() {
+  const infrastructureSlides = [
+    {
+      type: "image" as const,
+      src: "/images/FacilityImage.jpg",
+      title: "Infrastructure overview",
+      note: "Production floor overview with core equipment and utility access.",
+    },
+    {
+      type: "image" as const,
+      src: "/images/HomeManufacturing.jpg",
+      title: "Manufacturing floor",
+      note: "Unit layout showing controlled process zones and movement paths.",
+    },
+    {
+      type: "image" as const,
+      src: "/images/QualityControl.jpg",
+      title: "Quality support",
+      note: "Quality oversight and release support linked to the unit workflow.",
+    },
+    {
+      type: "video" as const,
+      src: "/images/ProcessHero.jpg",
+      title: "Unit walkthrough",
+      note: "Placeholder video slide. Replace this with the final plant walkthrough video later.",
+    },
+  ];
+
   return (
     <div className="page-frame page-gap">
       <PublicHero
@@ -25,7 +53,7 @@ export default function ExtractionProcessPage() {
         media={extractionContent.heroMedia}
       />
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="section-shell">
         <div className="plain-panel p-6 md:p-8">
           <SectionIntro
             title="Designed for process stability"
@@ -40,7 +68,6 @@ export default function ExtractionProcessPage() {
             ))}
           </div>
         </div>
-        <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[420px]" badge="Controlled Systems" />
       </section>
 
       <section className="section-shell">
@@ -59,8 +86,8 @@ export default function ExtractionProcessPage() {
       </section>
 
       <section className="section-shell grid gap-6 lg:grid-cols-[1fr_1fr]">
-        <MediaPlaceholder
-          media={extractionContent.infrastructureMedia}
+        <MediaCarousel
+          items={infrastructureSlides}
           className="min-h-[420px]"
           badge="Infrastructure / Unit"
         />
@@ -98,15 +125,6 @@ export default function ExtractionProcessPage() {
               steps={flow.steps}
             />
           ))}
-        </div>
-      </section>
-
-      <section className="section-shell">
-        <div className="grid gap-6 border-t border-[var(--line)] pt-8 md:grid-cols-[1fr_auto] md:items-end">
-          <div>
-            <p className="eyebrow">Output</p>
-            <h2 className="section-title mt-3">{extractionContent.closing}</h2>
-          </div>
         </div>
       </section>
     </div>

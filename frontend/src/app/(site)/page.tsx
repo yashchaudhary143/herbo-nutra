@@ -9,6 +9,7 @@ import {
   categoryTeasers,
   certificationStrip,
   homeContent,
+  homeStats,
   seoDescriptions,
 } from "@/lib/site";
 
@@ -25,7 +26,7 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="page-frame page-gap">
+    <div className="page-frame">
       <section className="pt-0">
         <div className="relative overflow-hidden">
           <MediaPlaceholder media={homeContent.heroMedia} className="min-h-[520px] md:min-h-[680px]" />
@@ -41,7 +42,7 @@ export default async function HomePage() {
                 <p className="mt-5 text-lg font-medium leading-9 text-white/92 md:text-[1.85rem] md:leading-[1.45]">
                   {homeContent.heroText}
                 </p>
-                <p className="mt-5 text-sm font-medium tracking-[0.08em] text-white/78">
+                <p className="mt-5 max-w-lg text-sm leading-7 text-white/82">
                   {homeContent.heroSubtext}
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -51,6 +52,12 @@ export default async function HomePage() {
                   >
                     Send Inquiry
                   </Link>
+                  <Link
+                    href="/products"
+                    className="button-secondary border-white/28 bg-white/10 text-white hover:border-white/60 hover:bg-white/14"
+                  >
+                    View products
+                  </Link>
                 </div>
               </div>
             </div>
@@ -58,191 +65,231 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell">
-        <SectionIntro
-          label="Positioning"
-          title={homeContent.positioning.title}
-          text={homeContent.positioning.text}
-        />
+      <section className="home-band-accent">
+        <div className="section-shell home-band">
+          <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
+            <div className="home-panel p-6 md:p-8">
+              <SectionIntro
+                title={homeContent.positioning.title}
+                text={homeContent.positioning.text}
+                align="compact"
+              />
+              <div className="mt-6 flex flex-wrap gap-2">
+                {homeContent.innovation.formats.map((value) => (
+                  <span key={value} className="home-chip">
+                    {value}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              {homeStats.map((stat) => (
+                <div key={stat.label} className="home-stat-card">
+                  <p className="home-stat-value">{stat.value}</p>
+                  <p className="home-stat-label">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="flex flex-col justify-center">
+              <SectionIntro
+                title={homeContent.aboutSnapshot.title}
+                text={homeContent.aboutSnapshot.body[0]}
+                align="compact"
+              />
+              <p className="mt-4 editorial-copy">
+                {homeContent.aboutSnapshot.body[1]}
+              </p>
+            </div>
+            <MediaPlaceholder media={homeContent.processMedia} className="min-h-[400px]" badge="Understanding" />
+          </div>
+        </div>
       </section>
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="flex flex-col justify-center">
+      <section className="home-band-framed">
+        <div className="section-shell home-band">
           <SectionIntro
-            label="About Snapshot"
-            title={homeContent.aboutSnapshot.title}
-            text={homeContent.aboutSnapshot.body[0]}
+            title={homeContent.productExperience.title}
+            text={homeContent.productExperience.intro}
+            align="compact"
           />
-          <p className="mt-4 text-base leading-8 text-[var(--muted)]">
-            {homeContent.aboutSnapshot.body[1]}
+          <div className="home-feature-grid">
+            {homeContent.productExperience.points.map((item) => (
+              <div key={item} className="home-feature-row">
+                <span aria-hidden="true" className="home-feature-dot" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--muted)]">
+            {homeContent.productExperience.closing}
           </p>
         </div>
-        <MediaPlaceholder media={homeContent.processMedia} className="min-h-[400px]" badge="Understanding" />
       </section>
 
-      <section className="section-shell">
-        <SectionIntro
-          label="Product Experience"
-          title={homeContent.productExperience.title}
-          text={homeContent.productExperience.intro}
-          align="split"
-        />
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {homeContent.productExperience.points.map((item) => (
-            <div key={item} className="plain-panel p-6 text-sm leading-7 text-[var(--muted)]">
-              {item}
-            </div>
-          ))}
+      <section className="home-band">
+        <div className="section-shell">
+          <SectionIntro
+            title="Browse the product range"
+            text="Category views stay available for faster scanning before moving into the full specification table."
+            align="compact"
+          />
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {teaserCards.map((item) => (
+              <article key={item.slug} className="plain-panel category-card overflow-hidden">
+                <MediaPlaceholder media={item.media} className="min-h-[240px]" />
+                <div className="p-6">
+                  <h3 className="font-display text-[2rem] font-semibold tracking-[-0.04em] text-[var(--foreground)]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{item.summary}</p>
+                  <Link href={`/products/${item.slug}`} className="button-link mt-5">
+                    View category
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-        <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--muted)]">
-          {homeContent.productExperience.closing}
-        </p>
       </section>
 
-      <section className="section-shell">
-        <SectionIntro
-          label="Products"
-          title="Browse the product range."
-          text="Category views stay available for faster scanning before moving into the full specification table."
-          align="split"
-        />
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {teaserCards.map((item) => (
-            <article key={item.slug} className="plain-panel category-card overflow-hidden">
-              <MediaPlaceholder media={item.media} className="min-h-[240px]" />
-              <div className="p-6">
-                <h3 className="font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{item.summary}</p>
-                <Link href={`/products/${item.slug}`} className="button-link mt-5">
-                  View category
+      <section className="home-band-muted">
+        <div className="section-shell home-band grid gap-6 lg:grid-cols-[1fr_1fr]">
+          <MediaPlaceholder media={homeContent.processMedia} className="min-h-[420px]" badge="Manufacturing" />
+          <div className="flex flex-col justify-center">
+            <SectionIntro
+              title={homeContent.process.title}
+              text={homeContent.process.text}
+              align="compact"
+            />
+            <div className="mt-8">
+              <Link href="/extraction-process" className="button-link">
+                Explore manufacturing
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-band">
+        <div className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="flex flex-col justify-center">
+            <SectionIntro
+              title={homeContent.innovation.title}
+              text={homeContent.innovation.text}
+              align="compact"
+            />
+            <div className="mt-6 flex flex-wrap gap-2">
+              {homeContent.innovation.formats.map((value) => (
+                <span
+                  key={value}
+                  className="gold-outline border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)]"
+                >
+                  {value}
+                </span>
+              ))}
+            </div>
+            <p className="mt-6 text-base leading-8 text-[var(--muted)]">
+              {homeContent.innovation.closing}
+            </p>
+            <div className="mt-6">
+              <Link href="/npd" className="button-link">
+                Explore advanced formats
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+          <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Formats" />
+        </div>
+      </section>
+
+      <section className="home-band-framed">
+        <div className="section-shell home-band">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="home-editorial-card">
+              <SectionIntro
+                title={homeContent.sustainability.title}
+                text={homeContent.sustainability.text}
+                align="compact"
+              />
+              <div className="mt-6">
+                <Link href="/sustainability" className="button-link">
+                  Read sustainability approach
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-shell grid gap-6 lg:grid-cols-[1fr_1fr]">
-        <MediaPlaceholder media={homeContent.processMedia} className="min-h-[420px]" badge="Manufacturing" />
-        <div className="flex flex-col justify-center">
-          <SectionIntro
-            label="Manufacturing"
-            title={homeContent.process.title}
-            text={homeContent.process.text}
-          />
-          <div className="mt-8">
-            <Link href="/extraction-process" className="button-link">
-              Explore manufacturing
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            </div>
+            <div className="home-editorial-card">
+              <SectionIntro
+                title={homeContent.global.title}
+                text={homeContent.global.text}
+                align="compact"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="flex flex-col justify-center">
-          <SectionIntro
-            label="Formats & Innovation"
-            title={homeContent.innovation.title}
-            text={homeContent.innovation.text}
-          />
-          <div className="mt-6 flex flex-wrap gap-2">
-            {homeContent.innovation.formats.map((value) => (
-              <span
-                key={value}
-                className="gold-outline border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)]"
-              >
-                {value}
-              </span>
-            ))}
+      <section className="home-band-accent">
+        <div className="section-shell home-band">
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="flex flex-col justify-center">
+              <SectionIntro
+                title={homeContent.team.title}
+                text={homeContent.team.text}
+                align="compact"
+              />
+              <div className="mt-6">
+                <Link href="/about" className="button-link">
+                  Meet the team
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Leadership" />
           </div>
-          <p className="mt-6 text-base leading-8 text-[var(--muted)]">
-            {homeContent.innovation.closing}
-          </p>
-          <div className="mt-6">
-            <Link href="/npd" className="button-link">
-              Explore advanced formats
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-        <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Formats" />
-      </section>
 
-      <section className="section-shell grid gap-6 lg:grid-cols-2">
-        <div className="plain-panel p-6 md:p-8">
-          <SectionIntro
-            label="Sustainability"
-            title={homeContent.sustainability.title}
-            text={homeContent.sustainability.text}
-          />
-          <div className="mt-6">
-            <Link href="/sustainability" className="button-link">
-              Read sustainability approach
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+          <div className="mt-10 border-t border-[var(--line)] pt-10">
+            <SectionIntro
+              title="Defined by Structured Systems"
+              text="These standards support how we maintain quality, safety, and consistency across operations."
+              align="compact"
+            />
+            <div className="mt-6 flex flex-wrap gap-2">
+              {certificationStrip.map((item) => (
+                <span
+                  key={item}
+                  className="gold-outline border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)]"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="plain-panel p-6 md:p-8">
-          <SectionIntro
-            label="Global Outlook"
-            title={homeContent.global.title}
-            text={homeContent.global.text}
-          />
         </div>
       </section>
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="flex flex-col justify-center">
-          <SectionIntro
-            label="Team"
-            title={homeContent.team.title}
-            text={homeContent.team.text}
-          />
-          <div className="mt-6">
-            <Link href="/about" className="button-link">
-              Meet the team
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-        <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Leadership" />
-      </section>
-
-      <section className="section-shell">
-        <SectionIntro
-          label="Certifications"
-          title="Defined by Structured Systems"
-          text="These standards support how we maintain quality, safety, and consistency across operations."
-        />
-        <div className="mt-8 flex flex-wrap gap-2 border-y border-[var(--line)] py-5">
-          {certificationStrip.map((item) => (
-            <span
-              key={item}
-              className="gold-outline border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)]"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-shell">
-        <div className="grid gap-6 border-t border-[var(--line)] pt-8 md:grid-cols-[1fr_auto] md:items-end">
-          <div>
-            <p className="eyebrow">Final Statement</p>
-            <h2 className="section-title mt-3">{homeContent.finalStatement.title}</h2>
-            <p className="section-text mt-4 max-w-2xl">
-              {homeContent.finalStatement.text}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/contact" className="button-primary">
-              Send Inquiry
-            </Link>
+      <section className="section-shell py-14 md:py-20">
+        <div className="home-cta-panel">
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/72">Final Statement</p>
+              <h2 className="mt-3 font-display text-4xl font-semibold leading-[0.98] tracking-[-0.05em] text-white md:text-5xl">
+                {homeContent.finalStatement.title}
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-white/78">
+                {homeContent.finalStatement.text}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/contact" className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]">
+                Send Inquiry
+              </Link>
+            </div>
           </div>
         </div>
       </section>

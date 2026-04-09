@@ -1,4 +1,3 @@
-import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
 import { SectionIntro } from "@/components/section-intro";
 import {
@@ -24,7 +23,7 @@ export default function AboutPage() {
         stats={aboutContent.stats}
       />
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="section-shell">
         <div className="plain-panel p-6 md:p-8">
           <SectionIntro title="Company overview" text={aboutContent.overview} />
           <div className="mt-8 grid gap-4">
@@ -64,22 +63,6 @@ export default function AboutPage() {
             {aboutContent.supply}
           </p>
         </div>
-        <MediaPlaceholder media={aboutContent.qualityMedia} className="min-h-[420px]" badge="Quality" />
-      </section>
-
-      <section className="section-shell">
-        <SectionIntro
-          label="Documentation Support"
-          title={aboutContent.technicalSupportTitle}
-          text={aboutContent.technicalSupportIntro}
-        />
-        <div className="mt-8 grid gap-3 md:grid-cols-2">
-          {aboutContent.technicalDocuments.map((item) => (
-            <div key={item} className="plain-panel px-5 py-4 text-sm leading-7 text-[var(--muted)]">
-              {item}
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="section-shell">
@@ -90,25 +73,48 @@ export default function AboutPage() {
         />
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {aboutContent.team.map((member) => (
-            <article key={member.name} className="plain-panel p-6 md:p-7">
+            <article key={member.name} className="plain-panel p-5 md:p-6">
               <p className="eyebrow">{member.role}</p>
-              <h3 className="mt-2 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
+              <h3 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-[2rem]">
                 {member.name}
               </h3>
-              <p className="mt-4 text-sm leading-7 text-[var(--muted)]">{member.summary}</p>
-              <div className="mt-6 grid gap-3">
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{member.summary}</p>
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-[var(--muted)]">
                 {member.points.map((item) => (
-                  <div key={item} className="border-t border-[var(--line)] pt-3 text-sm leading-7 text-[var(--muted)]">
-                    {item}
-                  </div>
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--green-800)]"
+                    />
+                    <span>{item}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
               {"closing" in member && member.closing ? (
-                <p className="mt-6 border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
+                <p className="mt-4 pt-1 text-sm leading-6 text-[var(--muted)]">
                   {member.closing}
                 </p>
               ) : null}
             </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section-shell">
+        <div className="max-w-4xl">
+          <p className="eyebrow">Documentation Support</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-4xl">
+            {aboutContent.technicalSupportTitle}
+          </h2>
+          <p className="mt-4 text-base leading-7 text-[var(--muted)]">
+            {aboutContent.technicalSupportIntro}
+          </p>
+        </div>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          {aboutContent.technicalDocuments.map((item) => (
+            <div key={item} className="plain-panel px-4 py-3 text-sm leading-6 text-[var(--muted)]">
+              {item}
+            </div>
           ))}
         </div>
       </section>

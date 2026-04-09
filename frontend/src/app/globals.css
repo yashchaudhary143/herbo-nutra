@@ -125,6 +125,81 @@ textarea {
   @apply border border-[var(--line)] bg-[var(--surface-muted)];
 }
 
+.home-band {
+  @apply py-14 md:py-20;
+}
+
+.home-band-muted {
+  background:
+    linear-gradient(180deg, rgba(242, 247, 240, 0.88), rgba(255, 255, 255, 0.92)),
+    var(--surface-muted);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.home-band-framed {
+  @apply border-y border-[var(--line)] bg-white;
+}
+
+.home-band-accent {
+  background:
+    radial-gradient(circle at top left, rgba(228, 242, 229, 0.72), transparent 24rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 242, 0.92));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.home-panel {
+  @apply border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-soft)];
+}
+
+.home-panel-muted {
+  @apply border border-[var(--line)] bg-[var(--surface-muted)];
+}
+
+.home-editorial-card {
+  @apply border border-[var(--line)] bg-white p-5 shadow-[var(--shadow-soft)] md:p-6;
+}
+
+.home-benefit-card {
+  @apply border border-[var(--line)] bg-white px-5 py-4 text-sm leading-7 text-[var(--muted)] shadow-[var(--shadow-soft)];
+}
+
+.home-feature-grid {
+  @apply mt-8 grid gap-x-8 gap-y-0 md:grid-cols-2;
+}
+
+.home-feature-row {
+  @apply flex items-start gap-4 border-t border-[var(--line)] py-4 text-sm leading-7 text-[var(--muted)];
+}
+
+.home-feature-dot {
+  @apply mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--green-800)];
+}
+
+.home-stat-card {
+  @apply border border-[var(--line)] bg-white px-5 py-5 shadow-[var(--shadow-soft)];
+}
+
+.home-stat-value {
+  @apply font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-3xl;
+}
+
+.home-stat-label {
+  @apply mt-2 text-sm leading-6 text-[var(--muted)];
+}
+
+.home-chip {
+  @apply border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--foreground)];
+}
+
+.home-cta-panel {
+  background:
+    linear-gradient(135deg, rgba(31, 89, 55, 0.98), rgba(39, 105, 64, 0.96)),
+    var(--green-950);
+  @apply overflow-hidden border border-[rgba(255,255,255,0.08)] px-6 py-8 text-white shadow-[0_28px_80px_rgba(16,33,24,0.18)] md:px-10 md:py-10;
+}
+
 .field {
   @apply w-full border border-[var(--line-strong)] bg-white px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--green-900)] focus:outline-none focus:ring-2 focus:ring-[rgba(35,72,48,0.1)];
 }

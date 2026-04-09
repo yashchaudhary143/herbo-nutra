@@ -1,4 +1,3 @@
-import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
 import { SectionIntro } from "@/components/section-intro";
 import { buildMetadata, seoDescriptions, sustainabilityContent } from "@/lib/site";
@@ -19,7 +18,7 @@ export default function SustainabilityPage() {
         media={sustainabilityContent.heroMedia}
       />
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="section-shell">
         <div className="plain-panel p-6 md:p-8">
           <SectionIntro
             title={sustainabilityContent.sections[0]?.title ?? ""}
@@ -34,7 +33,6 @@ export default function SustainabilityPage() {
             ))}
           </div>
         </div>
-        <MediaPlaceholder media={sustainabilityContent.heroMedia} className="min-h-[420px]" badge="Long-Term Balance" />
       </section>
 
       <section className="section-shell">

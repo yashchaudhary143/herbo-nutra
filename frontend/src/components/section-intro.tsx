@@ -2,7 +2,7 @@ type SectionIntroProps = {
   label?: string;
   title: string;
   text?: string;
-  align?: "left" | "split";
+  align?: "left" | "split" | "compact";
 };
 
 export function SectionIntro({ label, title, text, align = "left" }: SectionIntroProps) {
@@ -14,6 +14,18 @@ export function SectionIntro({ label, title, text, align = "left" }: SectionIntr
           <h2 className="section-title mt-3">{title}</h2>
         </div>
         {text ? <p className="section-text max-w-2xl">{text}</p> : <div />}
+      </div>
+    );
+  }
+
+  if (align === "compact") {
+    return (
+      <div className="max-w-2xl">
+        {label ? <p className="eyebrow">{label}</p> : null}
+        <h2 className="mt-3 font-display text-[2rem] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--foreground)] md:text-[2.8rem]">
+          {title}
+        </h2>
+        {text ? <p className="mt-4 text-base leading-7 text-[var(--muted)]">{text}</p> : null}
       </div>
     );
   }
