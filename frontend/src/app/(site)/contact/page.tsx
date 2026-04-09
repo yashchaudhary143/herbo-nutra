@@ -1,6 +1,6 @@
+import { FileText, Zap, Package } from "lucide-react";
 import { fetchCategories, fetchProducts } from "@/lib/api";
 import { InquiryForm } from "@/components/inquiry-form";
-import { MediaPlaceholder } from "@/components/media-placeholder";
 import { PublicHero } from "@/components/public-hero";
 import { buildMetadata, contactCopy, seoDescriptions } from "@/lib/site";
 
@@ -28,24 +28,34 @@ export default async function ContactPage() {
         media={contactCopy.heroMedia}
       />
 
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="space-y-6">
-          <div>
-            <h2 className="section-title text-2xl md:text-4xl">What to include</h2>
-            <div className="mt-6 grid gap-4">
-              <div className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
-                Product name or ingredient type
-              </div>
-              <div className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
-                Required specification or strength
-              </div>
-              <div className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
-                Quantity, packaging, and target market
-              </div>
-            </div>
-          </div>
-          <MediaPlaceholder media={contactCopy.sideMedia} className="min-h-[260px]" badge="Product Support" />
+      <section className="section-shell">
+        <div className="max-w-3xl">
+          <h2 className="section-title">What to include</h2>
+          <p className="section-text mt-6">Provide the key details about your requirement so our team can respond with the most relevant information and options for your application.</p>
         </div>
+        
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <FileText className="h-8 w-8 text-[var(--green-800)] mb-4" />
+            <h3 className="font-semibold text-[var(--foreground)]">Product specification</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Name or ingredient type you're looking for</p>
+          </div>
+          
+          <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <Zap className="h-8 w-8 text-[var(--green-800)] mb-4" />
+            <h3 className="font-semibold text-[var(--foreground)]">Technical requirements</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Desired specification or strength for your application</p>
+          </div>
+          
+          <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <Package className="h-8 w-8 text-[var(--green-800)] mb-4" />
+            <h3 className="font-semibold text-[var(--foreground)]">Scale and delivery</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Quantity, packaging format, and target market</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell max-w-2xl">
         <InquiryForm source="contact" productGroups={catalogGroups} />
       </section>
     </div>
