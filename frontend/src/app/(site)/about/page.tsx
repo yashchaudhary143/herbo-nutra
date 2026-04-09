@@ -1,5 +1,10 @@
+import Image from "next/image";
+ import { FileText, Award, Settings, Shield, Lightbulb } from "lucide-react";
+
 import { PublicHero } from "@/components/public-hero";
+import { MediaPlaceholder } from "@/components/media-placeholder";
 import { SectionIntro } from "@/components/section-intro";
+import { TeamMembersGrid } from "@/components/team-members-grid";
 import {
   aboutContent,
   buildMetadata,
@@ -24,45 +29,85 @@ export default function AboutPage() {
       />
 
       <section className="section-shell">
-        <div className="max-w-5xl">
-          <SectionIntro title="Company overview" text={aboutContent.overview} />
-          <div className="mt-8 grid gap-4">
-            <div className="border-t border-[var(--line)] pt-4">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">
-                {aboutContent.applicationUnderstanding.title}
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
-                {aboutContent.applicationUnderstanding.text}
-              </p>
+        <div className="max-w-6xl">
+          <h2 className="font-display text-4xl font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)] md:text-5xl">
+            Company overview
+          </h2>
+
+          <div className="mt-10 grid gap-8 md:grid-cols-2 md:items-start">
+            <div className="overflow-hidden rounded-3xl border border-[var(--line)] shadow-md">
+              <MediaPlaceholder
+                media={aboutContent.qualityMedia}
+                className="aspect-video"
+              />
             </div>
-            <div className="border-t border-[var(--line)] pt-4">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">
-                {aboutContent.quality.title}
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
-                {aboutContent.quality.text}
+
+            <div>
+              <p className="text-lg leading-7 text-[var(--muted)]">
+                {aboutContent.overview}
               </p>
-            </div>
-            <div className="border-t border-[var(--line)] pt-4">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">
-                {aboutContent.development.title}
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
-                {aboutContent.development.text}
-              </p>
-            </div>
-          </div>
-          <div className="editorial-point-list">
-            {aboutContent.development.points.map((item) => (
-              <div key={item} className="editorial-point-item">
-                <span aria-hidden="true" className="editorial-point-dot" />
-                <span>{item}</span>
+
+              <div className="mt-6">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--green-800)]">
+                  Capabilities
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["Liposomal", "Micronized", "Phytosomal", "Granulated"].map(
+                    (cap) => (
+                      <span
+                        key={cap}
+                        className="rounded-full border border-[var(--line)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:border-[var(--green-800)]"
+                      >
+                        {cap}
+                      </span>
+                    )
+                  )}
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-          <p className="mt-8 border-l-2 border-[var(--green-100)] pl-4 text-base leading-8 text-[var(--muted)]">
-            {aboutContent.supply}
-          </p>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {[
+              {
+                icon: Settings,
+                title: aboutContent.applicationUnderstanding.title,
+                text: aboutContent.applicationUnderstanding.text,
+              },
+              {
+                icon: Shield,
+                title: aboutContent.quality.title,
+                text: aboutContent.quality.text,
+              },
+              {
+                icon: Lightbulb,
+                title: aboutContent.development.title,
+                text: aboutContent.development.text,
+              },
+            ].map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className="rounded-2xl bg-slate-50 p-6 transition hover:shadow-md"
+                >
+                  <Icon className="h-8 w-8 text-[var(--green-800)]" />
+                  <h3 className="mt-4 font-semibold text-[var(--foreground)]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+                    {item.text}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-10 rounded-2xl border-l-4 border-[var(--green-800)] bg-green-50/30 p-6">
+            <p className="text-base leading-7 text-[var(--muted)]">
+              {aboutContent.supply}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -71,77 +116,105 @@ export default function AboutPage() {
           label="Our Team"
           title={aboutContent.teamTitle}
           text={aboutContent.teamIntro}
+          align="left"
         />
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {aboutContent.team.map((member) => (
-            <article key={member.name} className="plain-panel p-5 md:p-6">
-              <p className="eyebrow">{member.role}</p>
-              <h3 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-[2rem]">
-                {member.name}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{member.summary}</p>
-              <ul className="mt-4 space-y-2 text-sm leading-6 text-[var(--muted)]">
-                {member.points.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--green-800)]"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              {"closing" in member && member.closing ? (
-                <p className="mt-4 pt-1 text-sm leading-6 text-[var(--muted)]">
-                  {member.closing}
-                </p>
-              ) : null}
-            </article>
-          ))}
+        <div className="mt-10">
+          <TeamMembersGrid members={aboutContent.team} />
         </div>
       </section>
 
       <section className="section-shell">
-        <div className="max-w-4xl">
-          <p className="eyebrow">Documentation Support</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-4xl">
-            {aboutContent.technicalSupportTitle}
-          </h2>
-          <p className="mt-4 text-base leading-7 text-[var(--muted)]">
-            {aboutContent.technicalSupportIntro}
-          </p>
-        </div>
-        <div className="editorial-row-grid mt-6">
-          {aboutContent.technicalDocuments.map((item) => (
-            <div key={item} className="editorial-row">
-              {item}
-            </div>
-          ))}
+        <div className="max-w-6xl">
+          <div className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--green-800)]">
+              Documentation Support
+            </p>
+            <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-5xl">
+              {aboutContent.technicalSupportTitle}
+            </h2>
+            <p className="mt-4 max-w-3xl text-lg leading-7 text-[var(--muted)]">
+              {aboutContent.technicalSupportIntro}
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {aboutContent.technicalDocuments.map((item, idx) => {
+              const parts = item.split(" - ");
+              const acronym = parts[0].trim();
+              const description = parts[1] || acronym;
+
+              return (
+                <div
+                  key={idx}
+                  className="flex items-start gap-3 rounded-xl bg-gradient-to-br from-green-50/50 to-slate-50/50 p-4 transition hover:-translate-y-0.5 hover:shadow-md border border-green-100/50"
+                >
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-white shadow-sm">
+                    <FileText className="h-5 w-5 text-[var(--green-800)]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-sm text-[var(--foreground)]">
+                      {acronym}
+                    </p>
+                    <p className="mt-0.5 text-xs leading-4 text-[var(--muted)]">
+                      {description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       <section className="section-shell">
-        <SectionIntro
-          label="Accreditations & Certifications"
-          title={aboutContent.certificationsTitle}
-          text={aboutContent.certificationsIntro}
-        />
-        <p className="mt-6 text-lg font-semibold text-[var(--foreground)]">
-          {aboutContent.certificationsLead}
-        </p>
-        <div className="editorial-row-grid mt-6">
-          {aboutContent.certificationsPoints.map((item) => (
-            <div key={item} className="editorial-row">
-              {item}
+        <div className="max-w-6xl">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--green-800)]">
+              Accreditations & Certifications
+            </p>
+            <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.04em] text-[var(--foreground)] md:text-5xl">
+              {aboutContent.certificationsTitle}
+            </h2>
+            <p className="mt-4 max-w-3xl text-lg leading-7 text-[var(--muted)]">
+              {aboutContent.certificationsIntro}
+            </p>
+          </div>
+
+          <div className="mt-10">
+            <p className="mb-6 font-display text-xl font-semibold text-[var(--foreground)]">
+              {aboutContent.certificationsLead}
+            </p>
+
+            <div className="grid gap-4 md:grid-cols-6">
+              {aboutContent.certificationsPoints.map((cert, idx) => {
+                const badge = cert
+                  .split(" - ")[0]
+                  .trim();
+
+                return (
+                  <div
+                    key={idx}
+                    className="group relative flex flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl bg-slate-50 p-6 transition hover:bg-white hover:shadow-md"
+                  >
+                    <Award className="h-8 w-8 text-[var(--green-800)] opacity-70 transition group-hover:opacity-100" />
+                    <p className="text-center text-xs font-semibold leading-tight text-[var(--foreground)]">
+                      {badge}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
+
+          <div className="mt-10 rounded-2xl bg-[#F9F9F7] p-6 space-y-4">
+            <p className="text-base leading-7 text-[var(--muted)]">
+              {aboutContent.certificationsCommitment}
+            </p>
+            <p className="text-base leading-7 text-[var(--muted)]">
+              {aboutContent.certificationsClosing}
+            </p>
+          </div>
         </div>
-        <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--muted)]">
-          {aboutContent.certificationsCommitment}
-        </p>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-[var(--muted)]">
-          {aboutContent.certificationsClosing}
-        </p>
       </section>
     </div>
   );

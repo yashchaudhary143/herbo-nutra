@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Leaf, Recycle, TreePine, Sprout, Heart } from "lucide-react";
 
 import { PublicHero } from "@/components/public-hero";
@@ -45,6 +46,45 @@ export default function SustainabilityPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell mt-10">
+        <div className="max-w-6xl">
+          <div className="mb-10">
+            <p className="eyebrow">Sustainability in action</p>
+            <h2 className="section-title mt-3">Visual examples of our sustainable workflow</h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                src: "/images/RawMaterial.jpg",
+                title: "Traceable sourcing",
+                caption: "Sourcing natural ingredients through responsible, transparent supply chains.",
+              },
+              {
+                src: "/images/Extraction.jpg",
+                title: "Efficient extraction",
+                caption: "Process control and recovery practices designed to minimize waste.",
+              },
+              {
+                src: "/images/QualityControl.jpg",
+                title: "Quality oversight",
+                caption: "Inspection and stability checks that keep the output consistent and reliable.",
+              },
+            ].map((item) => (
+              <div key={item.title} className="sustainability-image-card rounded-3xl overflow-hidden border border-[var(--line)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                  <Image src={item.src} alt={item.title} fill className="object-cover transition-transform duration-500 hover:scale-105" />
+                </div>
+                <div className="space-y-2 p-5">
+                  <p className="text-sm font-semibold text-[var(--foreground)]">{item.title}</p>
+                  <p className="text-sm leading-6 text-[var(--muted)]">{item.caption}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
