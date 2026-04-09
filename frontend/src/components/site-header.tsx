@@ -22,22 +22,22 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="relative sticky top-0 z-40 bg-[rgba(255,255,255,0.97)] shadow-[0_10px_30px_rgba(18,33,25,0.08)] backdrop-blur-md">
-      <div className="section-shell flex items-center justify-between gap-4 py-3 lg:py-4">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-14 w-14 overflow-hidden bg-transparent lg:h-16 lg:w-16">
+    <header className="relative sticky top-0 z-40 bg-[rgba(255,255,255,1)] shadow-[0_12px_32px_rgba(18,33,25,0.12)] backdrop-blur-sm border-b border-[var(--line)]">
+      <div className="section-shell flex items-center justify-between gap-1.5 py-1.5 lg:py-2">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="relative h-16 w-16 overflow-hidden bg-transparent lg:h-20 lg:w-20">
             <Image
               src="/HerboNutraLogo.png"
               alt={`${company.shortName} logo`}
-              width={64}
-              height={64}
+              width={80}
+              height={80}
               unoptimized
               priority
               className="h-full w-full object-contain"
             />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[var(--foreground)] lg:text-base">
+            <p className="truncate text-base font-bold text-[var(--foreground)] lg:text-lg">
               <span className="sm:hidden">Herbo Nutra</span>
               <span className="hidden sm:inline">{company.shortName}</span>
             </p>
@@ -45,11 +45,11 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="hidden items-center gap-3 lg:flex">
           <Link
             href="/"
             className={cn(
-              "rounded-full px-4 py-2 text-sm font-semibold transition",
+              "rounded-full px-3 py-1.5 text-sm font-semibold transition",
               isActive("/")
                 ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.14)]"
                 : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
@@ -62,7 +62,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-full px-4 py-2 text-sm font-semibold transition",
+                "rounded-full px-3 py-1.5 text-sm font-semibold transition",
                 isActive(item.href)
                   ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.14)]"
                   : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
@@ -75,7 +75,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center border border-[var(--line-strong)] bg-white text-[var(--foreground)] lg:hidden"
+          className="inline-flex h-9 w-9 items-center justify-center border border-[var(--line-strong)] bg-white text-[var(--foreground)] lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-navigation"
           aria-label="Toggle navigation"
