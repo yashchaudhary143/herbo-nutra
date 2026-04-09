@@ -25,12 +25,12 @@ export function SiteHeader() {
     <header className="relative sticky top-0 z-40 bg-[rgba(255,255,255,0.97)] shadow-[0_10px_30px_rgba(18,33,25,0.08)] backdrop-blur-md">
       <div className="section-shell flex items-center justify-between gap-4 py-3 lg:py-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-12 w-12 overflow-hidden bg-transparent lg:h-14 lg:w-14">
+          <div className="relative h-14 w-14 overflow-hidden bg-transparent lg:h-16 lg:w-16">
             <Image
               src="/HerboNutraLogo.png"
               alt={`${company.shortName} logo`}
-              width={56}
-              height={56}
+              width={64}
+              height={64}
               unoptimized
               priority
               className="h-full w-full object-contain"

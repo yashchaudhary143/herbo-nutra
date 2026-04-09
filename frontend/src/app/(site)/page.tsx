@@ -53,7 +53,7 @@ export default async function HomePage() {
                   </Link>
                   <Link
                     href="/products"
-                    className="inline-flex min-w-[11.5rem] items-center justify-center rounded-full border border-white/55 bg-white/14 px-6 py-3.5 text-sm font-semibold text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)] transition hover:border-white/75 hover:bg-white/20"
+                    className="inline-flex min-w-[11.5rem] items-center justify-center rounded-full border border-white/55 bg-white/14 px-6 py-3.5 text-sm font-semibold !text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)] transition hover:border-white/75 hover:bg-white/20"
                   >
                     View products
                   </Link>
