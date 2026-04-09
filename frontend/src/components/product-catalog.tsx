@@ -2,6 +2,7 @@
 
 import { useEffect, useEffectEvent, useState } from "react";
 
+import { CustomSelect } from "@/components/custom-select";
 import {
   ApiError,
   Category,
@@ -11,6 +12,7 @@ import {
   PaginatedProducts,
   Product,
 } from "@/lib/api";
+import { getPublicCategoryLabel, publicCategoryOrder } from "@/lib/site";
 
 type ProductCatalogProps = {
   categories: Category[];
@@ -103,49 +105,51 @@ export function ProductCatalog({
   }, [lockedCategorySlug, selectedCategory, selectedForm]);
 
   const items = response.items;
+  const visibleCategories = publicCategoryOrder
+    .map((slug) => categories.find((category) => category.slug === slug))
+    .filter((category): category is Category => Boolean(category));
+  const categoryOptions = [
+    { value: "", label: "All categories" },
+    ...visibleCategories.map((category) => ({
+      value: category.slug,
+      label: getPublicCategoryLabel(category.slug, category.name),
+    })),
+  ];
+  const formOptions = [
+    { value: "", label: "All forms" },
+    ...forms.map((form) => ({ value: form.slug, label: form.name })),
+  ];
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-4 lg:grid-cols-[1fr_380px] lg:items-end">
+      <div className="grid gap-4 lg:grid-cols-[1fr_560px] lg:items-end">
         <div>
           <h2 className="section-title text-2xl md:text-4xl">Product table</h2>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
             Browse products by category and format.
           </p>
         </div>
-        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
+        <div className="grid gap-3 sm:grid-cols-2">
           {lockedCategorySlug ? (
-            <div className="flex min-h-13 items-center border border-[var(--line-strong)] bg-[var(--surface-muted)] px-5 py-4 text-sm font-medium text-[var(--foreground)]">
-              {isCategoryResponse(response) ? response.category.name : "Category"}
+            <div className="filter-trigger bg-[var(--surface-muted)] text-[var(--foreground)]">
+              {isCategoryResponse(response)
+                ? getPublicCategoryLabel(response.category.slug, response.category.name)
+                : "Category"}
             </div>
           ) : (
-            <select
+            <CustomSelect
+              options={categoryOptions}
               value={selectedCategory}
-              onChange={(event) => setSelectedCategory(event.target.value)}
-              className="field min-h-13 px-5 py-4"
-              aria-label="Filter by category"
-            >
-              <option value="">All categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.slug}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+              onChange={setSelectedCategory}
+              ariaLabel="Filter by category"
+            />
           )}
-          <select
+          <CustomSelect
+            options={formOptions}
             value={selectedForm}
-            onChange={(event) => setSelectedForm(event.target.value)}
-            className="field min-h-13 px-5 py-4"
-            aria-label="Filter by form"
-          >
-            <option value="">All forms</option>
-            {forms.map((form) => (
-              <option key={form.id} value={form.slug}>
-                {form.name}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedForm}
+            ariaLabel="Filter by form"
+          />
         </div>
       </div>
 
@@ -195,7 +199,7 @@ export function ProductCatalog({
                     <td>
                       {product.category ? (
                         <span className="text-sm font-medium text-[var(--foreground)]">
-                          {product.category.name}
+                          {getPublicCategoryLabel(product.category.slug, product.category.name)}
                         </span>
                       ) : (
                         "-"

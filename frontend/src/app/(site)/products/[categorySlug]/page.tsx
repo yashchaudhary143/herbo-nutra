@@ -6,7 +6,7 @@ import { MediaPlaceholder } from "@/components/media-placeholder";
 import { ProductCatalog } from "@/components/product-catalog";
 import { PublicHero } from "@/components/public-hero";
 import { SectionIntro } from "@/components/section-intro";
-import { buildMetadata, categoryContentBySlug, productPageCopy } from "@/lib/site";
+import { buildMetadata, categoryContentBySlug, getPublicCategoryLabel, productPageCopy } from "@/lib/site";
 
 type CategoryPageProps = {
   params: Promise<{ categorySlug: string }>;
@@ -41,10 +41,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     .split("-")
     .map((segment) => segment[0].toUpperCase() + segment.slice(1))
     .join(" ");
+  const publicCategoryName = getPublicCategoryLabel(categorySlug, fallbackName);
 
   const category = response?.category ?? {
     id: 0,
-    name: categoryContentBySlug[categorySlug] ? fallbackName : fallbackName,
+    name: publicCategoryName,
     slug: categorySlug,
     description: null,
     sort_order: 0,
@@ -70,8 +71,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   return (
     <div className="page-frame page-gap">
       <PublicHero
-        eyebrow={category.name}
-        title={`${category.name} product range`}
+        eyebrow={getPublicCategoryLabel(category.slug, category.name)}
+        title={`${getPublicCategoryLabel(category.slug, category.name)} product range`}
         description={content.overview}
         media={content.media}
       />

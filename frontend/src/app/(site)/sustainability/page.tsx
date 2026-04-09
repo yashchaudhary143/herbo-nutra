@@ -19,7 +19,7 @@ export default function SustainabilityPage() {
       />
 
       <section className="section-shell">
-        <div className="plain-panel p-6 md:p-8">
+        <div className="max-w-5xl">
           <SectionIntro
             title={sustainabilityContent.sections[0]?.title ?? ""}
             text={sustainabilityContent.sections[0]?.text ?? ""}
@@ -40,9 +40,9 @@ export default function SustainabilityPage() {
           title="How this approach is applied"
           text="This perspective is reflected in how sourcing, process control, and operational discipline are handled across the business."
         />
-        <div className="mt-8 grid gap-3 md:grid-cols-2">
+        <div className="editorial-row-grid mt-8">
           {sustainabilityContent.practices.map((item) => (
-            <div key={item} className="plain-panel px-5 py-4 text-sm leading-7 text-[var(--muted)]">
+            <div key={item} className="editorial-row">
               {item}
             </div>
           ))}

@@ -9,7 +9,6 @@ import {
   categoryTeasers,
   certificationStrip,
   homeContent,
-  homeStats,
   seoDescriptions,
 } from "@/lib/site";
 
@@ -48,13 +47,13 @@ export default async function HomePage() {
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
                     href="/contact"
-                    className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]"
+                    className="inline-flex min-w-[11.5rem] items-center justify-center rounded-full border border-white bg-white px-6 py-3.5 text-sm font-semibold text-[var(--green-950)] transition hover:bg-[var(--surface-muted)]"
                   >
                     Send Inquiry
                   </Link>
                   <Link
                     href="/products"
-                    className="button-secondary border-white/28 bg-white/10 text-white hover:border-white/60 hover:bg-white/14"
+                    className="inline-flex min-w-[11.5rem] items-center justify-center rounded-full border border-white/55 bg-white/14 px-6 py-3.5 text-sm font-semibold text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)] transition hover:border-white/75 hover:bg-white/20"
                   >
                     View products
                   </Link>
@@ -67,27 +66,18 @@ export default async function HomePage() {
 
       <section className="home-band-accent">
         <div className="section-shell home-band">
-          <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-            <div className="home-panel p-6 md:p-8">
-              <SectionIntro
-                title={homeContent.positioning.title}
-                text={homeContent.positioning.text}
-                align="compact"
-              />
-              <div className="mt-6 flex flex-wrap gap-2">
-                {homeContent.innovation.formats.map((value) => (
-                  <span key={value} className="home-chip">
-                    {value}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
-              {homeStats.map((stat) => (
-                <div key={stat.label} className="home-stat-card">
-                  <p className="home-stat-value">{stat.value}</p>
-                  <p className="home-stat-label">{stat.label}</p>
-                </div>
+          <div className="max-w-4xl">
+            <h2 className="max-w-[11ch] text-balance font-display text-[3rem] font-semibold leading-[0.96] tracking-[-0.06em] text-[var(--foreground)] md:max-w-[12ch] md:text-[5rem]">
+              {homeContent.positioning.title}
+            </h2>
+            <p className="mt-5 max-w-3xl text-base leading-8 text-[var(--muted)]">
+              {homeContent.positioning.text}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {homeContent.innovation.formats.map((value) => (
+                <span key={value} className="home-chip">
+                  {value}
+                </span>
               ))}
             </div>
           </div>
@@ -187,7 +177,7 @@ export default async function HomePage() {
               {homeContent.innovation.formats.map((value) => (
                 <span
                   key={value}
-                  className="gold-outline border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)]"
+                  className="rounded-full bg-[var(--surface-muted)] px-4 py-2 text-sm font-medium text-[var(--foreground)]"
                 >
                   {value}
                 </span>
@@ -209,8 +199,8 @@ export default async function HomePage() {
 
       <section className="home-band-framed">
         <div className="section-shell home-band">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="home-editorial-card">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div>
               <SectionIntro
                 title={homeContent.sustainability.title}
                 text={homeContent.sustainability.text}
@@ -223,7 +213,7 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="home-editorial-card">
+            <div className="border-t border-[var(--line)] pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
               <SectionIntro
                 title={homeContent.global.title}
                 text={homeContent.global.text}
@@ -263,7 +253,7 @@ export default async function HomePage() {
               {certificationStrip.map((item) => (
                 <span
                   key={item}
-                  className="gold-outline border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)]"
+                  className="rounded-full bg-[var(--surface-muted)] px-4 py-2 text-sm font-medium text-[var(--foreground)]"
                 >
                   {item}
                 </span>

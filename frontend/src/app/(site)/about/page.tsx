@@ -24,7 +24,7 @@ export default function AboutPage() {
       />
 
       <section className="section-shell">
-        <div className="plain-panel p-6 md:p-8">
+        <div className="max-w-5xl">
           <SectionIntro title="Company overview" text={aboutContent.overview} />
           <div className="mt-8 grid gap-4">
             <div className="border-t border-[var(--line)] pt-4">
@@ -52,11 +52,12 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="editorial-point-list">
             {aboutContent.development.points.map((item) => (
-              <span key={item} className="border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--foreground)]">
-                {item}
-              </span>
+              <div key={item} className="editorial-point-item">
+                <span aria-hidden="true" className="editorial-point-dot" />
+                <span>{item}</span>
+              </div>
             ))}
           </div>
           <p className="mt-8 border-l-2 border-[var(--green-100)] pl-4 text-base leading-8 text-[var(--muted)]">
@@ -110,9 +111,9 @@ export default function AboutPage() {
             {aboutContent.technicalSupportIntro}
           </p>
         </div>
-        <div className="mt-6 grid gap-3 md:grid-cols-2">
+        <div className="editorial-row-grid mt-6">
           {aboutContent.technicalDocuments.map((item) => (
-            <div key={item} className="plain-panel px-4 py-3 text-sm leading-6 text-[var(--muted)]">
+            <div key={item} className="editorial-row">
               {item}
             </div>
           ))}
@@ -128,11 +129,11 @@ export default function AboutPage() {
         <p className="mt-6 text-lg font-semibold text-[var(--foreground)]">
           {aboutContent.certificationsLead}
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="editorial-row-grid mt-6">
           {aboutContent.certificationsPoints.map((item) => (
-            <span key={item} className="border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--foreground)]">
+            <div key={item} className="editorial-row">
               {item}
-            </span>
+            </div>
           ))}
         </div>
         <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--muted)]">

@@ -26,8 +26,7 @@ export default async function NpdPage() {
       <section className="section-shell">
         <SectionIntro
           title="Available formats"
-          text="These advanced formats support bioavailability, dispersion, handling, and application-specific development requirements."
-          align="split"
+          align="compact"
         />
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {featuredForms.map((form) => (

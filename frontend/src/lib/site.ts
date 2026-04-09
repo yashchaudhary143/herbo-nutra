@@ -56,6 +56,32 @@ export const certificationStrip = [
   "KOSHER",
 ];
 
+export const publicCategoryOrder = [
+  "herbal-extracts",
+  "food-ingredients",
+  "nutraceutical-ingredients",
+  "ammino-acids",
+  "cosmetic-ingredients",
+  "nucleotide-blends",
+  "sport-nutrition-ingredients",
+  "fruit-powers-vegetables",
+] as const;
+
+export const publicCategoryLabels: Record<string, string> = {
+  "herbal-extracts": "Herbal Extracts",
+  "food-ingredients": "Food Ingredients",
+  "nutraceutical-ingredients": "Nutraceutical Ingredients",
+  "ammino-acids": "Amino Acids",
+  "cosmetic-ingredients": "Cosmetic Ingredients",
+  "nucleotide-blends": "Nucleotide Blends",
+  "sport-nutrition-ingredients": "Sports Nutrition",
+  "fruit-powers-vegetables": "Fruit & Vegetable Powders",
+};
+
+export function getPublicCategoryLabel(slug: string, fallback?: string) {
+  return publicCategoryLabels[slug] ?? fallback ?? slug;
+}
+
 export const categoryTeasers = [
   {
     slug: "herbal-extracts",
@@ -65,17 +91,6 @@ export const categoryTeasers = [
       src: "/images/HerbalExtracts.jpg",
       title: "Herbal extracts image",
       note: "Botanical raw material, extract powder, or finished ingredient photography.",
-      tone: "botanical",
-    } satisfies MediaSlot,
-  },
-  {
-    slug: "botanical-salts",
-    title: "Botanical Salts",
-    summary: "Botanical salt ingredients positioned for controlled sourcing and application-specific formulation use.",
-    media: {
-      src: "/images/HerbalExtracts.jpg",
-      title: "Botanical salts image",
-      note: "Botanical salt or raw material photography.",
       tone: "botanical",
     } satisfies MediaSlot,
   },
@@ -102,23 +117,12 @@ export const categoryTeasers = [
     } satisfies MediaSlot,
   },
   {
-    slug: "natural-sourced-vitamins-minerals",
-    title: "Natural Sourced Vitamins & Minerals",
-    summary: "Naturally derived vitamins and minerals presented for clean technical review.",
-    media: {
-      src: "/images/Vitamins&Minerals.jpg",
-      title: "Natural sourced vitamins and minerals image",
-      note: "Vitamin and mineral ingredient or lab release photography.",
-      tone: "facility",
-    } satisfies MediaSlot,
-  },
-  {
     slug: "ammino-acids",
-    title: "Ammino Acids",
+    title: "Amino Acids",
     summary: "Amino acid ingredients for nutritional, functional, and performance-oriented systems.",
     media: {
       src: "/images/AminoAcids.jpg",
-      title: "Ammino acids image",
+      title: "Amino acids image",
       note: "Batching, blending, or quality release photography.",
       tone: "lab",
     } satisfies MediaSlot,
@@ -147,7 +151,7 @@ export const categoryTeasers = [
   },
   {
     slug: "sport-nutrition-ingredients",
-    title: "Sport Nutrition Ingredients",
+    title: "Sports Nutrition",
     summary: "Ingredients aligned with active nutrition, performance, and recovery-focused formulations.",
     media: {
       src: "/images/AminoAcids.jpg",
@@ -158,11 +162,11 @@ export const categoryTeasers = [
   },
   {
     slug: "fruit-powers-vegetables",
-    title: "Fruit Powers & Vegetables",
+    title: "Fruit & Vegetable Powders",
     summary: "Fruit and vegetable-derived ingredient formats for food, wellness, and functional systems.",
     media: {
       src: "/images/BotanicalPowders.jpg",
-      title: "Fruit powers and vegetables image",
+      title: "Fruit and vegetable powders image",
       note: "Powder texture, produce-derived ingredient, or packaging imagery.",
       tone: "packaging",
     } satisfies MediaSlot,
@@ -181,7 +185,7 @@ export const homeContent = {
     tone: "hero",
   } satisfies MediaSlot,
   positioning: {
-    title: "Structured Ingredients for Real-World Use",
+    title: "Structured Ingredients for Real World Use",
     text: "Designed with a focus on stability, usability, and repeatable performance across applications.",
   },
   aboutSnapshot: {
@@ -214,7 +218,7 @@ export const homeContent = {
       "We work on formats that improve usability in practical applications.",
     formats: ["Liposomal", "Phytosomal", "Micronized", "Granulated"],
     closing:
-      "These formats are developed to address absorption, dispersion, and handling challenges, making ingredients easier to work with in different systems.",
+      "Ingredients are adapted with practical use, handling, and formulation fit in mind.",
   },
   sustainability: {
     title: "Working with Balance",

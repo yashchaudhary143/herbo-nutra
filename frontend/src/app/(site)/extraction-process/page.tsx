@@ -54,7 +54,7 @@ export default function ExtractionProcessPage() {
       />
 
       <section className="section-shell">
-        <div className="plain-panel p-6 md:p-8">
+        <div className="max-w-5xl">
           <SectionIntro
             title="Designed for process stability"
             text={extractionContent.sections[0]?.text ?? ""}

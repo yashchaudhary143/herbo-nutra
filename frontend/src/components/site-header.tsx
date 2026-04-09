@@ -22,18 +22,18 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="relative sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(255,255,255,0.96)] backdrop-blur-md">
-      <div className="section-shell flex items-center justify-between gap-3 py-3 lg:py-4">
+    <header className="relative sticky top-0 z-40 bg-[rgba(255,255,255,0.97)] shadow-[0_10px_30px_rgba(18,33,25,0.08)] backdrop-blur-md">
+      <div className="section-shell flex items-center justify-between gap-4 py-3 lg:py-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-11 w-11 overflow-hidden rounded-sm border border-[var(--line-strong)] bg-white lg:h-12 lg:w-12">
+          <div className="relative h-12 w-12 overflow-hidden bg-transparent lg:h-14 lg:w-14">
             <Image
               src="/HerboNutraLogo.png"
               alt={`${company.shortName} logo`}
-              width={48}
-              height={48}
+              width={56}
+              height={56}
               unoptimized
               priority
-              className="h-full w-full object-contain p-1"
+              className="h-full w-full object-contain"
             />
           </div>
           <div className="min-w-0">
