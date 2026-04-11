@@ -77,7 +77,13 @@ export default function SustainabilityPage() {
             ].map((item) => (
               <div key={item.title} className="sustainability-image-card rounded-3xl overflow-hidden border border-[var(--line)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
                 <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                  <Image src={item.src} alt={item.title} fill className="object-cover transition-transform duration-500 hover:scale-105" />
+                  <Image
+                    src={item.src}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                  />
                 </div>
                 <div className="space-y-2 p-5">
                   <p className="text-sm font-semibold text-[var(--foreground)]">{item.title}</p>

@@ -22,22 +22,22 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="relative sticky top-0 z-40 bg-[rgba(255,255,255,1)] shadow-[0_12px_32px_rgba(18,33,25,0.12)] backdrop-blur-sm border-b border-[var(--line)]">
-      <div className="section-shell flex items-center justify-between gap-1.5 py-1.5 lg:py-2">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="relative h-16 w-16 overflow-hidden bg-transparent lg:h-20 lg:w-20">
+    <header className="relative sticky top-0 z-40 bg-[rgba(255,255,255,0.98)] shadow-[0_10px_28px_rgba(18,33,25,0.14)] backdrop-blur">
+      <div className="section-shell flex items-center justify-between gap-3 py-2.5 lg:py-3">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="relative h-16 w-16 overflow-hidden bg-transparent lg:h-[72px] lg:w-[72px]">
             <Image
               src="/HerboNutraLogo.png"
               alt={`${company.shortName} logo`}
-              width={80}
-              height={80}
+              width={72}
+              height={72}
               unoptimized
               priority
               className="h-full w-full object-contain"
             />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-base font-bold text-[var(--foreground)] lg:text-lg">
+            <p className="truncate text-base font-semibold text-[var(--foreground)] lg:text-lg">
               <span className="sm:hidden">Herbo Nutra</span>
               <span className="hidden sm:inline">{company.shortName}</span>
             </p>
@@ -45,13 +45,13 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-3 lg:flex">
+        <nav className="hidden items-center gap-4 lg:flex">
           <Link
             href="/"
             className={cn(
               "rounded-full px-3 py-1.5 text-sm font-semibold transition",
               isActive("/")
-                ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.14)]"
+                ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.18)]"
                 : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
             )}
           >
@@ -64,7 +64,7 @@ export function SiteHeader() {
               className={cn(
                 "rounded-full px-3 py-1.5 text-sm font-semibold transition",
                 isActive(item.href)
-                  ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.14)]"
+                  ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.18)]"
                   : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
               )}
             >

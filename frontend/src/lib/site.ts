@@ -675,6 +675,22 @@ export const npdContent = {
     note: "Laboratory and formulation support image.",
     tone: "lab",
   } satisfies MediaSlot,
+  herbalExtractPowder: {
+    title: "Herbal Extract Powder",
+    text:
+      "Concentrated botanical extract powders prepared for consistent dosing, stable handling, and dependable formulation performance.",
+    points: [
+      "Standardized potency for repeatable formulation results",
+      "Particle consistency for smooth blending and processing",
+      "Suitable for capsules, tablets, and functional blends",
+    ],
+    media: {
+      src: "/images/BotanicalPowders.jpg",
+      title: "Herbal extract powder image",
+      note: "Powdered botanical extract or production photography.",
+      tone: "catalog",
+    } satisfies MediaSlot,
+  },
   capabilities: [
     {
       title: "Liposomal",

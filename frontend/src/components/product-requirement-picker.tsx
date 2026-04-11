@@ -223,15 +223,24 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
               placeholder="Search by product, botanical name, or category"
               className="w-full bg-transparent text-sm text-[var(--foreground)] outline-none placeholder:text-[var(--muted)]"
             />
-            {query ? (
+            <div className="flex items-center gap-3">
+              {query ? (
+                <button
+                  type="button"
+                  className="text-xs font-medium text-[var(--green-950)]"
+                  onClick={() => setQuery("")}
+                >
+                  Clear
+                </button>
+              ) : null}
               <button
                 type="button"
-                className="text-xs font-medium text-[var(--green-950)]"
-                onClick={() => setQuery("")}
+                className="text-xs font-semibold text-[var(--foreground)]"
+                onClick={() => setOpen(false)}
               >
-                Clear
+                Done
               </button>
-            ) : null}
+            </div>
           </div>
 
           <div className="max-h-[min(24rem,calc(100dvh-18rem))] space-y-6 overflow-y-auto p-4">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Leaf, Zap, Globe } from "lucide-react";
+import { ArrowRight, Globe, Leaf, Settings2 } from "lucide-react";
 
 import { fetchCategories } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
@@ -7,7 +7,6 @@ import { SectionIntro } from "@/components/section-intro";
 import {
   buildMetadata,
   categoryTeasers,
-  certificationStrip,
   homeContent,
   seoDescriptions,
 } from "@/lib/site";
@@ -23,6 +22,30 @@ export default async function HomePage() {
   const teaserCards = categoryTeasers.filter(
     (teaser) => categories.find((category) => category.slug === teaser.slug) ?? teaser,
   );
+
+  const whyChooseUs = [
+    {
+      icon: Leaf,
+      title: "Application-ready ingredients",
+      text: "Botanical and nutraceutical ingredients developed for practical use, stability, and formulation fit.",
+    },
+    {
+      icon: Settings2,
+      title: "Controlled processing",
+      text: "Measured manufacturing systems designed to keep quality, consistency, and repeatability aligned.",
+    },
+    {
+      icon: Globe,
+      title: "Reliable commercial support",
+      text: "Clear specifications, responsive communication, and supply-focused execution for B2B buyers.",
+    },
+  ];
+
+  const trustHighlights = [
+    homeContent.sustainability,
+    homeContent.global,
+    homeContent.team,
+  ];
 
   return (
     <div className="page-frame">
@@ -64,81 +87,41 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell py-12 md:py-16">
+      <section className="section-shell py-14 md:py-20">
         <div className="max-w-3xl">
           <h2 className="section-title">{homeContent.positioning.title}</h2>
           <p className="section-text mt-6">{homeContent.positioning.text}</p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <div className="rounded-xl bg-gradient-to-br from-green-50/50 to-slate-50/50 p-6 border border-green-200/40 hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <h3 className="font-semibold text-[var(--foreground)]">Products & Ingredients</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Wide range of botanical and nutraceutical ingredients across multiple categories</p>
-          </div>
-          <div className="rounded-xl bg-gradient-to-br from-green-50/50 to-slate-50/50 p-6 border border-green-200/40 hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <h3 className="font-semibold text-[var(--foreground)]">Multiple Formats</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Available in powders, extracts, and advanced formulation formats for your needs</p>
-          </div>
-          <div className="rounded-xl bg-gradient-to-br from-green-50/50 to-slate-50/50 p-6 border border-green-200/40 hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <h3 className="font-semibold text-[var(--foreground)]">Quality Assured</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Stringent standards and certifications for safety, purity, and consistency</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell py-12 md:py-16">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-          <div>
-            <h2 className="section-title">Why Choose Herbo Nutra</h2>
-            <p className="section-text mt-6">{homeContent.aboutSnapshot.body[0]}</p>
-            <p className="mt-4 text-base leading-8 text-[var(--muted)]">{homeContent.aboutSnapshot.body[1]}</p>
-            <div className="mt-8">
-              <Link href="/about" className="button-link">
-                Learn more about us
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-          <MediaPlaceholder media={homeContent.processMedia} className="min-h-[400px]" badge="Expertise" />
-        </div>
-      </section>
-
-      <section className="section-shell py-12 md:py-16">
-        <div className="max-w-3xl">
-          <h2 className="section-title">Our Core Strengths</h2>
-          <p className="section-text mt-6">{homeContent.productExperience.intro}</p>
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {[
-            { icon: Leaf, title: "Botanical Excellence", text: "Premium botanical ingredients sourced and processed with precision" },
-            { icon: Zap, title: "Advanced Processing", text: "State-of-the-art extraction and formulation technology" },
-            { icon: Globe, title: "Global Standards", text: "Quality certifications and compliance with international regulations" }
-          ].map((item, idx) => (
-            <div key={idx} className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
-              <item.icon className="h-8 w-8 text-[var(--green-800)] mb-4" />
-              <h3 className="font-semibold text-[var(--foreground)]">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
-            </div>
+        <div className="summary-grid">
+          {whyChooseUs.map((item) => (
+            <article key={item.title} className="feature-card-soft">
+              <item.icon className="mb-4 h-8 w-8 text-[var(--green-800)]" />
+              <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
+            </article>
           ))}
         </div>
-        <p className="mt-10 text-base leading-8 text-[var(--muted)] max-w-3xl">{homeContent.productExperience.closing}</p>
       </section>
 
-      <section className="section-shell py-12 md:py-16">
+      <section className="section-shell py-14 md:py-20">
         <div className="max-w-3xl">
-          <h2 className="section-title">Browse product range</h2>
-          <p className="section-text mt-6">Category views for faster scanning of our complete ingredient portfolio, from traditional botanicals to advanced formulations.</p>
+          <SectionIntro
+            title="Browse product range"
+            text="Explore categories to align ingredients, formats, and specifications with your formulation goals."
+            align="compact"
+          />
         </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {teaserCards.map((item) => (
-            <article key={item.slug} className="rounded-2xl overflow-hidden bg-white hover:shadow-md hover:-translate-y-0.5 transition-all border border-green-200/20">
-              <MediaPlaceholder media={item.media} className="min-h-[200px]" />
+            <article key={item.slug} className="category-card">
+              <MediaPlaceholder media={item.media} className="min-h-[220px]" />
               <div className="p-6">
-                <h3 className="font-semibold text-[var(--foreground)] text-lg">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{item.summary}</p>
-                <Link href={`/products/${item.slug}`} className="button-link mt-4">
-                  Explore
+                <h3 className="text-xl font-semibold text-[var(--foreground)]">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.summary}</p>
+                <Link href={`/products/${item.slug}`} className="button-link mt-5">
+                  Explore category
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
@@ -147,87 +130,78 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell py-12 md:py-16">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <MediaPlaceholder media={homeContent.processMedia} className="min-h-[380px]" badge="Manufacturing" />
-          <div className="flex flex-col justify-center">
-            <h2 className="section-title">Manufacturing Process</h2>
-            <p className="section-text mt-6">{homeContent.process.text}</p>
-            <Link href="/extraction-process" className="button-link mt-8">
-              Explore manufacturing
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+      <section className="section-shell py-14 md:py-20">
+        <div className="editorial-split">
+          <MediaPlaceholder media={homeContent.processMedia} className="min-h-[420px]" badge="Manufacturing" />
+          <div className="max-w-2xl">
+            <SectionIntro
+              title={homeContent.process.title}
+              text={homeContent.process.text}
+              align="compact"
+            />
+            <div className="mt-8">
+              <Link href="/extraction-process" className="button-link">
+                Explore manufacturing
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section-shell py-12 md:py-16">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div className="flex flex-col justify-center">
-            <h2 className="section-title">Advanced Formats</h2>
-            <p className="section-text mt-6">{homeContent.innovation.text}</p>
-            <div className="mt-8 grid gap-2 grid-cols-2 md:grid-cols-3">
+      <section className="section-shell py-14 md:py-20">
+        <div className="editorial-split lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="max-w-2xl">
+            <SectionIntro
+              title={homeContent.innovation.title}
+              text={homeContent.innovation.text}
+              align="compact"
+            />
+            <div className="mt-8 flex flex-wrap gap-3">
               {homeContent.innovation.formats.map((value) => (
-                <span
-                  key={value}
-                  className="rounded-lg bg-gradient-to-br from-green-50/30 to-slate-50/30 px-4 py-2 text-sm font-medium text-[var(--foreground)] border border-green-200/30"
-                >
+                <span key={value} className="home-chip">
                   {value}
                 </span>
               ))}
             </div>
             <p className="mt-8 text-base leading-8 text-[var(--muted)]">{homeContent.innovation.closing}</p>
-            <Link href="/npd" className="button-link mt-8">
-              Explore advanced formats
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[380px]" badge="Innovation" />
-        </div>
-      </section>
-
-      <section className="section-shell py-12 md:py-16">
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <h3 className="font-semibold text-[var(--foreground)] text-lg">{homeContent.sustainability.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{homeContent.sustainability.text}</p>
-            <Link href="/sustainability" className="button-link mt-5">
-              Learn more
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          
-          <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30">
-            <h3 className="font-semibold text-[var(--foreground)] text-lg">{homeContent.global.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{homeContent.global.text}</p>
-          </div>
-
-          <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <h3 className="font-semibold text-[var(--foreground)] text-lg">{homeContent.team.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{homeContent.team.text}</p>
-            <Link href="/about" className="button-link mt-5">
-              Meet the team
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell py-12 md:py-16">
-        <div className="max-w-3xl">
-          <h2 className="section-title">Quality Standards & Certifications</h2>
-          <p className="section-text mt-6">These certifications and standards support how we maintain quality, safety, and consistency across all our operations.</p>
-        </div>
-        <div className="mt-10 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {certificationStrip.map((item) => (
-            <div
-              key={item}
-              className="rounded-lg bg-gradient-to-br from-green-50/50 to-slate-50/50 px-4 py-3 text-sm font-medium text-[var(--foreground)] border border-green-200/40 text-center hover:shadow-sm transition-all"
-            >
-              {item}
+            <div className="mt-8">
+              <Link href="/npd" className="button-link">
+                Explore advanced formats
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-          ))}
+          </div>
+          <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Formats" />
         </div>
+      </section>
+
+      <section className="section-shell py-14 md:py-20">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="max-w-xl">
+            <SectionIntro
+              title="Trust built into the system"
+              text="Our public presentation is supported by consistent quality systems, controlled operations, and a team focused on practical buyer requirements."
+              align="compact"
+            />
+            <div className="mt-8">
+              <Link href="/about" className="button-link">
+                Learn more about the team
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          <div>
+            {trustHighlights.map((item) => (
+              <div key={item.title} className="trust-row">
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
+                <p className="mt-2">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </section>
 
       <section className="section-shell py-16 md:py-24">

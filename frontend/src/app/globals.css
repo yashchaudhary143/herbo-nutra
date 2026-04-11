@@ -195,6 +195,26 @@ textarea {
   @apply rounded-full bg-[var(--surface-muted)] px-4 py-2 text-sm font-medium text-[var(--foreground)];
 }
 
+.summary-grid {
+  @apply mt-12 grid gap-6 md:grid-cols-3;
+}
+
+.feature-card-soft {
+  @apply rounded-2xl border border-green-200/30 bg-gradient-to-br from-green-50/35 to-slate-50/35 p-6 shadow-[0_14px_34px_rgba(18,33,25,0.05)] transition-all hover:-translate-y-0.5 hover:shadow-md;
+}
+
+.format-card {
+  @apply rounded-3xl border border-green-200/35 bg-gradient-to-br from-white/90 via-white/70 to-green-50/30 p-7 shadow-[0_18px_40px_rgba(18,33,25,0.06)];
+}
+
+.editorial-split {
+  @apply grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center;
+}
+
+.trust-row {
+  @apply border-t border-[var(--line)] py-4 text-base leading-7 text-[var(--muted)];
+}
+
 .home-cta-panel {
   background:
     linear-gradient(135deg, rgba(31, 89, 55, 0.98), rgba(39, 105, 64, 0.96)),

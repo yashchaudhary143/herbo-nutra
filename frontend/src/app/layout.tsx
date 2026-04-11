@@ -60,6 +60,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${jakarta.variable} ${outfit.variable} h-full scroll-smooth antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]">
         {children}
