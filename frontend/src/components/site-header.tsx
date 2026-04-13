@@ -36,13 +36,11 @@ export function SiteHeader() {
     "/npd": [
       { label: "Overview", href: "/npd#formats-hero" },
       { label: "Available formats", href: "/npd#available-formats" },
-      { label: "Herbal extract powder", href: "/npd#herbal-extract-powder" },
     ],
     "/sustainability": [
-      { label: "Overview", href: "/sustainability#overview" },
+      { label: "Overview", href: "/sustainability" },
       { label: "Approach", href: "/sustainability#approach" },
       { label: "Practices", href: "/sustainability#practices" },
-      { label: "Closing", href: "/sustainability#closing" },
     ],
     "/extraction-process": [
       { label: "Overview", href: "/extraction-process#overview" },

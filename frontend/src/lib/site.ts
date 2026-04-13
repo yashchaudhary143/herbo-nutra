@@ -3,13 +3,19 @@ import type { Metadata } from "next";
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://herbonutraextract.com";
 
 export const company = {
-  name: "Herbo Nutra Extract Pvt. Ltd.",
-  shortName: "Herbo Nutra Extract",
-  email: "info@herbonutraextract.com",
-  phone: "+91 98765 43210",
-  whatsapp: "+91 98765 43210",
-  address: "Plot 18, Herbal Industrial Estate, Vadodara, Gujarat 390010, India",
-  mapEmbedUrl: "https://www.google.com/maps?q=Vadodara%2C%20Gujarat&z=13&output=embed",
+  name: process.env.NEXT_PUBLIC_COMPANY_NAME ?? process.env.COMPANY_NAME ?? "Herbo Nutra Extract Pvt. Ltd.",
+  shortName: process.env.NEXT_PUBLIC_COMPANY_SHORT_NAME ?? process.env.COMPANY_SHORT_NAME ?? "Herbo Nutra Extract",
+  email: process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? process.env.COMPANY_EMAIL ?? "info@herbonutraextract.com",
+  phone: process.env.NEXT_PUBLIC_COMPANY_PHONE ?? process.env.COMPANY_PHONE ?? "+91 98765 43210",
+  whatsapp: process.env.NEXT_PUBLIC_COMPANY_WHATSAPP ?? process.env.COMPANY_WHATSAPP ?? "+91 98765 43210",
+  address:
+    process.env.NEXT_PUBLIC_COMPANY_ADDRESS ??
+    process.env.COMPANY_ADDRESS ??
+    "Plot 18, Herbal Industrial Estate, Vadodara, Gujarat 390010, India",
+  mapEmbedUrl:
+    process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL ??
+    process.env.GOOGLE_MAPS_EMBED_URL ??
+    "https://www.google.com/maps?q=Vadodara%2C%20Gujarat&z=13&output=embed",
 };
 
 export type MediaTone =

@@ -1,11 +1,7 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-
 import { fetchCategories, fetchCategoryProducts, fetchForms } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
 import { ProductCatalog } from "@/components/product-catalog";
 import { PublicHero } from "@/components/public-hero";
-import { SectionIntro } from "@/components/section-intro";
 import { buildMetadata, categoryContentBySlug, getPublicCategoryLabel, productPageCopy } from "@/lib/site";
 
 type CategoryPageProps = {
@@ -76,33 +72,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         description={content.overview}
         media={content.media}
       />
-
-      <section className="section-shell grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <SectionIntro title="Typical applications" text={content.trustNote} />
-          <div className="mt-6 grid gap-3">
-            {content.applications.map((item) => (
-              <div key={item} className="border-t border-[var(--line)] pt-4 text-sm leading-7 text-[var(--muted)]">
-                {item}
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {productPageCopy.categoryTrustPoints.map((item) => (
-              <span key={item} className="border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--foreground)]">
-                {item}
-              </span>
-            ))}
-          </div>
-          <div className="mt-6">
-            <Link href="/contact" className="button-link">
-              Request this category
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-        <MediaPlaceholder media={content.media} className="min-h-[360px]" badge="Category Image" />
-      </section>
 
       <section className="section-shell">
         <ProductCatalog

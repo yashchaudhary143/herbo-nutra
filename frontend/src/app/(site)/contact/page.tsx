@@ -2,7 +2,7 @@ import { FileText, Zap, Package } from "lucide-react";
 import { fetchCategories, fetchProducts } from "@/lib/api";
 import { InquiryForm } from "@/components/inquiry-form";
 import { PublicHero } from "@/components/public-hero";
-import { buildMetadata, contactCopy, seoDescriptions } from "@/lib/site";
+import { buildMetadata, company, contactCopy, seoDescriptions } from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Contact Us",
@@ -18,6 +18,7 @@ export default async function ContactPage() {
       products: productCatalog.items.filter((product) => product.category_id === category.id),
     }))
     .filter((group) => group.products.length > 0);
+  const mapEmbedUrl = process.env.GOOGLE_MAPS_EMBED_URL ?? company.mapEmbedUrl;
 
   return (
     <div className="page-frame page-gap">
@@ -57,6 +58,22 @@ export default async function ContactPage() {
 
       <section id="contact-form" className="section-shell max-w-2xl">
         <InquiryForm source="contact" productGroups={catalogGroups} />
+      </section>
+
+      <section className="section-shell">
+        <div className="max-w-3xl">
+          <h2 className="section-title">Location</h2>
+          <p className="section-text mt-4">Visit the facility or share the location with your logistics team.</p>
+        </div>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-[var(--line)] bg-white shadow-[var(--shadow-soft)]">
+          <iframe
+            title="Herbo Nutra Extract location"
+            src={mapEmbedUrl}
+            className="h-[360px] w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
       </section>
     </div>
   );
