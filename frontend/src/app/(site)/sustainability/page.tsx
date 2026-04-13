@@ -21,7 +21,7 @@ export default function SustainabilityPage() {
         media={sustainabilityContent.heroMedia}
       />
 
-      <section className="section-shell">
+      <section id="overview" className="section-shell">
         <div className="max-w-5xl">
           <SectionIntro
             title={sustainabilityContent.sections[0]?.title ?? ""}
@@ -50,7 +50,7 @@ export default function SustainabilityPage() {
         </div>
       </section>
 
-      <section className="section-shell mt-10">
+      <section id="approach" className="section-shell mt-10">
         <div className="max-w-6xl">
           <div className="mb-10">
             <p className="eyebrow">Sustainability in action</p>
@@ -95,7 +95,7 @@ export default function SustainabilityPage() {
         </div>
       </section>
 
-      <section className="section-shell sustainability-practices-section">
+      <section id="practices" className="section-shell sustainability-practices-section">
         <SectionIntro
           title="How this approach is applied"
           text="This perspective is reflected in how sourcing, process control, and operational discipline are handled across the business."
@@ -114,7 +114,7 @@ export default function SustainabilityPage() {
         </div>
       </section>
 
-      <section className="section-shell sustainability-closing-section">
+      <section id="closing" className="section-shell sustainability-closing-section">
         <div className="grid gap-6 border-t border-[var(--line)] pt-6">
           <div className="flex items-start gap-4">
             <TreePine className="sustainability-closing-icon" />

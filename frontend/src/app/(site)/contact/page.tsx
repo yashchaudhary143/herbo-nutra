@@ -28,7 +28,7 @@ export default async function ContactPage() {
         media={contactCopy.heroMedia}
       />
 
-      <section className="section-shell">
+      <section id="requirements" className="section-shell">
         <div className="max-w-3xl">
           <h2 className="section-title">What to include</h2>
           <p className="section-text mt-6">Provide the key details about your requirement so our team can respond with the most relevant information and options for your application.</p>
@@ -55,7 +55,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="section-shell max-w-2xl">
+      <section id="contact-form" className="section-shell max-w-2xl">
         <InquiryForm source="contact" productGroups={catalogGroups} />
       </section>
     </div>

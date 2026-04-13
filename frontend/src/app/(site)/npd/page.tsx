@@ -20,14 +20,16 @@ export default async function NpdPage() {
 
   return (
     <div className="page-frame page-gap">
-      <PublicHero
-        eyebrow="Formats"
-        title={npdContent.title}
-        description={npdContent.summary}
-        media={npdContent.heroMedia}
-      />
+      <section id="formats-hero">
+        <PublicHero
+          eyebrow="Formats"
+          title={npdContent.title}
+          description={npdContent.summary}
+          media={npdContent.heroMedia}
+        />
+      </section>
 
-      <section className="section-shell py-14 md:py-20">
+      <section id="available-formats" className="section-shell py-14 md:py-20">
         <SectionIntro
           title="Available formats"
           text="Review the available advanced formats and explore the technologies best aligned with your formulation goals."
@@ -64,29 +66,6 @@ export default async function NpdPage() {
         </div>
       </section>
 
-      <section className="section-shell py-14 md:py-20">
-        <div className="editorial-split lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="max-w-2xl">
-            <SectionIntro
-              title={npdContent.herbalExtractPowder.title}
-              text={npdContent.herbalExtractPowder.text}
-              align="compact"
-            />
-            <div className="mt-8 space-y-3">
-              {npdContent.herbalExtractPowder.points.map((point) => (
-                <div key={point} className="editorial-row">
-                  {point}
-                </div>
-              ))}
-            </div>
-          </div>
-          <MediaPlaceholder
-            media={npdContent.herbalExtractPowder.media}
-            className="min-h-[360px]"
-            badge="Extract Powder"
-          />
-        </div>
-      </section>
     </div>
   );
 }

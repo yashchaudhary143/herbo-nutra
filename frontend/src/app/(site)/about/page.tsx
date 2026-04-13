@@ -28,7 +28,7 @@ export default function AboutPage() {
         stats={aboutContent.stats}
       />
 
-      <section className="section-shell">
+      <section id="overview" className="section-shell">
         <div className="max-w-6xl">
           <h2 className="font-display text-4xl font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)] md:text-5xl">
             Company overview
@@ -111,7 +111,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section-shell">
+      <section id="team" className="section-shell">
         <SectionIntro
           label="Our Team"
           title={aboutContent.teamTitle}
@@ -123,7 +123,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section-shell">
+      <section id="documentation" className="section-shell">
         <div className="max-w-6xl">
           <div className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--green-800)]">
@@ -166,7 +166,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section-shell">
+      <section id="certifications" className="section-shell">
         <div className="max-w-6xl">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--green-800)]">
