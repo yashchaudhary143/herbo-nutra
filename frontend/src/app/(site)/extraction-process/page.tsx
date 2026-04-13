@@ -81,100 +81,112 @@ export default function ExtractionProcessPage() {
 
   return (
     <div className="page-frame page-gap">
-      <PublicHero
-        eyebrow="Manufacturing"
-        title={extractionContent.title}
-        description={extractionContent.summary}
-        media={extractionContent.heroMedia}
-      />
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="max-w-3xl">
-          <SectionIntro
-            title="Designed for process stability"
-            text={extractionContent.sections[0]?.text ?? ""}
-            align="compact"
-          />
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {processHighlights.map((item) => (
-            <article key={item.title} className="feature-card-soft">
-              <item.icon className="mb-4 h-8 w-8 text-[var(--green-800)]" />
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="max-w-3xl">
-          <SectionIntro
-            title="From raw material to finished ingredient"
-            text="A structured process sequence designed to support consistency, stability, and complete ingredient development through each transformation stage."
-            align="compact"
-          />
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {processCards.map((section) =>
-            section ? (
-              <article key={section.title} className="feature-card-soft">
-                <h3 className="text-lg font-semibold text-[var(--foreground)]">{section.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{section.text}</p>
-              </article>
-            ) : null,
-          )}
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="editorial-split">
-          <MediaCarousel
-            items={infrastructureSlides}
-            className="min-h-[420px]"
-            badge="Infrastructure / Unit"
-          />
-          <div className="max-w-2xl">
-            <SectionIntro
-              title={extractionContent.infrastructure.title}
-              text={extractionContent.infrastructure.text}
-              align="compact"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="editorial-split lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="max-w-2xl">
-            <SectionIntro
-              title={extractionContent.packaging.title}
-              text={extractionContent.packaging.text}
-              align="compact"
-            />
-          </div>
-          <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[420px]" badge="Packaging" />
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <SectionIntro
-          label="Flowcharts"
-          title="Manufacturing flowcharts across all 8 forms"
-          text="Each process family follows a structured sequence designed to support consistency, stability, and application-ready output."
+      <section id="overview">
+        <PublicHero
+          eyebrow="Manufacturing"
+          title={extractionContent.title}
+          description={extractionContent.summary}
+          media={extractionContent.heroMedia}
         />
-        <div className="mt-8 grid gap-6">
-          {manufacturingFlowcharts.map((flow) => (
-            <ManufacturingFlowchartCard
-              key={flow.title}
-              title={flow.title}
-              subtitle={flow.subtitle}
-              image={flow.image}
-              steps={flow.steps}
+      </section>
+
+      <section id="process-highlights" className="border-t border-[var(--line)] bg-[var(--surface-muted)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="max-w-3xl">
+            <SectionIntro
+              title="Designed for process stability"
+              text={extractionContent.sections[0]?.text ?? ""}
+              align="compact"
             />
-          ))}
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {processHighlights.map((item) => (
+              <article key={item.title} className="feature-card-soft">
+                <item.icon className="mb-4 h-8 w-8 text-[var(--green-800)]" />
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="process-stages" className="border-t border-[var(--line)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="max-w-3xl">
+            <SectionIntro
+              title="From raw material to finished ingredient"
+              text="A structured process sequence designed to support consistency, stability, and complete ingredient development through each transformation stage."
+              align="compact"
+            />
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {processCards.map((section) =>
+              section ? (
+                <article key={section.title} className="feature-card-soft">
+                  <h3 className="text-lg font-semibold text-[var(--foreground)]">{section.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{section.text}</p>
+                </article>
+              ) : null,
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section id="infrastructure" className="border-t border-[var(--line)] bg-[var(--surface-muted)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="editorial-split">
+            <MediaCarousel
+              items={infrastructureSlides}
+              className="min-h-[420px]"
+              badge="Infrastructure / Unit"
+            />
+            <div className="max-w-2xl">
+              <SectionIntro
+                title={extractionContent.infrastructure.title}
+                text={extractionContent.infrastructure.text}
+                align="compact"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="packaging" className="border-t border-[var(--line)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="editorial-split lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="max-w-2xl">
+              <SectionIntro
+                title={extractionContent.packaging.title}
+                text={extractionContent.packaging.text}
+                align="compact"
+              />
+            </div>
+            <MediaPlaceholder media={extractionContent.sideMedia} className="min-h-[420px]" badge="Packaging" />
+          </div>
+        </div>
+      </section>
+
+      <section id="flowcharts" className="border-t border-[var(--line)] bg-[var(--surface-muted)]">
+        <div className="section-shell py-10 md:py-16">
+          <SectionIntro
+            label="Flowcharts"
+            title="Manufacturing flowcharts across all 8 forms"
+            text="Each process family follows a structured sequence designed to support consistency, stability, and application-ready output."
+          />
+          <div className="mt-8 grid gap-6">
+            {manufacturingFlowcharts.map((flow) => (
+              <ManufacturingFlowchartCard
+                key={flow.title}
+                title={flow.title}
+                subtitle={flow.subtitle}
+                image={flow.image}
+                steps={flow.steps}
+              />
+            ))}
+          </div>
         </div>
       </section>
     </div>

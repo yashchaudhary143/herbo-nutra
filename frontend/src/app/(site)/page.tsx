@@ -49,7 +49,7 @@ export default async function HomePage() {
 
   return (
     <div className="page-frame">
-      <section className="pt-0">
+      <section id="hero" className="pt-0">
         <div className="relative overflow-hidden">
           <MediaPlaceholder media={homeContent.heroMedia} className="min-h-[520px] md:min-h-[680px]" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,45,29,0.84)_0%,rgba(21,59,37,0.58)_34%,rgba(21,59,37,0.18)_62%,rgba(21,59,37,0.08)_100%)]" />
@@ -87,140 +87,151 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell py-14 md:py-20">
-        <div className="max-w-3xl">
-          <h2 className="section-title">{homeContent.positioning.title}</h2>
-          <p className="section-text mt-6">{homeContent.positioning.text}</p>
-        </div>
-
-        <div className="summary-grid">
-          {whyChooseUs.map((item) => (
-            <article key={item.title} className="feature-card-soft">
-              <item.icon className="mb-4 h-8 w-8 text-[var(--green-800)]" />
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="max-w-3xl">
-          <SectionIntro
-            title="Browse product range"
-            text="Explore categories to align ingredients, formats, and specifications with your formulation goals."
-            align="compact"
-          />
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {teaserCards.map((item) => (
-            <article key={item.slug} className="category-card">
-              <MediaPlaceholder media={item.media} className="min-h-[220px]" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-[var(--foreground)]">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.summary}</p>
-                <Link href={`/products/${item.slug}`} className="button-link mt-5">
-                  Explore category
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="editorial-split">
-          <MediaPlaceholder media={homeContent.processMedia} className="min-h-[420px]" badge="Manufacturing" />
-          <div className="max-w-2xl">
-            <SectionIntro
-              title={homeContent.process.title}
-              text={homeContent.process.text}
-              align="compact"
-            />
-            <div className="mt-8">
-              <Link href="/extraction-process" className="button-link">
-                Explore manufacturing
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="editorial-split lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="max-w-2xl">
-            <SectionIntro
-              title={homeContent.innovation.title}
-              text={homeContent.innovation.text}
-              align="compact"
-            />
-            <div className="mt-8 flex flex-wrap gap-3">
-              {homeContent.innovation.formats.map((value) => (
-                <span key={value} className="home-chip">
-                  {value}
-                </span>
-              ))}
-            </div>
-            <p className="mt-8 text-base leading-8 text-[var(--muted)]">{homeContent.innovation.closing}</p>
-            <div className="mt-8">
-              <Link href="/npd" className="button-link">
-                Explore advanced formats
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-          <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Formats" />
-        </div>
-      </section>
-
-      <section className="section-shell py-14 md:py-20">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="max-w-xl">
-            <SectionIntro
-              title="Trust built into the system"
-              text="Our public presentation is supported by consistent quality systems, controlled operations, and a team focused on practical buyer requirements."
-              align="compact"
-            />
-            <div className="mt-8">
-              <Link href="/about" className="button-link">
-                Learn more about the team
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+      <section id="positioning" className="border-t border-[var(--line)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="max-w-3xl">
+            <h2 className="section-title">{homeContent.positioning.title}</h2>
+            <p className="section-text mt-6">{homeContent.positioning.text}</p>
           </div>
 
-          <div>
-            {trustHighlights.map((item) => (
-              <div key={item.title} className="trust-row">
+          <div className="summary-grid">
+            {whyChooseUs.map((item) => (
+              <article key={item.title} className="feature-card-soft">
+                <item.icon className="mb-4 h-8 w-8 text-[var(--green-800)]" />
                 <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
-                <p className="mt-2">{item.text}</p>
-              </div>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
+              </article>
             ))}
           </div>
         </div>
-
       </section>
 
-      <section className="section-shell py-16 md:py-24">
-        <div className="home-cta-panel">
+      <section id="categories" className="border-t border-[var(--line)] bg-[var(--surface-muted)]">
+        <div className="section-shell py-10 md:py-16">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/72">Ready to start</p>
-            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-[-0.05em] text-white md:text-5xl">
-              {homeContent.finalStatement.title}
-            </h2>
-            <p className="mt-6 text-base leading-8 text-white/78">
-              {homeContent.finalStatement.text}
-            </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link href="/contact" className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]">
-                Send inquiry
-              </Link>
-              <Link href="/products" className="button-primary border-white/50 bg-transparent text-white hover:bg-white/10">
-                View products
-              </Link>
+            <SectionIntro
+              title="Browse product range"
+              text="Explore categories to align ingredients, formats, and specifications with your formulation goals."
+              align="compact"
+            />
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {teaserCards.map((item) => (
+              <article key={item.slug} className="category-card">
+                <MediaPlaceholder media={item.media} className="min-h-[220px]" />
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-[var(--foreground)]">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.summary}</p>
+                  <Link href={`/products/${item.slug}`} className="button-link mt-5">
+                    Explore category
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="manufacturing-preview" className="border-t border-[var(--line)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="editorial-split">
+            <MediaPlaceholder media={homeContent.processMedia} className="min-h-[420px]" badge="Manufacturing" />
+            <div className="max-w-2xl">
+              <SectionIntro
+                title={homeContent.process.title}
+                text={homeContent.process.text}
+                align="compact"
+              />
+              <div className="mt-8">
+                <Link href="/extraction-process" className="button-link">
+                  Explore manufacturing
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="formats-preview" className="border-t border-[var(--line)] bg-[var(--surface-muted)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="editorial-split lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="max-w-2xl">
+              <SectionIntro
+                title={homeContent.innovation.title}
+                text={homeContent.innovation.text}
+                align="compact"
+              />
+              <div className="mt-8 flex flex-wrap gap-3">
+                {homeContent.innovation.formats.map((value) => (
+                  <span key={value} className="home-chip">
+                    {value}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-8 text-base leading-8 text-[var(--muted)]">{homeContent.innovation.closing}</p>
+              <div className="mt-8">
+                <Link href="/npd" className="button-link">
+                  Explore advanced formats
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Formats" />
+          </div>
+        </div>
+      </section>
+
+      <section id="trust" className="border-t border-[var(--line)]">
+        <div className="section-shell py-10 md:py-16">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="max-w-xl">
+              <SectionIntro
+                title="Trust built into the system"
+                text="Our public presentation is supported by consistent quality systems, controlled operations, and a team focused on practical buyer requirements."
+                align="compact"
+              />
+              <div className="mt-8">
+                <Link href="/about" className="button-link">
+                  Learn more about the team
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              {trustHighlights.map((item) => (
+                <div key={item.title} className="trust-row">
+                  <h3 className="text-lg font-semibold text-[var(--foreground)]">{item.title}</h3>
+                  <p className="mt-2">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cta" className="border-t border-[var(--line)]">
+        <div className="section-shell py-12 md:py-18">
+          <div className="home-cta-panel">
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/72">Ready to start</p>
+              <h2 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-[-0.05em] text-white md:text-5xl">
+                {homeContent.finalStatement.title}
+              </h2>
+              <p className="mt-6 text-base leading-8 text-white/78">
+                {homeContent.finalStatement.text}
+              </p>
+              <div className="mt-10 flex flex-wrap gap-3">
+                <Link href="/contact" className="button-primary border-white bg-white text-[var(--green-950)] hover:bg-[var(--surface-muted)]">
+                  Send inquiry
+                </Link>
+                <Link href="/products" className="button-primary border-white/50 bg-transparent text-white hover:bg-white/10">
+                  View products
+                </Link>
+              </div>
             </div>
           </div>
         </div>

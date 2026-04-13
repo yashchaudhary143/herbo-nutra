@@ -125,6 +125,10 @@ textarea {
   @apply inline-flex items-center gap-2 text-sm font-semibold text-[var(--green-950)] transition hover:text-[var(--green-800)];
 }
 
+section[id] {
+  scroll-margin-top: 6rem;
+}
+
 .plain-panel {
   @apply border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-soft)] rounded-xl;
 }
