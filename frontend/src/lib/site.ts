@@ -29,12 +29,12 @@ export type MediaSlot = {
 };
 
 export const navigation = [
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About Us" },
   { href: "/products", label: "Products" },
   { href: "/npd", label: "Formats" },
   { href: "/sustainability", label: "Sustainability" },
   { href: "/extraction-process", label: "Manufacturing" },
-  { href: "/contact", label: "Contact" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export const utilityBar = ["Herbal Extracts", "Nutraceutical Ingredients", "Export Support"];
@@ -857,7 +857,7 @@ export const categoryContentBySlug: Record<
 };
 
 export const contactCopy = {
-  prompt: "Use this page for company contact, documentation questions, and partnership discussions.",
+  prompt: "Contact us for product inquiries, documentation support, and partnership discussions.",
   details: [
     "Phone and WhatsApp for quick follow-up",
     "Email for technical and commercial coordination",

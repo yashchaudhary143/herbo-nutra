@@ -6,19 +6,99 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-import { company, navigation } from "@/lib/site";
+import { company, navigation, publicCategoryLabels, publicCategoryOrder } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
+  const navSections: Record<string, { label: string; href: string }[]> = {
+    "/": [
+      { label: "Overview", href: "/#hero" },
+      { label: "Why Us", href: "/#positioning" },
+      { label: "Categories", href: "/#categories" },
+      { label: "Manufacturing", href: "/#manufacturing-preview" },
+      { label: "Formats", href: "/#formats-preview" },
+      { label: "Quality & Trust", href: "/#trust" },
+      { label: "Get Started", href: "/#cta" },
+    ],
+    "/about": [
+      { label: "Overview", href: "/about#overview" },
+      { label: "Team", href: "/about#team" },
+      { label: "Documentation", href: "/about#documentation" },
+      { label: "Certifications", href: "/about#certifications" },
+    ],
+    "/products": publicCategoryOrder.map((slug) => ({
+      label: publicCategoryLabels[slug],
+      href: `/products/${slug}`,
+    })),
+    "/npd": [
+      { label: "Overview", href: "/npd#formats-hero" },
+      { label: "Available formats", href: "/npd#available-formats" },
+      { label: "Herbal extract powder", href: "/npd#herbal-extract-powder" },
+    ],
+    "/sustainability": [
+      { label: "Overview", href: "/sustainability#overview" },
+      { label: "Approach", href: "/sustainability#approach" },
+      { label: "Practices", href: "/sustainability#practices" },
+      { label: "Closing", href: "/sustainability#closing" },
+    ],
+    "/extraction-process": [
+      { label: "Overview", href: "/extraction-process#overview" },
+      { label: "Process highlights", href: "/extraction-process#process-highlights" },
+      { label: "Process stages", href: "/extraction-process#process-stages" },
+      { label: "Infrastructure", href: "/extraction-process#infrastructure" },
+      { label: "Packaging", href: "/extraction-process#packaging" },
+      { label: "Flowcharts", href: "/extraction-process#flowcharts" },
+    ],
+    "/contact": [
+      { label: "Requirements", href: "/contact#requirements" },
+      { label: "Contact form", href: "/contact#contact-form" },
+    ],
+  };
   const isActive = (href: string) => {
     if (href === "/") {
       return pathname === "/";
     }
 
     return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const renderNavItem = (href: string, label: string) => {
+    const sections = navSections[href] ?? [];
+
+    return (
+      <div key={href} className="group relative">
+        <Link
+          href={href}
+          className={cn(
+            "rounded-full px-3 py-1.5 text-sm font-semibold transition",
+            isActive(href)
+              ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.18)]"
+              : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
+          )}
+        >
+          {label}
+        </Link>
+        {sections.length ? (
+          <div className="pointer-events-none absolute left-1/2 top-full z-40 mt-3 w-max -translate-x-1/2 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100">
+            <div className="absolute -top-4 left-0 right-0 h-6" />
+            <div className="min-w-[220px] rounded-2xl border border-[var(--line)] bg-white p-2 shadow-[0_18px_40px_rgba(18,33,25,0.12)]">
+              {sections.map((section) => (
+                <Link
+                  key={section.href}
+                  href={section.href}
+                  className="block rounded-xl px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
+                >
+                  {section.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
   };
 
   return (
@@ -46,31 +126,8 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-4 lg:flex">
-          <Link
-            href="/"
-            className={cn(
-              "rounded-full px-3 py-1.5 text-sm font-semibold transition",
-              isActive("/")
-                ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.18)]"
-                : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
-            )}
-          >
-            Home
-          </Link>
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm font-semibold transition",
-                isActive(item.href)
-                  ? "bg-[var(--green-100)] text-[var(--green-950)] shadow-[inset_0_0_0_1px_rgba(31,89,55,0.18)]"
-                  : "text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {renderNavItem("/", "Home")}
+          {navigation.map((item) => renderNavItem(item.href, item.label))}
         </nav>
 
         <button
@@ -124,7 +181,7 @@ export function SiteHeader() {
 
           <div className="mt-4 pb-10 sm:pb-12">
             <Link href="/contact" onClick={closeMenu} className="button-primary w-full">
-              Contact
+              Contact Us
             </Link>
           </div>
         </div>
