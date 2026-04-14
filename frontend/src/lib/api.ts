@@ -127,11 +127,14 @@ export async function fetchProducts(params?: { search?: string; category?: strin
   }
 }
 
-export async function fetchCategoryProducts(slug: string, params?: { form?: string }) {
+export async function fetchCategoryProducts(slug: string, params?: { form?: string; search?: string }) {
   const query = new URLSearchParams();
   query.set("limit", "100");
   if (params?.form) {
     query.set("form", params.form);
+  }
+  if (params?.search) {
+    query.set("search", params.search);
   }
 
   try {
@@ -153,6 +156,7 @@ export async function fetchForms() {
 
 export async function clientApiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
+    cache: "no-store",
     ...init,
     credentials: "include",
     headers: {

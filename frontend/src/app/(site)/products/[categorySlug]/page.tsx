@@ -1,12 +1,11 @@
 import { fetchCategories, fetchCategoryProducts, fetchForms } from "@/lib/api";
-import { MediaPlaceholder } from "@/components/media-placeholder";
 import { ProductCatalog } from "@/components/product-catalog";
 import { PublicHero } from "@/components/public-hero";
-import { buildMetadata, categoryContentBySlug, getPublicCategoryLabel, productPageCopy } from "@/lib/site";
+import { buildMetadata, getCategoryMedia, getPublicCategoryLabel } from "@/lib/site";
 
 type CategoryPageProps = {
   params: Promise<{ categorySlug: string }>;
-  searchParams?: Promise<{ form?: string }>;
+  searchParams?: Promise<{ form?: string; search?: string }>;
 };
 
 export async function generateMetadata({ params }: CategoryPageProps) {
@@ -27,10 +26,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const { categorySlug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const selectedForm = resolvedSearchParams?.form;
+  const selectedSearch = resolvedSearchParams?.search;
   const [categories, forms, response] = await Promise.all([
     fetchCategories(),
     fetchForms(),
-    fetchCategoryProducts(categorySlug, { form: selectedForm }),
+    fetchCategoryProducts(categorySlug, { form: selectedForm, search: selectedSearch }),
   ]);
 
   const fallbackName = categorySlug
@@ -51,26 +51,17 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     product_count: 0,
   };
 
-  const content = categoryContentBySlug[categorySlug] ?? {
-    overview:
-      category.description ??
-      "Category overview and product data are kept short and readable on this page.",
-    applications: ["Sourcing review", "Technical comparison", "Direct inquiry handoff"],
-    trustNote: "The main job of this page is to keep the table easy to review.",
-    media: {
-      title: `${category.name} category image`,
-      note: "Category photography appears here when available.",
-      tone: "catalog" as const,
-    },
-  };
+  const overview =
+    category.description ??
+    `${category.name} products are presented for technical comparison, sourcing review, and direct inquiry handoff.`;
 
   return (
     <div className="page-frame page-gap">
       <PublicHero
         eyebrow={getPublicCategoryLabel(category.slug, category.name)}
         title={`${getPublicCategoryLabel(category.slug, category.name)} product range`}
-        description={content.overview}
-        media={content.media}
+        description={overview}
+        media={getCategoryMedia(category)}
       />
 
       <section className="section-shell">
@@ -88,6 +79,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           }
           lockedCategorySlug={category.slug}
           initialFormSlug={selectedForm}
+          initialSearchValue={selectedSearch}
         />
       </section>
     </div>

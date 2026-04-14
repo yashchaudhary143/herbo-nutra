@@ -6,7 +6,8 @@ import { MediaPlaceholder } from "@/components/media-placeholder";
 import { SectionIntro } from "@/components/section-intro";
 import {
   buildMetadata,
-  categoryTeasers,
+  getCategoryMedia,
+  getCategorySummary,
   homeContent,
   seoDescriptions,
 } from "@/lib/site";
@@ -19,9 +20,6 @@ export const metadata = buildMetadata({
 
 export default async function HomePage() {
   const categories = await fetchCategories();
-  const teaserCards = categoryTeasers.filter(
-    (teaser) => categories.find((category) => category.slug === teaser.slug) ?? teaser,
-  );
 
   const whyChooseUs = [
     {
@@ -117,13 +115,15 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {teaserCards.map((item) => (
-              <article key={item.slug} className="category-card">
-                <MediaPlaceholder media={item.media} className="min-h-[220px]" />
+            {categories.map((category, index) => (
+              <article key={category.id} className="category-card">
+                <MediaPlaceholder media={getCategoryMedia(category, index)} className="min-h-[220px]" />
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-[var(--foreground)]">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.summary}</p>
-                  <Link href={`/products/${item.slug}`} className="button-link mt-5">
+                  <h3 className="text-xl font-semibold text-[var(--foreground)]">{category.name}</h3>
+                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                    {getCategorySummary(category)}
+                  </p>
+                  <Link href={`/products/${category.slug}`} className="button-link mt-5">
                     Explore category
                     <ArrowRight className="h-4 w-4" />
                   </Link>

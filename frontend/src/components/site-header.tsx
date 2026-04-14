@@ -6,13 +6,22 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-import { company, navigation, publicCategoryLabels, publicCategoryOrder } from "@/lib/site";
+import type { Category } from "@/lib/api";
+import { company, navigation } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  categories: Category[];
+};
+
+export function SiteHeader({ categories }: SiteHeaderProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
+  const productSections = categories.map((category) => ({
+    label: category.name,
+    href: `/products/${category.slug}`,
+  }));
   const navSections: Record<string, { label: string; href: string }[]> = {
     "/": [
       { label: "Overview", href: "/#hero" },
@@ -29,10 +38,7 @@ export function SiteHeader() {
       { label: "Documentation", href: "/about#documentation" },
       { label: "Certifications", href: "/about#certifications" },
     ],
-    "/products": publicCategoryOrder.map((slug) => ({
-      label: publicCategoryLabels[slug],
-      href: `/products/${slug}`,
-    })),
+    "/products": productSections,
     "/npd": [
       { label: "Overview", href: "/npd#formats-hero" },
       { label: "Available formats", href: "/npd#available-formats" },
@@ -161,19 +167,34 @@ export function SiteHeader() {
               Home
             </Link>
             {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={closeMenu}
-                className={cn(
-                  "border px-4 py-3 text-sm font-medium transition",
-                  isActive(item.href)
-                    ? "border-[var(--green-900)] bg-[var(--surface-muted)] text-[var(--green-950)]"
-                    : "border-[var(--line-strong)] bg-white text-[var(--muted)] hover:text-[var(--foreground)]",
-                )}
-              >
-                {item.label}
-              </Link>
+              <div key={item.href} className="space-y-2">
+                <Link
+                  href={item.href}
+                  onClick={closeMenu}
+                  className={cn(
+                    "block border px-4 py-3 text-sm font-medium transition",
+                    isActive(item.href)
+                      ? "border-[var(--green-900)] bg-[var(--surface-muted)] text-[var(--green-950)]"
+                      : "border-[var(--line-strong)] bg-white text-[var(--muted)] hover:text-[var(--foreground)]",
+                  )}
+                >
+                  {item.label}
+                </Link>
+                {item.href === "/products" && productSections.length ? (
+                  <div className="grid gap-2 pl-4">
+                    {productSections.map((section) => (
+                      <Link
+                        key={section.href}
+                        href={section.href}
+                        onClick={closeMenu}
+                        className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--foreground)] transition hover:border-[var(--green-900)]"
+                      >
+                        {section.label}
+                      </Link>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             ))}
           </nav>
 

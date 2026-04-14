@@ -1,10 +1,17 @@
 import Link from "next/link";
 
-import { fetchCategories } from "@/lib/api";
+import { fetchCategories, fetchForms, fetchProducts } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
+import { ProductCatalog } from "@/components/product-catalog";
 import { SectionIntro } from "@/components/section-intro";
 import { PublicHero } from "@/components/public-hero";
-import { buildMetadata, categoryTeasers, productPageCopy, seoDescriptions } from "@/lib/site";
+import {
+  buildMetadata,
+  getCategoryMedia,
+  getCategorySummary,
+  productPageCopy,
+  seoDescriptions,
+} from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Product Catalog",
@@ -15,15 +22,19 @@ export const metadata = buildMetadata({
 type ProductsPageProps = {
   searchParams?: Promise<{
     form?: string;
+    search?: string;
   }>;
 };
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const categories = await fetchCategories();
-  const teaserCards = categoryTeasers.filter(
-    (teaser) => categories.find((category) => category.slug === teaser.slug) ?? teaser,
-  );
+  const selectedForm = resolvedSearchParams?.form ?? "";
+  const selectedSearch = resolvedSearchParams?.search ?? "";
+  const [categories, forms, productCatalog] = await Promise.all([
+    fetchCategories(),
+    fetchForms(),
+    fetchProducts({ form: selectedForm, search: selectedSearch }),
+  ]);
 
   return (
     <div className="page-frame page-gap">
@@ -44,13 +55,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             align="compact"
           />
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {teaserCards.map((item) => (
-              <article key={item.slug} className="category-card">
-                <MediaPlaceholder media={item.media} className="min-h-[220px]" />
+            {categories.map((category, index) => (
+              <article key={category.id} className="category-card">
+                <MediaPlaceholder media={getCategoryMedia(category, index)} className="min-h-[220px]" />
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-[var(--foreground)]">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{item.summary}</p>
-                  <Link href={`/products/${item.slug}`} className="button-link mt-5">
+                  <h3 className="text-xl font-semibold text-[var(--foreground)]">{category.name}</h3>
+                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                    {getCategorySummary(category)}
+                  </p>
+                  <Link href={`/products/${category.slug}`} className="button-link mt-5">
                     Explore category
                   </Link>
                 </div>
@@ -59,7 +72,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </div>
         </div>
       </section>
-
+      <section className="section-shell">
+        <ProductCatalog
+          categories={categories}
+          forms={forms}
+          initialData={productCatalog}
+          initialFormSlug={selectedForm}
+          initialSearchValue={selectedSearch}
+        />
+      </section>
     </div>
   );
 }

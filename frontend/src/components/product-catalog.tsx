@@ -12,7 +12,7 @@ import {
   PaginatedProducts,
   Product,
 } from "@/lib/api";
-import { getPublicCategoryLabel, publicCategoryOrder } from "@/lib/site";
+import { getPublicCategoryLabel } from "@/lib/site";
 
 type ProductCatalogProps = {
   categories: Category[];
@@ -20,6 +20,7 @@ type ProductCatalogProps = {
   initialData: PaginatedProducts | CategoryProductsResponse;
   lockedCategorySlug?: string;
   initialFormSlug?: string;
+  initialSearchValue?: string;
 };
 
 function isCategoryResponse(
@@ -34,9 +35,11 @@ export function ProductCatalog({
   initialData,
   lockedCategorySlug,
   initialFormSlug = "",
+  initialSearchValue = "",
 }: ProductCatalogProps) {
   const [selectedCategory, setSelectedCategory] = useState(lockedCategorySlug ?? "");
   const [selectedForm, setSelectedForm] = useState(initialFormSlug);
+  const [searchTerm, setSearchTerm] = useState(initialSearchValue);
   const [response, setResponse] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,6 +90,9 @@ export function ProductCatalog({
     if (selectedForm) {
       params.set("form", selectedForm);
     }
+    if (searchTerm.trim()) {
+      params.set("search", searchTerm.trim());
+    }
 
     const endpoint = lockedCategorySlug
       ? `/api/categories/${lockedCategorySlug}/products?${params.toString()}`
@@ -102,15 +108,12 @@ export function ProductCatalog({
     return () => {
       active.current = false;
     };
-  }, [lockedCategorySlug, selectedCategory, selectedForm]);
+  }, [lockedCategorySlug, searchTerm, selectedCategory, selectedForm]);
 
   const items = response.items;
-  const visibleCategories = publicCategoryOrder
-    .map((slug) => categories.find((category) => category.slug === slug))
-    .filter((category): category is Category => Boolean(category));
   const categoryOptions = [
     { value: "", label: "All categories" },
-    ...visibleCategories.map((category) => ({
+    ...categories.map((category) => ({
       value: category.slug,
       label: getPublicCategoryLabel(category.slug, category.name),
     })),
@@ -126,10 +129,18 @@ export function ProductCatalog({
         <div>
           <h2 className="section-title text-2xl md:text-4xl">Product table</h2>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
-            Browse products by category and format.
+            Search products, compare specifications, and narrow the range by category or format.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <input
+            className="field"
+            type="search"
+            placeholder="Search product details"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            aria-label="Search product details"
+          />
           {lockedCategorySlug ? (
             <div className="filter-trigger bg-[var(--surface-muted)] text-[var(--foreground)]">
               {isCategoryResponse(response)

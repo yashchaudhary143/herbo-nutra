@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import type { Category } from "@/lib/api";
+
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://herbonutraextract.com";
 
 export const company = {
@@ -62,30 +64,113 @@ export const certificationStrip = [
   "KOSHER",
 ];
 
-export const publicCategoryOrder = [
-  "herbal-extracts",
-  "food-ingredients",
-  "nutraceutical-ingredients",
-  "ammino-acids",
-  "cosmetic-ingredients",
-  "nucleotide-blends",
-  "sport-nutrition-ingredients",
-  "fruit-powers-vegetables",
-] as const;
+export function getPublicCategoryLabel(slug: string, fallback?: string) {
+  return (
+    fallback ??
+    slug
+      .split("-")
+      .filter(Boolean)
+      .map((segment) => segment[0]?.toUpperCase() + segment.slice(1))
+      .join(" ")
+  );
+}
 
-export const publicCategoryLabels: Record<string, string> = {
-  "herbal-extracts": "Herbal Extracts",
-  "food-ingredients": "Food Ingredients",
-  "nutraceutical-ingredients": "Nutraceutical Ingredients",
-  "ammino-acids": "Amino Acids",
-  "cosmetic-ingredients": "Cosmetic Ingredients",
-  "nucleotide-blends": "Nucleotide Blends",
-  "sport-nutrition-ingredients": "Sports Nutrition",
-  "fruit-powers-vegetables": "Fruit & Vegetable Powders",
+const categoryMediaBySlug: Record<string, MediaSlot> = {
+  "herbal-extracts": {
+    src: "/images/HerbalExtracts.jpg",
+    title: "Herbal extracts image",
+    note: "Botanical raw material, extract powder, or finished ingredient photography.",
+    tone: "botanical",
+  },
+  "food-ingredients": {
+    src: "/images/BotanicalPowders.jpg",
+    title: "Food ingredients image",
+    note: "Food ingredient, seasoning, or powder photography.",
+    tone: "catalog",
+  },
+  "nutraceutical-ingredients": {
+    src: "/images/HerbalExtracts.jpg",
+    title: "Nutraceutical ingredients image",
+    note: "Botanical extract, QC, or finished ingredient photography.",
+    tone: "lab",
+  },
+  "ammino-acids": {
+    src: "/images/AminoAcids.jpg",
+    title: "Amino acids image",
+    note: "Batching, blending, or quality release photography.",
+    tone: "lab",
+  },
+  "cosmetic-ingredients": {
+    src: "/images/BotanicalExtracts.jpg",
+    title: "Cosmetic ingredients image",
+    note: "Bioactive ingredient or formulation photography.",
+    tone: "lab",
+  },
+  "nucleotide-blends": {
+    src: "/images/QualityControl.jpg",
+    title: "Nucleotide blends image",
+    note: "Technical or formulation support imagery.",
+    tone: "lab",
+  },
+  "sport-nutrition-ingredients": {
+    src: "/images/AminoAcids.jpg",
+    title: "Sports nutrition ingredients image",
+    note: "Performance ingredient and clean batching photography.",
+    tone: "catalog",
+  },
+  "fruit-powers-vegetables": {
+    src: "/images/BotanicalPowders.jpg",
+    title: "Fruit and vegetable powders image",
+    note: "Powder texture, produce-derived ingredient, or packaging imagery.",
+    tone: "packaging",
+  },
 };
 
-export function getPublicCategoryLabel(slug: string, fallback?: string) {
-  return publicCategoryLabels[slug] ?? fallback ?? slug;
+const fallbackCategoryMedia: MediaSlot[] = [
+  {
+    src: "/images/HerbalExtracts.jpg",
+    title: "Botanical ingredients image",
+    note: "Botanical ingredient photography.",
+    tone: "botanical",
+  },
+  {
+    src: "/images/BotanicalPowders.jpg",
+    title: "Ingredient powders image",
+    note: "Powder texture or ingredient photography.",
+    tone: "catalog",
+  },
+  {
+    src: "/images/QualityControl.jpg",
+    title: "Quality control image",
+    note: "Quality review or technical support imagery.",
+    tone: "lab",
+  },
+  {
+    src: "/images/FacilityImage.jpg",
+    title: "Facility image",
+    note: "Facility or production photography.",
+    tone: "facility",
+  },
+];
+
+export function getCategoryMedia(category: Pick<Category, "slug" | "name">, index = 0): MediaSlot {
+  const configured = categoryMediaBySlug[category.slug];
+  if (configured) {
+    return configured;
+  }
+
+  const fallback = fallbackCategoryMedia[index % fallbackCategoryMedia.length];
+  return {
+    ...fallback,
+    title: `${category.name} category image`,
+  };
+}
+
+export function getCategorySummary(category: Pick<Category, "description" | "name">) {
+  return (
+    category.description ??
+    `${category.name} products presented for technical review, sourcing discussions, and direct inquiry handoff.`
+  );
 }
 
 export const categoryTeasers = [

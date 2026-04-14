@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -8,10 +8,21 @@ import type { Category, Form, PaginatedProducts } from "@/lib/api";
 const categories: Category[] = [
   {
     id: 1,
+    name: "Custom Botanicals",
+    slug: "custom-botanicals",
+    description: "Custom botanical catalog",
+    sort_order: 1,
+    is_active: true,
+    created_at: "",
+    updated_at: "",
+    product_count: 1,
+  },
+  {
+    id: 2,
     name: "Nutraceutical Ingredients",
     slug: "nutraceutical-ingredients",
     description: "Core nutraceutical ingredients",
-    sort_order: 1,
+    sort_order: 2,
     is_active: true,
     created_at: "",
     updated_at: "",
@@ -51,7 +62,7 @@ const initialData: PaginatedProducts = {
   items: [
     {
       id: 1,
-      category_id: 1,
+      category_id: 2,
       common_name: "Ashwagandha Extract",
       botanical_name: "Withania somnifera",
       specification: "Withanolides 5%",
@@ -59,12 +70,12 @@ const initialData: PaginatedProducts = {
       is_active: true,
       created_at: "",
       updated_at: "",
-      category: categories[0],
+      category: categories[1],
       forms: [forms[0], forms[1]],
     },
     {
       id: 2,
-      category_id: 1,
+      category_id: 2,
       common_name: "Turmeric Extract",
       botanical_name: "Curcuma longa",
       specification: "Curcuminoids 95%",
@@ -72,7 +83,7 @@ const initialData: PaginatedProducts = {
       is_active: true,
       created_at: "",
       updated_at: "",
-      category: categories[0],
+      category: categories[1],
       forms: [forms[0]],
     },
   ],
@@ -80,6 +91,7 @@ const initialData: PaginatedProducts = {
 
 describe("ProductCatalog", () => {
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
   });
 
@@ -102,16 +114,59 @@ describe("ProductCatalog", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(<ProductCatalog categories={categories} forms={forms} initialData={initialData} />);
-    await userEvent.type(
-      screen.getByPlaceholderText(/search product details/i),
-      "ashwa",
-    );
+
+    await userEvent.type(screen.getByPlaceholderText(/search product details/i), "ashwa");
 
     await waitFor(() => {
       expect(screen.queryByText("Turmeric Extract")).not.toBeInTheDocument();
     });
 
     expect(screen.getByText("Ashwagandha Extract")).toBeInTheDocument();
-    expect(screen.getAllByText("Micronization Technology").length).toBeGreaterThan(0);
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      expect.stringContaining("search=ashwa"),
+      expect.any(Object),
+    );
+  });
+
+  it("shows backend-driven category options and honors initial filters", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(initialData), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <ProductCatalog
+        categories={categories}
+        forms={forms}
+        initialData={initialData}
+        initialFormSlug="micronization-technology"
+        initialSearchValue="ashwagandha"
+      />,
+    );
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled();
+    });
+
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      expect.stringContaining("form=micronization-technology"),
+      expect.any(Object),
+    );
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      expect.stringContaining("search=ashwagandha"),
+      expect.any(Object),
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /filter by category/i }));
+    const categoryListbox = screen.getByRole("listbox", { name: /filter by category/i });
+
+    expect(within(categoryListbox).getByRole("option", { name: /custom botanicals/i })).toBeInTheDocument();
+    expect(
+      within(categoryListbox).getByRole("option", { name: /nutraceutical ingredients/i }),
+    ).toBeInTheDocument();
   });
 });

@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { PublicHero } from "@/components/public-hero";
-import { MediaPlaceholder } from "@/components/media-placeholder";
 import { SectionIntro } from "@/components/section-intro";
 import { fetchForms } from "@/lib/api";
 import { buildMetadata, npdContent, seoDescriptions } from "@/lib/site";
