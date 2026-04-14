@@ -39,7 +39,7 @@ export default async function ContactPage() {
           <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">
             <FileText className="h-8 w-8 text-[var(--green-800)] mb-4" />
             <h3 className="font-semibold text-[var(--foreground)]">Product specification</h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Name or ingredient type you're looking for</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Name or ingredient type you&apos;re looking for</p>
           </div>
           
           <div className="rounded-2xl bg-gradient-to-br from-green-50/30 to-slate-50/30 p-6 border border-green-200/30 hover:shadow-md hover:-translate-y-0.5 transition-all">

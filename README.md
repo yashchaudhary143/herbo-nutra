@@ -28,7 +28,13 @@ The frontend proxies `/api/*` to `http://127.0.0.1:8000` by default.
 
 ## Deployment
 - Copy `.env.example` to `.env` on the EC2 host.
+- Run `cd backend && alembic upgrade head` before starting or updating the stack.
 - Build and start the stack with `docker compose up -d --build`.
+- Keep `AUTO_CREATE_TABLES=false` in production so schema changes only flow through Alembic migrations.
+- Configure Turnstile and SMTP before launch:
+  - Required: `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`
+  - Required: `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`, `INQUIRY_NOTIFICATION_EMAIL`
+  - Optional: WhatsApp credentials. If omitted, admin will show notification delivery as `skipped`.
 - Put SSL in front of nginx or terminate TLS directly with your preferred reverse proxy/Caddy/Nginx host config.
 - Use `scripts/backup_postgres.sh` and `scripts/backup_uploads.sh` from cron/systemd timers for backups.
 

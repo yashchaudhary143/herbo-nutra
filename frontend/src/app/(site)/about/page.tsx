@@ -1,5 +1,4 @@
-import Image from "next/image";
- import { FileText, Award, Settings, Shield, Lightbulb } from "lucide-react";
+import { FileText, Award, Settings, Shield, Lightbulb } from "lucide-react";
 
 import { PublicHero } from "@/components/public-hero";
 import { MediaPlaceholder } from "@/components/media-placeholder";
