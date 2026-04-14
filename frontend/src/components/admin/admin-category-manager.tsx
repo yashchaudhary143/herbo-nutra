@@ -93,55 +93,81 @@ export function AdminCategoryManager() {
     if (!window.confirm("Delete this category and its products?")) {
       return;
     }
-    await clientApiFetch(`/api/admin/categories/${id}`, { method: "DELETE" });
-    await reloadCategories();
+    setError(null);
+    try {
+      await clientApiFetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+      setItems((current) => current.filter((item) => item.id !== id));
+      setForm((current) => (current.id === id ? emptyState : current));
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to delete category.");
+    }
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-      <form className="admin-card grid gap-4" onSubmit={handleSubmit}>
-        <div>
+    <div className="space-y-6">
+      <form className="admin-card admin-form-grid" onSubmit={handleSubmit}>
+        <div className="admin-panel-header">
           <p className="eyebrow">{form.id ? "Edit category" : "Add category"}</p>
-          <h2 className="mt-4 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--forest-900)]">
-            Catalog taxonomy
-          </h2>
+          <h2 className="admin-title">Catalog taxonomy</h2>
         </div>
-        <input
-          className="field"
-          placeholder="Category name"
-          value={form.name}
-          onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
-        />
-        <input
-          className="field"
-          placeholder="Slug"
-          value={form.slug}
-          onChange={(event) => setForm((state) => ({ ...state, slug: event.target.value }))}
-        />
-        <textarea
-          className="field min-h-32"
-          placeholder="Description"
-          value={form.description}
-          onChange={(event) => setForm((state) => ({ ...state, description: event.target.value }))}
-        />
-        <input
-          className="field"
-          type="number"
-          placeholder="Sort order"
-          value={form.sort_order}
-          onChange={(event) =>
-            setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
-          }
-        />
-        <label className="flex items-center gap-3 text-sm text-[var(--muted)]">
-          <input
-            type="checkbox"
-            checked={form.is_active}
-            onChange={(event) => setForm((state) => ({ ...state, is_active: event.target.checked }))}
-          />
-          Active
-        </label>
-        <div className="flex flex-wrap gap-3">
+        <div className="grid items-start gap-4 md:grid-cols-2">
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Category name</label>
+            <input
+              className="field"
+              placeholder="Category name"
+              value={form.name}
+              onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
+            />
+          </div>
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Slug</label>
+            <input
+              className="field"
+              placeholder="Slug"
+              value={form.slug}
+              onChange={(event) => setForm((state) => ({ ...state, slug: event.target.value }))}
+            />
+          </div>
+          <div className="admin-field-stack md:col-span-2">
+            <label className="admin-field-label">Description</label>
+            <textarea
+              className="field min-h-36"
+              placeholder="Description"
+              value={form.description}
+              onChange={(event) => setForm((state) => ({ ...state, description: event.target.value }))}
+            />
+          </div>
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Sort order</label>
+            <input
+              className="field"
+              type="number"
+              placeholder="Sort order"
+              value={form.sort_order}
+              onChange={(event) =>
+                setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
+              }
+            />
+          </div>
+          <label className="admin-choice-row text-sm text-[var(--muted)] md:col-span-1">
+            <input
+              className="admin-checkbox"
+              type="checkbox"
+              checked={form.is_active}
+              onChange={(event) =>
+                setForm((state) => ({ ...state, is_active: event.target.checked }))
+              }
+            />
+            <span>
+              <span className="block font-medium text-[var(--foreground)]">Active</span>
+              <span className="admin-inline-help">
+                Inactive categories stay in admin but disappear from the public catalog.
+              </span>
+            </span>
+          </label>
+        </div>
+        <div className="admin-actions border-t border-[var(--line-admin)] pt-4">
           <button className="button-primary" type="submit">
             {form.id ? "Update category" : "Create category"}
           </button>

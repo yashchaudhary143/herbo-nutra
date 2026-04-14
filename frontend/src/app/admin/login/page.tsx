@@ -2,7 +2,7 @@ import { AdminLoginForm } from "@/components/admin/admin-login-form";
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f8f5ed_0%,#efe7d4_100%)]">
+    <div className="admin-layout min-h-screen">
       <div className="section-shell flex min-h-screen items-center justify-center py-12">
         <div className="grid w-full max-w-5xl gap-8 lg:grid-cols-[1fr_480px]">
           <div className="self-center">

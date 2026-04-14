@@ -28,16 +28,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f8f5ed_0%,#f0ead9_100%)]">
-      <div className="section-shell grid gap-6 py-8 lg:grid-cols-[280px_1fr]">
-        <aside className="admin-card h-fit">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--forest-700)]">
-            Admin Panel
-          </p>
-          <h1 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--forest-900)]">
-            Herbo Nutra
-          </h1>
-          <div className="mt-6 flex flex-col gap-2">
+    <div className="admin-layout min-h-screen">
+      <div className="section-shell grid admin-shell-grid">
+        <aside className="admin-card admin-sidebar h-fit">
+          <div className="admin-sidebar-content">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--forest-700)]">
+              Admin Panel
+            </p>
+            <h1 className="admin-shell-title">Herbo Nutra</h1>
+            <p className="admin-shell-subtitle">Catalog operations, format control, and inbound leads.</p>
+            <div className="mt-6 flex flex-col gap-2.5">
             {links.map((link) => {
               const active = pathname === link.href;
               return (
@@ -53,15 +53,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="button-secondary mt-8 flex w-full items-center justify-center gap-2 rounded-[1.35rem] border-[var(--line-admin)] bg-white/72 py-3 text-[var(--forest-900)] hover:bg-[var(--surface-muted)]"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--line)] px-4 py-3 text-sm font-semibold text-[var(--forest-900)] transition hover:bg-[var(--forest-100)]"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </button>
         </aside>
         <main>{children}</main>
       </div>

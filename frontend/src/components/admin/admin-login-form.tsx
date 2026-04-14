@@ -51,18 +51,20 @@ export function AdminLoginForm() {
   });
 
   return (
-    <form className="glass-panel grid gap-4 rounded-[2rem] p-8" onSubmit={onSubmit}>
-      <div>
+    <form className="glass-panel grid gap-5 rounded-[2rem] p-8 md:p-9" onSubmit={onSubmit}>
+      <div className="admin-field-stack">
+        <label className="admin-field-label">Admin email</label>
         <input className="field" placeholder="Admin email" {...register("email")} />
         {errors.email ? <p className="mt-2 text-xs text-red-600">{errors.email.message}</p> : null}
       </div>
-      <div>
+      <div className="admin-field-stack">
+        <label className="admin-field-label">Password</label>
         <input className="field" type="password" placeholder="Password" {...register("password")} />
         {errors.password ? (
           <p className="mt-2 text-xs text-red-600">{errors.password.message}</p>
         ) : null}
       </div>
-      <button type="submit" className="button-primary" disabled={isPending}>
+      <button type="submit" className="button-primary mt-1 w-full justify-center rounded-[1.35rem]" disabled={isPending}>
         {isPending ? "Signing in..." : "Sign in"}
       </button>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}

@@ -33,25 +33,25 @@ export function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div className="admin-card">
-        <p className="eyebrow">Operations Snapshot</p>
-        <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.03em] text-[var(--forest-900)]">
-          Lead generation and catalog control in one place.
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--muted)]">
+        <div className="admin-panel-header">
+          <p className="eyebrow">Operations Snapshot</p>
+          <h2 className="admin-title">Lead generation and catalog control in one place.</h2>
+          <p className="admin-lead">
           Track product coverage, incoming leads, and immediate workload from the same admin surface.
-        </p>
+          </p>
+        </div>
       </div>
       {error ? <div className="admin-card text-sm text-red-600">{error}</div> : null}
       <div className="admin-grid">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
-            <div key={card.key} className="admin-card">
+            <div key={card.key} className="admin-metric-card">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-[var(--muted)]">{card.label}</p>
                 <Icon className="h-5 w-5 text-[var(--gold-500)]" />
               </div>
-              <p className="mt-6 font-display text-4xl font-semibold tracking-[-0.04em] text-[var(--forest-900)]">
+              <p className="admin-metric-value">
                 {stats ? stats[card.key] : "--"}
               </p>
             </div>

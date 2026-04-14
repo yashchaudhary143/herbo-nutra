@@ -96,65 +96,101 @@ export function AdminFormManager() {
     if (!window.confirm("Delete this form?")) {
       return;
     }
-    await clientApiFetch(`/api/admin/forms/${id}`, { method: "DELETE" });
-    await reloadForms();
+    setError(null);
+    try {
+      await clientApiFetch(`/api/admin/forms/${id}`, { method: "DELETE" });
+      setItems((current) => current.filter((item) => item.id !== id));
+      setForm((current) => (current.id === id ? emptyState : current));
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to delete form.");
+    }
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[440px_1fr]">
-      <form className="admin-card grid gap-4" onSubmit={handleSubmit}>
-        <div>
+    <div className="space-y-6">
+      <form className="admin-card admin-form-grid" onSubmit={handleSubmit}>
+        <div className="admin-panel-header">
           <p className="eyebrow">{form.id ? "Edit form" : "Add form"}</p>
-          <h2 className="mt-4 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--forest-900)]">
-            Product forms and technologies
-          </h2>
+          <h2 className="admin-title">Product forms and technologies</h2>
         </div>
-        <input
-          className="field"
-          placeholder="Form name"
-          value={form.name}
-          onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
-        />
-        <input
-          className="field"
-          placeholder="Slug"
-          value={form.slug}
-          onChange={(event) => setForm((state) => ({ ...state, slug: event.target.value }))}
-        />
-        <textarea
-          className="field min-h-40"
-          placeholder="Description"
-          value={form.description}
-          onChange={(event) => setForm((state) => ({ ...state, description: event.target.value }))}
-        />
-        <input
-          className="field"
-          type="number"
-          placeholder="Sort order"
-          value={form.sort_order}
-          onChange={(event) =>
-            setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
-          }
-        />
-        <label className="flex items-center gap-3 text-sm text-[var(--muted)]">
-          <input
-            type="checkbox"
-            checked={form.is_active}
-            onChange={(event) => setForm((state) => ({ ...state, is_active: event.target.checked }))}
-          />
-          Active
-        </label>
-        <label className="flex items-center gap-3 text-sm text-[var(--muted)]">
-          <input
-            type="checkbox"
-            checked={form.is_npd_featured}
-            onChange={(event) =>
-              setForm((state) => ({ ...state, is_npd_featured: event.target.checked }))
-            }
-          />
-          Feature on Formats page
-        </label>
-        <div className="flex flex-wrap gap-3">
+        <div className="grid items-start gap-4 md:grid-cols-2">
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Form name</label>
+            <input
+              className="field"
+              placeholder="Form name"
+              value={form.name}
+              onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
+            />
+          </div>
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Slug</label>
+            <input
+              className="field"
+              placeholder="Slug"
+              value={form.slug}
+              onChange={(event) => setForm((state) => ({ ...state, slug: event.target.value }))}
+            />
+          </div>
+          <div className="admin-field-stack md:col-span-2">
+            <label className="admin-field-label">Description</label>
+            <textarea
+              className="field min-h-36"
+              placeholder="Description"
+              value={form.description}
+              onChange={(event) => setForm((state) => ({ ...state, description: event.target.value }))}
+            />
+          </div>
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Sort order</label>
+            <input
+              className="field"
+              type="number"
+              placeholder="Sort order"
+              value={form.sort_order}
+              onChange={(event) =>
+                setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
+              }
+            />
+          </div>
+          <div className="grid gap-3 md:col-span-1">
+            <label className="admin-choice-row text-sm text-[var(--muted)]">
+              <input
+                className="admin-checkbox"
+                type="checkbox"
+                checked={form.is_active}
+                onChange={(event) =>
+                  setForm((state) => ({ ...state, is_active: event.target.checked }))
+                }
+              />
+              <span>
+                <span className="block font-medium text-[var(--foreground)]">Active</span>
+                <span className="admin-inline-help">
+                  Inactive forms stay available in admin but are removed from public filtering and NPD highlights.
+                </span>
+              </span>
+            </label>
+            <label className="admin-choice-row text-sm text-[var(--muted)]">
+              <input
+                className="admin-checkbox"
+                type="checkbox"
+                checked={form.is_npd_featured}
+                onChange={(event) =>
+                  setForm((state) => ({ ...state, is_npd_featured: event.target.checked }))
+                }
+              />
+              <span>
+                <span className="block font-medium text-[var(--foreground)]">
+                  Feature on Formats page
+                </span>
+                <span className="admin-inline-help">
+                  Featured items appear as highlighted technologies on the public NPD experience.
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div className="admin-actions border-t border-[var(--line-admin)] pt-4">
           <button className="button-primary" type="submit">
             {form.id ? "Update form" : "Create form"}
           </button>
