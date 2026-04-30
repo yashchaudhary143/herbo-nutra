@@ -33,6 +33,7 @@ The frontend proxies `/api/*` to `http://127.0.0.1:8000` by default.
 - Keep `AUTO_CREATE_TABLES=false` in production so schema changes only flow through Alembic migrations.
 - Configure SMTP before launch:
   - Required: `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`, `INQUIRY_NOTIFICATION_EMAIL`
+  - `INQUIRY_NOTIFICATION_EMAIL` accepts multiple internal recipients separated by commas, semicolons, or new lines. The backend sends separate email copies so recipients do not see each other.
 - Put SSL in front of nginx or terminate TLS directly with your preferred reverse proxy/Caddy/Nginx host config.
 - Use `scripts/backup_postgres.sh` and `scripts/backup_uploads.sh` from cron/systemd timers for backups.
 

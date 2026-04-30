@@ -1,5 +1,6 @@
 import smtplib
 from email.message import EmailMessage
+import re
 
 from app.core.config import Settings
 from app.models import Inquiry
@@ -19,15 +20,32 @@ def _format_inquiry_message(settings: Settings, inquiry: Inquiry) -> str:
     )
 
 
+def _notification_recipients(settings: Settings) -> list[str]:
+    if not settings.inquiry_notification_email:
+        return []
+    return [
+        recipient.strip()
+        for recipient in re.split(r"[,;\n]+", settings.inquiry_notification_email)
+        if recipient.strip()
+    ]
+
+
+def _build_email_message(settings: Settings, inquiry: Inquiry, recipient: str) -> EmailMessage:
+    message = EmailMessage()
+    message["Subject"] = f"[Herbo Nutra] New B2B inquiry from {inquiry.company_name}"
+    message["From"] = f"{settings.company_name} <{settings.smtp_from_email}>"
+    message["To"] = recipient
+    message.set_content(_format_inquiry_message(settings, inquiry))
+    return message
+
+
 def send_email_notification(settings: Settings, inquiry: Inquiry) -> str:
     if not settings.smtp_enabled:
         return "skipped"
 
-    message = EmailMessage()
-    message["Subject"] = f"New B2B inquiry from {inquiry.company_name}"
-    message["From"] = settings.smtp_from_email
-    message["To"] = settings.inquiry_notification_email
-    message.set_content(_format_inquiry_message(settings, inquiry))
+    recipients = _notification_recipients(settings)
+    if not recipients:
+        return "skipped"
 
     try:
         with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as smtp:
@@ -35,7 +53,8 @@ def send_email_notification(settings: Settings, inquiry: Inquiry) -> str:
                 smtp.starttls()
             if settings.smtp_username and settings.smtp_password:
                 smtp.login(settings.smtp_username, settings.smtp_password)
-            smtp.send_message(message)
+            for recipient in recipients:
+                smtp.send_message(_build_email_message(settings, inquiry, recipient))
     except Exception:
         return "failed"
 

@@ -1,4 +1,6 @@
 from app.services import notifications
+from app.core.config import Settings
+from app.models import Inquiry
 
 
 def test_list_categories(client):
@@ -83,3 +85,53 @@ def test_submit_inquiry_with_notification_fallback(client, monkeypatch):
     payload = response.json()
     assert payload["inquiry"]["company_name"] == "Wellness Labs"
     assert payload["email_status"] == "failed"
+
+
+def test_email_notification_sends_separate_messages_per_recipient(monkeypatch):
+    sent_messages = []
+
+    class DummySMTP:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def starttls(self):
+            pass
+
+        def login(self, username, password):
+            pass
+
+        def send_message(self, message):
+            sent_messages.append(message)
+
+    monkeypatch.setattr(notifications.smtplib, "SMTP", DummySMTP)
+    settings = Settings(
+        smtp_host="smtp.example.com",
+        smtp_username="no.reply@myntis.com",
+        smtp_password="secret",
+        smtp_from_email="no.reply@myntis.com",
+        inquiry_notification_email="bhashkar@herbonutra.com, Herbal@herbonutra.com",
+    )
+    inquiry = Inquiry(
+        source="contact",
+        name="Riya Sharma",
+        company_name="Wellness Labs",
+        email="riya@example.com",
+        phone="+91 99000 00000",
+        product_requirement="Turmeric Extract",
+        message="Looking for MOQ and export compliance details.",
+        status="new",
+        email_status="pending",
+    )
+
+    assert notifications.send_email_notification(settings, inquiry) == "sent"
+    assert [message["To"] for message in sent_messages] == [
+        "bhashkar@herbonutra.com",
+        "Herbal@herbonutra.com",
+    ]
+    assert all("," not in message["To"] for message in sent_messages)
