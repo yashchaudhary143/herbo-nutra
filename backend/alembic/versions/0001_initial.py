@@ -49,7 +49,6 @@ def upgrade() -> None:
         sa.Column("message", sa.Text(), nullable=False),
         sa.Column("status", sa.String(length=50), nullable=False),
         sa.Column("email_status", sa.String(length=50), nullable=False),
-        sa.Column("whatsapp_status", sa.String(length=50), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
     )
     op.create_index("ix_inquiries_id", "inquiries", ["id"], unique=False)

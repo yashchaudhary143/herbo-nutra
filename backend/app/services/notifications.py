@@ -1,8 +1,6 @@
 import smtplib
 from email.message import EmailMessage
 
-import httpx
-
 from app.core.config import Settings
 from app.models import Inquiry
 
@@ -38,35 +36,6 @@ def send_email_notification(settings: Settings, inquiry: Inquiry) -> str:
             if settings.smtp_username and settings.smtp_password:
                 smtp.login(settings.smtp_username, settings.smtp_password)
             smtp.send_message(message)
-    except Exception:
-        return "failed"
-
-    return "sent"
-
-
-def send_whatsapp_notification(settings: Settings, inquiry: Inquiry) -> str:
-    if not settings.whatsapp_enabled:
-        return "skipped"
-
-    try:
-        response = httpx.post(
-            f"{settings.whatsapp_api_base_url}/{settings.whatsapp_phone_number_id}/messages",
-            headers={
-                "Authorization": f"Bearer {settings.whatsapp_access_token}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "messaging_product": "whatsapp",
-                "to": settings.whatsapp_recipient_number,
-                "type": "text",
-                "text": {
-                    "preview_url": False,
-                    "body": _format_inquiry_message(settings, inquiry)[:4000],
-                },
-            },
-            timeout=20.0,
-        )
-        response.raise_for_status()
     except Exception:
         return "failed"
 

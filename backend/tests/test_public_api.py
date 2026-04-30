@@ -5,7 +5,11 @@ def test_list_categories(client):
     response = client.get("/api/categories")
     assert response.status_code == 200
     categories = response.json()
-    assert len(categories) >= 3
+    assert [category["slug"] for category in categories] == [
+        "herbal-extracts",
+        "amino-acids",
+        "plant-sourced-vitamins-minerals",
+    ]
     assert any(category["product_count"] >= 1 for category in categories)
 
 
@@ -62,7 +66,6 @@ def test_filter_category_products_by_form(client):
 
 def test_submit_inquiry_with_notification_fallback(client, monkeypatch):
     monkeypatch.setattr(notifications, "send_email_notification", lambda *args, **kwargs: "failed")
-    monkeypatch.setattr(notifications, "send_whatsapp_notification", lambda *args, **kwargs: "failed")
 
     response = client.post(
         "/api/inquiries",
@@ -80,4 +83,3 @@ def test_submit_inquiry_with_notification_fallback(client, monkeypatch):
     payload = response.json()
     assert payload["inquiry"]["company_name"] == "Wellness Labs"
     assert payload["email_status"] == "failed"
-    assert payload["whatsapp_status"] == "failed"

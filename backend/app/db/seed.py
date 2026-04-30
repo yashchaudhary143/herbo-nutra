@@ -11,64 +11,25 @@ from app.models import AdminUser, Category, Form, Product
 
 CATEGORY_DEFINITIONS = [
     {
-        "name": "Herbal Extracts",
+        "name": "Herbal Extracts (Food Ingredients / Nutraceutical Ingredients)",
         "slug": "herbal-extracts",
-        "description": "Standardized and ratio-based botanical extracts managed through controlled sourcing and processing.",
+        "description": "Herbal extracts, food ingredients, and nutraceutical ingredients managed through controlled sourcing and processing.",
         "sort_order": 1,
+        "is_active": True,
     },
     {
-        "name": "Botanical Salts",
-        "slug": "botanical-salts",
-        "description": "Botanical salt ingredients positioned for formulation use, sourcing review, and application-specific blending.",
-        "sort_order": 2,
-    },
-    {
-        "name": "Food Ingredients",
-        "slug": "food-ingredients",
-        "description": "Ingredient formats intended for food, seasoning, and general functional food applications.",
-        "sort_order": 3,
-    },
-    {
-        "name": "Nutraceutical Ingredients",
-        "slug": "nutraceutical-ingredients",
-        "description": "Botanical and functional ingredients for nutraceutical and wellness-focused formulations.",
-        "sort_order": 4,
-    },
-    {
-        "name": "Natural Sourced Vitamins & Minerals",
-        "slug": "natural-sourced-vitamins-minerals",
-        "description": "Naturally derived vitamin and mineral ingredients aligned with label-friendly formulation needs.",
-        "sort_order": 5,
-    },
-    {
-        "name": "Ammino Acids",
-        "slug": "ammino-acids",
+        "name": "Amino Acids",
+        "slug": "amino-acids",
         "description": "Amino acid ingredients produced for nutritional, functional, and specialty applications.",
-        "sort_order": 6,
+        "sort_order": 2,
+        "is_active": True,
     },
     {
-        "name": "Cosmetic Ingredients",
-        "slug": "cosmetic-ingredients",
-        "description": "Bioactive and botanical ingredients suitable for cosmetic and personal care positioning.",
-        "sort_order": 7,
-    },
-    {
-        "name": "Nucleotide Blends",
-        "slug": "nucleotide-blends",
-        "description": "Nucleotide-oriented ingredient systems for nutritional and specialty blend applications.",
-        "sort_order": 8,
-    },
-    {
-        "name": "Sport Nutrition Ingredients",
-        "slug": "sport-nutrition-ingredients",
-        "description": "Ingredients aligned with active nutrition, performance, and recovery-focused formulations.",
-        "sort_order": 9,
-    },
-    {
-        "name": "Fruit Powers & Vegetables",
-        "slug": "fruit-powers-vegetables",
-        "description": "Fruit and vegetable-derived ingredient formats for functional, food, and nutrition applications.",
-        "sort_order": 10,
+        "name": "Plant Sourced Vitamins & Minerals",
+        "slug": "plant-sourced-vitamins-minerals",
+        "description": "Plant-sourced vitamin and mineral ingredients aligned with label-friendly formulation needs.",
+        "sort_order": 3,
+        "is_active": True,
     },
 ]
 
@@ -81,9 +42,9 @@ FORM_DEFINITIONS = [
         "is_npd_featured": False,
     },
     {
-        "name": "Natural Sourced Vitamins & Minerals",
+        "name": "Plant Sourced Vitamins & Minerals",
         "slug": "natural-sourced-vitamins-minerals",
-        "description": "Our vitamins and minerals are derived using selective extraction and purification technologies from natural plant and mineral sources, maintaining nutrient structure, purity, stability, and label-friendly positioning.",
+        "description": "Our vitamins and minerals are derived using selective extraction and purification technologies from plant-sourced materials, maintaining nutrient structure, purity, stability, and label-friendly positioning.",
         "sort_order": 2,
         "is_npd_featured": False,
     },
@@ -253,29 +214,11 @@ SEED_PRODUCTS = [
 def infer_category_slug(product: dict[str, str]) -> str:
     name = f"{product['common_name']} {product['botanical_name']} {product['specification']}".lower()
 
-    if "salt" in name:
-        return "botanical-salts"
-
     if any(keyword in name for keyword in ("arginine", "carnitine")):
-        return "ammino-acids"
+        return "amino-acids"
 
     if any(keyword in name for keyword in ("vitamin", "zinc")):
-        return "natural-sourced-vitamins-minerals"
-
-    if any(keyword in name for keyword in ("garlic", "ginger", "black pepper")):
-        return "food-ingredients"
-
-    if any(
-        keyword in name
-        for keyword in (
-            "grape seed",
-            "resveratrol",
-            "green tea",
-            "olive leaf",
-            "oleuropein",
-        )
-    ):
-        return "cosmetic-ingredients"
+        return "plant-sourced-vitamins-minerals"
 
     return "herbal-extracts"
 
@@ -284,9 +227,9 @@ def infer_form_slugs(product: dict[str, str], category_slug: str) -> list[str]:
     name = f"{product['common_name']} {product['botanical_name']} {product['specification']}".lower()
     form_slugs: list[str] = []
 
-    if category_slug == "ammino-acids":
+    if category_slug == "amino-acids":
         form_slugs.append("amino-acids")
-    elif category_slug == "natural-sourced-vitamins-minerals":
+    elif category_slug == "plant-sourced-vitamins-minerals":
         form_slugs.append("natural-sourced-vitamins-minerals")
     else:
         form_slugs.append("herbal-extracts")

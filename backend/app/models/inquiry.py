@@ -19,8 +19,6 @@ class Inquiry(Base):
     message: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="new")
     email_status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
-    whatsapp_status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
-

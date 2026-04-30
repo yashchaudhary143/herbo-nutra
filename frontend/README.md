@@ -15,5 +15,4 @@ Next.js storefront and admin UI for the Herbo Nutra Extract website.
 
 ## Production Notes
 - The Docker image uses Next standalone output and starts with `node server.js`.
-- Turnstile must be configured in production with `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
 - Admin and inquiry flows depend on the backend cookie auth and `/api/*` rewrites configured in `next.config.ts`.

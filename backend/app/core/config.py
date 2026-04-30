@@ -34,18 +34,9 @@ class Settings(BaseSettings):
     smtp_from_email: str | None = None
     inquiry_notification_email: str | None = None
 
-    turnstile_site_key: str | None = None
-    turnstile_secret_key: str | None = None
-
-    whatsapp_api_base_url: str = "https://graph.facebook.com/v22.0"
-    whatsapp_phone_number_id: str | None = None
-    whatsapp_access_token: str | None = None
-    whatsapp_recipient_number: str | None = None
-
     company_name: str = "Herbo Nutra Extract Pvt. Ltd."
     company_email: str = "info@herbonutraextract.com"
     company_phone: str = "+91 98765 43210"
-    company_whatsapp: str = "+91 98765 43210"
     company_address: str = (
         "Plot 18, Herbal Industrial Estate, Vadodara, Gujarat 390010, India"
     )
@@ -60,25 +51,10 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[misc]
     @property
-    def turnstile_enabled(self) -> bool:
-        return bool(self.turnstile_secret_key)
-
-    @computed_field  # type: ignore[misc]
-    @property
     def smtp_enabled(self) -> bool:
         return bool(self.smtp_host and self.smtp_from_email and self.inquiry_notification_email)
-
-    @computed_field  # type: ignore[misc]
-    @property
-    def whatsapp_enabled(self) -> bool:
-        return bool(
-            self.whatsapp_access_token
-            and self.whatsapp_phone_number_id
-            and self.whatsapp_recipient_number
-        )
 
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

@@ -13,9 +13,10 @@ type CustomSelectProps = {
   value: string;
   onChange: (value: string) => void;
   ariaLabel: string;
+  triggerClassName?: string;
 };
 
-export function CustomSelect({ options, value, onChange, ariaLabel }: CustomSelectProps) {
+export function CustomSelect({ options, value, onChange, ariaLabel, triggerClassName = "" }: CustomSelectProps) {
   const listId = useId().replace(/:/g, "");
   const rootRef = useRef<HTMLDivElement | null>(null);
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -63,7 +64,7 @@ export function CustomSelect({ options, value, onChange, ariaLabel }: CustomSele
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        className="filter-trigger"
+        className={`filter-trigger ${triggerClassName}`}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
@@ -76,7 +77,7 @@ export function CustomSelect({ options, value, onChange, ariaLabel }: CustomSele
           }
         }}
       >
-        <span className="min-w-0 pr-2 text-left leading-6">{selectedOption?.label ?? ""}</span>
+        <span className="min-w-0 truncate pr-2 text-left leading-6">{selectedOption?.label ?? ""}</span>
         <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 

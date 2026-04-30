@@ -20,10 +20,6 @@ def settings(tmp_path: Path) -> Settings:
         smtp_host=None,
         smtp_from_email=None,
         inquiry_notification_email=None,
-        turnstile_secret_key=None,
-        whatsapp_access_token=None,
-        whatsapp_phone_number_id=None,
-        whatsapp_recipient_number=None,
     )
 
 

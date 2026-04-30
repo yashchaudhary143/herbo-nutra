@@ -9,7 +9,6 @@ export const company = {
   shortName: process.env.NEXT_PUBLIC_COMPANY_SHORT_NAME ?? process.env.COMPANY_SHORT_NAME ?? "Herbo Nutra Extract",
   email: process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? process.env.COMPANY_EMAIL ?? "info@herbonutraextract.com",
   phone: process.env.NEXT_PUBLIC_COMPANY_PHONE ?? process.env.COMPANY_PHONE ?? "+91 98765 43210",
-  whatsapp: process.env.NEXT_PUBLIC_COMPANY_WHATSAPP ?? process.env.COMPANY_WHATSAPP ?? "+91 98765 43210",
   address:
     process.env.NEXT_PUBLIC_COMPANY_ADDRESS ??
     process.env.COMPANY_ADDRESS ??
@@ -79,50 +78,20 @@ const categoryMediaBySlug: Record<string, MediaSlot> = {
   "herbal-extracts": {
     src: "/images/HerbalExtracts.jpg",
     title: "Herbal extracts image",
-    note: "Botanical raw material, extract powder, or finished ingredient photography.",
+    note: "Botanical raw material, food ingredient, nutraceutical extract, or finished ingredient photography.",
     tone: "botanical",
   },
-  "food-ingredients": {
-    src: "/images/BotanicalPowders.jpg",
-    title: "Food ingredients image",
-    note: "Food ingredient, seasoning, or powder photography.",
-    tone: "catalog",
-  },
-  "nutraceutical-ingredients": {
-    src: "/images/HerbalExtracts.jpg",
-    title: "Nutraceutical ingredients image",
-    note: "Botanical extract, QC, or finished ingredient photography.",
-    tone: "lab",
-  },
-  "ammino-acids": {
+  "amino-acids": {
     src: "/images/AminoAcids.jpg",
     title: "Amino acids image",
     note: "Batching, blending, or quality release photography.",
     tone: "lab",
   },
-  "cosmetic-ingredients": {
-    src: "/images/BotanicalExtracts.jpg",
-    title: "Cosmetic ingredients image",
-    note: "Bioactive ingredient or formulation photography.",
+  "plant-sourced-vitamins-minerals": {
+    src: "/images/Vitamins&Minerals.jpg",
+    title: "Plant sourced vitamins and minerals image",
+    note: "Plant-sourced nutrient, QC, packaging, or finished ingredient photography.",
     tone: "lab",
-  },
-  "nucleotide-blends": {
-    src: "/images/QualityControl.jpg",
-    title: "Nucleotide blends image",
-    note: "Technical or formulation support imagery.",
-    tone: "lab",
-  },
-  "sport-nutrition-ingredients": {
-    src: "/images/AminoAcids.jpg",
-    title: "Sports nutrition ingredients image",
-    note: "Performance ingredient and clean batching photography.",
-    tone: "catalog",
-  },
-  "fruit-powers-vegetables": {
-    src: "/images/BotanicalPowders.jpg",
-    title: "Fruit and vegetable powders image",
-    note: "Powder texture, produce-derived ingredient, or packaging imagery.",
-    tone: "packaging",
   },
 };
 
@@ -177,38 +146,16 @@ export const categoryTeasers = [
   {
     slug: "herbal-extracts",
     title: "Herbal Extracts",
-    summary: "Standardized and ratio-based botanical extracts presented for technical review and formulation use.",
+    summary: "Herbal extracts, food ingredients, and nutraceutical ingredients for technical review and formulation use.",
     media: {
       src: "/images/HerbalExtracts.jpg",
       title: "Herbal extracts image",
-      note: "Botanical raw material, extract powder, or finished ingredient photography.",
+      note: "Botanical raw material, food ingredient, nutraceutical extract, or finished ingredient photography.",
       tone: "botanical",
     } satisfies MediaSlot,
   },
   {
-    slug: "food-ingredients",
-    title: "Food Ingredients",
-    summary: "Food and functional ingredient formats for broad formulation and blending use.",
-    media: {
-      src: "/images/BotanicalPowders.jpg",
-      title: "Food ingredients image",
-      note: "Food ingredient, seasoning, or powder photography.",
-      tone: "catalog",
-    } satisfies MediaSlot,
-  },
-  {
-    slug: "nutraceutical-ingredients",
-    title: "Nutraceutical Ingredients",
-    summary: "Core nutraceutical ingredients for wellness, functional, and specialty products.",
-    media: {
-      src: "/images/HerbalExtracts.jpg",
-      title: "Nutraceutical ingredients image",
-      note: "Botanical extract, QC, or finished ingredient photography.",
-      tone: "lab",
-    } satisfies MediaSlot,
-  },
-  {
-    slug: "ammino-acids",
+    slug: "amino-acids",
     title: "Amino Acids",
     summary: "Amino acid ingredients for nutritional, functional, and performance-oriented systems.",
     media: {
@@ -219,47 +166,14 @@ export const categoryTeasers = [
     } satisfies MediaSlot,
   },
   {
-    slug: "cosmetic-ingredients",
-    title: "Cosmetic Ingredients",
-    summary: "Botanical and bioactive ingredients suitable for cosmetic and personal care positioning.",
+    slug: "plant-sourced-vitamins-minerals",
+    title: "Plant Sourced Vitamins & Minerals",
+    summary: "Plant-sourced vitamin and mineral ingredients for clean-label nutrient systems.",
     media: {
-      src: "/images/BotanicalExtracts.jpg",
-      title: "Cosmetic ingredients image",
-      note: "Bioactive ingredient or formulation photography.",
+      src: "/images/Vitamins&Minerals.jpg",
+      title: "Plant sourced vitamins and minerals image",
+      note: "Plant-sourced nutrient, QC, packaging, or finished ingredient photography.",
       tone: "lab",
-    } satisfies MediaSlot,
-  },
-  {
-    slug: "nucleotide-blends",
-    title: "Nucleotide Blends",
-    summary: "Nucleotide-oriented ingredient systems for nutritional and specialty blend applications.",
-    media: {
-      src: "/images/QualityControl.jpg",
-      title: "Nucleotide blends image",
-      note: "Technical or formulation support imagery.",
-      tone: "lab",
-    } satisfies MediaSlot,
-  },
-  {
-    slug: "sport-nutrition-ingredients",
-    title: "Sports Nutrition",
-    summary: "Ingredients aligned with active nutrition, performance, and recovery-focused formulations.",
-    media: {
-      src: "/images/AminoAcids.jpg",
-      title: "Sport nutrition ingredients image",
-      note: "Performance ingredient and clean batching photography.",
-      tone: "catalog",
-    } satisfies MediaSlot,
-  },
-  {
-    slug: "fruit-powers-vegetables",
-    title: "Fruit & Vegetable Powders",
-    summary: "Fruit and vegetable-derived ingredient formats for food, wellness, and functional systems.",
-    media: {
-      src: "/images/BotanicalPowders.jpg",
-      title: "Fruit and vegetable powders image",
-      note: "Powder texture, produce-derived ingredient, or packaging imagery.",
-      tone: "packaging",
     } satisfies MediaSlot,
   },
 ];
@@ -572,11 +486,11 @@ export const manufacturingFlowcharts = [
     ],
   },
   {
-    title: "Natural Sourced Vitamins & Minerals",
-    subtitle: "Naturally Derived Nutrient Systems",
+    title: "Plant Sourced Vitamins & Minerals",
+    subtitle: "Plant-Sourced Nutrient Systems",
     image: "/images/Vitamins&Minerals.jpg",
     steps: [
-      "Natural Source Selection (Plant / Mineral)",
+      "Plant Source Selection",
       "Cleaning & Pre-processing",
       "Extraction / Isolation",
       "Filtration",
@@ -836,113 +750,36 @@ export const categoryContentBySlug: Record<
   }
 > = {
   "herbal-extracts": {
-    overview: "Herbal extracts presented for technical review, sourcing discussions, and formulation-specific evaluation.",
-    applications: ["Nutraceutical systems", "Functional blends", "Application-specific sourcing"],
-    trustNote: "This category keeps herbal extracts easy to review alongside technical specifications and form availability.",
+    overview: "Herbal extracts, food ingredients, and nutraceutical ingredients presented for technical review, sourcing discussions, and formulation-specific evaluation.",
+    applications: ["Nutraceutical systems", "Functional foods", "Application-specific sourcing"],
+    trustNote: "This category keeps herbal, food, and nutraceutical ingredients easy to review alongside technical specifications and form availability.",
     media: {
       src: "/images/HerbalExtracts.jpg",
       title: "Herbal extracts image",
-      note: "Botanical extract or raw material photography.",
+      note: "Botanical extract, food ingredient, or raw material photography.",
       tone: "botanical",
     },
   },
-  "botanical-salts": {
-    overview: "Botanical salts presented for technical review, sourcing discussions, and formulation fit.",
-    applications: ["Functional blends", "Ingredient review", "Application-specific sourcing"],
-    trustNote: "This category keeps botanical salt ingredients distinct from extracts and easier to evaluate for formulation use.",
-    media: {
-      src: "/images/HerbalExtracts.jpg",
-      title: "Botanical salts image",
-      note: "Botanical salt or raw material photography.",
-      tone: "botanical",
-    },
-  },
-  "food-ingredients": {
-    overview: "Food ingredient formats for everyday formulation, functional blends, and ingredient-system review.",
-    applications: ["Functional foods", "Seasoning systems", "Food-ready ingredient blends"],
-    trustNote: "This category keeps food-oriented ingredients easy to compare and review.",
-    media: {
-      src: "/images/BotanicalPowders.jpg",
-      title: "Food ingredients image",
-      note: "Food ingredient or powder photography.",
-      tone: "catalog",
-    },
-  },
-  "nutraceutical-ingredients": {
-    overview: "Core nutraceutical ingredients for wellness, functional, and specialty product development.",
-    applications: ["Capsules and tablets", "Functional blends", "Wellness systems"],
-    trustNote: "This category keeps core nutraceutical ingredients central and easy to scan.",
-    media: {
-      src: "/images/HerbalExtracts.jpg",
-      title: "Nutraceutical ingredients image",
-      note: "Botanical extract or nutraceutical ingredient visuals.",
-      tone: "lab",
-    },
-  },
-  "natural-sourced-vitamins-minerals": {
-    overview: "Naturally derived vitamins and minerals presented with clean technical visibility and sourcing support.",
+  "plant-sourced-vitamins-minerals": {
+    overview: "Plant-sourced vitamins and minerals presented with clean technical visibility and sourcing support.",
     applications: ["Fortified blends", "Daily wellness products", "Label-friendly nutrient systems"],
-    trustNote: "This category keeps vitamin and mineral review straightforward and specification-led.",
+    trustNote: "This category keeps plant-sourced vitamin and mineral review straightforward and specification-led.",
     media: {
       src: "/images/Vitamins&Minerals.jpg",
-      title: "Natural sourced vitamins minerals image",
-      note: "QC, packaging, or finished nutrient visuals.",
+      title: "Plant sourced vitamins minerals image",
+      note: "Plant-sourced nutrient, QC, packaging, or finished ingredient visuals.",
       tone: "lab",
     },
   },
-  "ammino-acids": {
+  "amino-acids": {
     overview: "Amino acid ingredients for nutritional, functional, and performance-oriented applications.",
     applications: ["Sports nutrition", "Daily wellness formulas", "Functional beverage systems"],
     trustNote: "This page keeps amino acid data simple and readable for faster review.",
     media: {
       src: "/images/AminoAcids.jpg",
-      title: "Ammino acids image",
+      title: "Amino acids image",
       note: "Clean batching or finished ingredient visuals.",
       tone: "catalog",
-    },
-  },
-  "cosmetic-ingredients": {
-    overview: "Botanical and bioactive ingredients suitable for cosmetic and personal care formulations.",
-    applications: ["Topical systems", "Cosmetic actives", "Personal care ingredient review"],
-    trustNote: "This category groups cosmetic-positioned ingredients into one technical view.",
-    media: {
-      src: "/images/BotanicalExtracts.jpg",
-      title: "Cosmetic ingredients image",
-      note: "Bioactive ingredient and lab context.",
-      tone: "lab",
-    },
-  },
-  "nucleotide-blends": {
-    overview: "Nucleotide blend systems for nutritional and specialty formulation requirements.",
-    applications: ["Specialty blends", "Technical review", "Nutritional systems"],
-    trustNote: "This category keeps nucleotide-oriented products visible when they are available.",
-    media: {
-      src: "/images/QualityControl.jpg",
-      title: "Nucleotide blends image",
-      note: "Technical support and formulation imagery.",
-      tone: "lab",
-    },
-  },
-  "sport-nutrition-ingredients": {
-    overview: "Performance and active-nutrition ingredients for sport-oriented formulation programs.",
-    applications: ["Performance blends", "Recovery systems", "Active nutrition products"],
-    trustNote: "This category keeps sport nutrition ingredients grouped for faster review.",
-    media: {
-      src: "/images/AminoAcids.jpg",
-      title: "Sport nutrition ingredients image",
-      note: "Performance ingredient and batching visuals.",
-      tone: "catalog",
-    },
-  },
-  "fruit-powers-vegetables": {
-    overview: "Fruit and vegetable-derived ingredient formats for food, wellness, and functional systems.",
-    applications: ["Powder blends", "Functional foods", "Fruit and vegetable ingredient review"],
-    trustNote: "This category keeps produce-derived ingredients easy to scan as the range expands.",
-    media: {
-      src: "/images/BotanicalPowders.jpg",
-      title: "Fruit powers vegetables image",
-      note: "Powder texture, packaging, or ingredient context.",
-      tone: "packaging",
     },
   },
 };
@@ -950,7 +787,7 @@ export const categoryContentBySlug: Record<
 export const contactCopy = {
   prompt: "Contact us for product inquiries, documentation support, and partnership discussions.",
   details: [
-    "Phone and WhatsApp for quick follow-up",
+    "Phone for quick follow-up",
     "Email for technical and commercial coordination",
     "Map and address details for company visibility",
   ],

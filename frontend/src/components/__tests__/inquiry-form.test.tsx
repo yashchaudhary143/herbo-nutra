@@ -32,8 +32,8 @@ describe("InquiryForm", () => {
           {
             category: {
               id: 1,
-              name: "Nutraceutical Ingredients",
-              slug: "nutraceutical-ingredients",
+              name: "Herbal Extracts (Food Ingredients / Nutraceutical Ingredients)",
+              slug: "herbal-extracts",
               description: null,
               sort_order: 1,
               is_active: true,
@@ -83,7 +83,7 @@ describe("InquiryForm", () => {
       expect.objectContaining({
         method: "POST",
         body: expect.stringContaining(
-          "Products: Nutraceutical Ingredients: Ashwagandha Extract",
+          "Products: Herbal Extracts (Food Ingredients / Nutraceutical Ingredients): Ashwagandha Extract",
         ),
       }),
     );
@@ -111,8 +111,8 @@ describe("InquiryForm", () => {
           {
             category: {
               id: 1,
-              name: "Nutraceutical Ingredients",
-              slug: "nutraceutical-ingredients",
+              name: "Herbal Extracts (Food Ingredients / Nutraceutical Ingredients)",
+              slug: "herbal-extracts",
               description: null,
               sort_order: 1,
               is_active: true,

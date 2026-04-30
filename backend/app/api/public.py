@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session, joinedload
 
@@ -11,7 +11,6 @@ from app.schemas.form import FormRead
 from app.schemas.inquiry import InquiryCreate, InquirySubmissionResponse
 from app.schemas.product import CategoryProductsResponse, PaginatedProducts, ProductRead
 from app.services import notifications
-from app.services.turnstile import verify_turnstile
 
 router = APIRouter(tags=["public"])
 
@@ -139,16 +138,9 @@ def category_products(
 @router.post("/inquiries", response_model=InquirySubmissionResponse, status_code=status.HTTP_201_CREATED)
 async def submit_inquiry(
     payload: InquiryCreate,
-    request: Request,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings_dependency),
 ) -> InquirySubmissionResponse:
-    await verify_turnstile(
-        settings=settings,
-        token=payload.turnstile_token,
-        remote_ip=request.client.host if request.client else None,
-    )
-
     inquiry = Inquiry(
         source=payload.source,
         name=payload.name,
@@ -159,14 +151,12 @@ async def submit_inquiry(
         message=payload.message,
         status="new",
         email_status="pending",
-        whatsapp_status="pending",
     )
     db.add(inquiry)
     db.commit()
     db.refresh(inquiry)
 
     inquiry.email_status = notifications.send_email_notification(settings, inquiry)
-    inquiry.whatsapp_status = notifications.send_whatsapp_notification(settings, inquiry)
     db.add(inquiry)
     db.commit()
     db.refresh(inquiry)
@@ -175,5 +165,4 @@ async def submit_inquiry(
         inquiry=inquiry,
         message="Thank you. Our team will get back to you shortly.",
         email_status=inquiry.email_status,
-        whatsapp_status=inquiry.whatsapp_status,
     )

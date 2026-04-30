@@ -23,7 +23,6 @@ export function SiteFooter() {
               <p>
                 <a href={`mailto:${company.email}`}>{company.email}</a>
               </p>
-              <p>WhatsApp: {company.whatsapp}</p>
             </div>
           </div>
         </div>

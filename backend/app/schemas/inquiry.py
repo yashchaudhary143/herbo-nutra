@@ -11,7 +11,6 @@ class InquiryCreate(BaseModel):
     phone: str = Field(min_length=7, max_length=50)
     product_requirement: str = Field(default="", max_length=255)
     message: str = Field(min_length=10, max_length=4000)
-    turnstile_token: str | None = None
 
 
 class InquiryRead(BaseModel):
@@ -27,7 +26,6 @@ class InquiryRead(BaseModel):
     message: str
     status: str
     email_status: str
-    whatsapp_status: str
     created_at: datetime
 
 
@@ -46,4 +44,3 @@ class InquirySubmissionResponse(BaseModel):
     inquiry: InquiryRead
     message: str
     email_status: str
-    whatsapp_status: str

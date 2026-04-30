@@ -67,7 +67,7 @@ export function AdminInquiryManager() {
           <p className="eyebrow">Lead Pipeline</p>
           <h2 className="admin-title">Every inquiry stays visible even if notifications fail.</h2>
           <p className="admin-lead">
-            Update lead status here even when downstream email or WhatsApp delivery is delayed or skipped.
+            Update lead status here even when downstream email delivery is delayed or skipped.
           </p>
         </div>
       </div>
@@ -102,16 +102,7 @@ export function AdminInquiryManager() {
                 </td>
                 <td className="capitalize">{item.source}</td>
                 <td>
-                  <div className="space-y-1 text-[0.92rem] text-[var(--muted)]">
-                    <p>
-                      <span className="font-medium text-[var(--foreground)]">Email:</span>{" "}
-                      {item.email_status}
-                    </p>
-                    <p>
-                      <span className="font-medium text-[var(--foreground)]">WhatsApp:</span>{" "}
-                      {item.whatsapp_status}
-                    </p>
-                  </div>
+                  <span className="text-[0.92rem] text-[var(--muted)]">{item.email_status}</span>
                 </td>
                 <td>
                   <div className="min-w-[170px]">

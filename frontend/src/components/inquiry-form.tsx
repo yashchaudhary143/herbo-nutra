@@ -5,7 +5,6 @@ import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { TurnstileWidget } from "@/components/turnstile-widget";
 import { ProductRequirementPicker, type ProductRequirementGroup } from "@/components/product-requirement-picker";
 import { clientApiFetch } from "@/lib/api";
 
@@ -35,9 +34,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export function InquiryForm({ source, productGroups, compact = false }: InquiryFormProps) {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const [serverMessage, setServerMessage] = useState<string | null>(null);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
   const {
@@ -79,12 +76,10 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
             ...values,
             message: composedMessage,
             source,
-            turnstile_token: turnstileToken,
           }),
         });
         setServerMessage(response.message);
         reset();
-        setTurnstileToken(null);
         setPickerKey((current) => current + 1);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Something went wrong.";
@@ -146,14 +141,12 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
           <FieldError message={errors.message?.message} />
         </div>
 
-        <TurnstileWidget siteKey={siteKey} onVerify={setTurnstileToken} />
-
         <div className="flex flex-col gap-4 border-t border-[var(--line)] pt-5">
           <button type="submit" className="button-primary w-full sm:w-auto" disabled={isPending}>
             {isPending ? "Submitting..." : submitLabel}
           </button>
           <p className="max-w-xl text-sm leading-7 text-[var(--muted)]">
-            Your inquiry is stored in the backend and then routed through the configured email and WhatsApp workflow.
+            Your inquiry is stored in the backend and then routed through the configured email workflow.
           </p>
         </div>
 

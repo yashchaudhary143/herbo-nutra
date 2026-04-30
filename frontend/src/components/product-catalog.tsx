@@ -132,9 +132,9 @@ export function ProductCatalog({
             Search products, compare specifications, and narrow the range by category or format.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-3 sm:items-start">
           <input
-            className="field"
+            className="field h-14"
             type="search"
             placeholder="Search product details"
             value={searchTerm}
@@ -142,10 +142,12 @@ export function ProductCatalog({
             aria-label="Search product details"
           />
           {lockedCategorySlug ? (
-            <div className="filter-trigger bg-[var(--surface-muted)] text-[var(--foreground)]">
-              {isCategoryResponse(response)
-                ? getPublicCategoryLabel(response.category.slug, response.category.name)
-                : "Category"}
+            <div className="filter-trigger h-14 bg-[var(--surface-muted)] text-[var(--foreground)]">
+              <span className="min-w-0 truncate">
+                {isCategoryResponse(response)
+                  ? getPublicCategoryLabel(response.category.slug, response.category.name)
+                  : "Category"}
+              </span>
             </div>
           ) : (
             <CustomSelect
@@ -153,6 +155,7 @@ export function ProductCatalog({
               value={selectedCategory}
               onChange={setSelectedCategory}
               ariaLabel="Filter by category"
+              triggerClassName="h-14"
             />
           )}
           <CustomSelect
@@ -160,6 +163,7 @@ export function ProductCatalog({
             value={selectedForm}
             onChange={setSelectedForm}
             ariaLabel="Filter by form"
+            triggerClassName="h-14"
           />
         </div>
       </div>

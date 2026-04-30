@@ -116,14 +116,14 @@ export default async function HomePage() {
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {categories.map((category, index) => (
-              <article key={category.id} className="category-card">
+              <article key={category.id} className="category-card flex h-full flex-col">
                 <MediaPlaceholder media={getCategoryMedia(category, index)} className="min-h-[220px]" />
-                <div className="p-6">
+                <div className="flex flex-1 flex-col p-6">
                   <h3 className="text-xl font-semibold text-[var(--foreground)]">{category.name}</h3>
                   <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
                     {getCategorySummary(category)}
                   </p>
-                  <Link href={`/products/${category.slug}`} className="button-link mt-5">
+                  <Link href={`/products/${category.slug}`} className="button-link mt-auto pt-6">
                     Explore category
                     <ArrowRight className="h-4 w-4" />
                   </Link>

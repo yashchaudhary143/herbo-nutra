@@ -47,7 +47,6 @@ export type Inquiry = {
   message: string;
   status: string;
   email_status: string;
-  whatsapp_status: string;
   created_at: string;
 };
 

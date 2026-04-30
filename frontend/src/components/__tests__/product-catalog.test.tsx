@@ -19,9 +19,9 @@ const categories: Category[] = [
   },
   {
     id: 2,
-    name: "Nutraceutical Ingredients",
-    slug: "nutraceutical-ingredients",
-    description: "Core nutraceutical ingredients",
+    name: "Herbal Extracts (Food Ingredients / Nutraceutical Ingredients)",
+    slug: "herbal-extracts",
+    description: "Herbal extracts, food ingredients, and nutraceutical ingredients.",
     sort_order: 2,
     is_active: true,
     created_at: "",
@@ -166,7 +166,7 @@ describe("ProductCatalog", () => {
 
     expect(within(categoryListbox).getByRole("option", { name: /custom botanicals/i })).toBeInTheDocument();
     expect(
-      within(categoryListbox).getByRole("option", { name: /nutraceutical ingredients/i }),
+      within(categoryListbox).getByRole("option", { name: /herbal extracts/i }),
     ).toBeInTheDocument();
   });
 });
