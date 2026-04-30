@@ -179,7 +179,7 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
-            <MediaPlaceholder media={homeContent.founderMedia} className="min-h-[420px]" badge="Formats" />
+            <MediaPlaceholder media={homeContent.formsMedia} className="min-h-[420px]" badge="Formats" />
           </div>
         </div>
       </section>

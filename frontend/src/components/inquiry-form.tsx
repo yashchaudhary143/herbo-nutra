@@ -35,6 +35,7 @@ function FieldError({ message }: { message?: string }) {
 
 export function InquiryForm({ source, productGroups, compact = false }: InquiryFormProps) {
   const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [serverMessageType, setServerMessageType] = useState<"success" | "error">("success");
   const [isPending, setIsPending] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
   const {
@@ -42,7 +43,7 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
     handleSubmit,
     setValue,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
   } = useForm<InquiryFormValues>({
     resolver: zodResolver(inquirySchema),
     defaultValues: {
@@ -78,11 +79,13 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
             source,
           }),
         });
+        setServerMessageType("success");
         setServerMessage(response.message);
         reset();
         setPickerKey((current) => current + 1);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Something went wrong.";
+        setServerMessageType("error");
         setServerMessage(message);
       } finally {
         setIsPending(false);
@@ -152,9 +155,9 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
 
         {serverMessage ? (
           <div
-            className={`px-4 py-3 text-sm ${
-              isSubmitSuccessful
-                ? "bg-[rgba(35,72,48,0.1)] text-[var(--green-950)]"
+            className={`border-l-4 px-4 py-3 text-sm ${
+              serverMessageType === "success"
+                ? "border-[var(--green-700)] bg-[rgba(35,72,48,0.08)] text-[var(--green-950)]"
                 : "bg-[rgba(182,62,36,0.12)] text-[var(--danger)]"
             }`}
           >

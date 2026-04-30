@@ -251,10 +251,11 @@ export const homeContent = {
     note: "Lab, inspection, or production-floor photography.",
     tone: "lab",
   } satisfies MediaSlot,
-  founderMedia: {
-    title: "Founder or leadership portrait",
-    note: "Founder portrait or leadership context.",
-    tone: "portrait",
+  formsMedia: {
+    src: "/images/Forms.jpg",
+    title: "Advanced ingredient forms image",
+    note: "Advanced format and formulation support photography.",
+    tone: "lab",
   } satisfies MediaSlot,
 };
 
