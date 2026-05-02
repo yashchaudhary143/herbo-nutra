@@ -88,6 +88,28 @@ def test_submit_inquiry_with_notification_fallback(client, monkeypatch):
     assert payload["email_status"] == "failed"
 
 
+def test_submit_inquiry_allows_product_without_message(client, monkeypatch):
+    monkeypatch.setattr(notifications, "send_email_notification", lambda *args, **kwargs: "failed")
+
+    response = client.post(
+        "/api/inquiries",
+        json={
+            "source": "contact",
+            "name": "Riya Sharma",
+            "company_name": "Wellness Labs",
+            "email": "riya@example.com",
+            "phone": "+91 99000 00000",
+            "product_requirement": "Turmeric Extract",
+            "message": "",
+        },
+    )
+
+    assert response.status_code == 201
+    payload = response.json()
+    assert payload["inquiry"]["product_requirement"] == "Turmeric Extract"
+    assert payload["inquiry"]["message"] == ""
+
+
 def test_email_notification_sends_separate_messages_per_recipient(monkeypatch):
     sent_messages = []
 

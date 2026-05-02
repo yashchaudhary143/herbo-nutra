@@ -67,7 +67,7 @@ describe("InquiryForm", () => {
     await userEvent.click(screen.getByRole("button", { name: /search and select products/i }));
     await userEvent.click(screen.getByRole("checkbox", { name: /ashwagandha extract/i }));
     await userEvent.type(
-      screen.getByPlaceholderText(/share specification, packaging/i),
+      screen.getByPlaceholderText(/add notes, quantity/i),
       "Looking for product details and MOQ information.",
     );
     await userEvent.click(screen.getByRole("button", { name: /send inquiry/i }));
@@ -137,8 +137,8 @@ describe("InquiryForm", () => {
     );
     await userEvent.click(screen.getByRole("button", { name: /add product/i }));
     await userEvent.type(
-      screen.getByPlaceholderText(/share specification, packaging/i),
-      "Looking for pilot quantities.",
+      screen.getByPlaceholderText(/add notes, quantity/i),
+      "Looking for pilot quantities with packaging and export timeline details.",
     );
     await userEvent.click(screen.getByRole("button", { name: /send inquiry/i }));
 
@@ -153,6 +153,75 @@ describe("InquiryForm", () => {
       expect.objectContaining({
         method: "POST",
         body: expect.stringContaining("Products: Custom requirements: Sea Buckthorn Extract"),
+      }),
+    );
+  });
+
+  it("submits when a product is selected without requiring extra message details", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          message: "Thank you. Our team will get back to you shortly.",
+        }),
+        {
+          status: 201,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <InquiryForm
+        source="contact"
+        productGroups={[
+          {
+            category: {
+              id: 1,
+              name: "Herbal Extracts",
+              slug: "herbal-extracts",
+              description: null,
+              sort_order: 1,
+              is_active: true,
+              created_at: "2026-03-26T00:00:00Z",
+              updated_at: "2026-03-26T00:00:00Z",
+              product_count: 1,
+            },
+            products: [
+              {
+                id: 1,
+                category_id: 1,
+                common_name: "Turmeric",
+                botanical_name: "Curcuma longa",
+                specification: "Curcumin 95%",
+                sort_order: 1,
+                is_active: true,
+                created_at: "2026-03-26T00:00:00Z",
+                updated_at: "2026-03-26T00:00:00Z",
+                methods: [],
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    await userEvent.type(screen.getByPlaceholderText(/your name/i), "Riya Sharma");
+    await userEvent.type(screen.getByPlaceholderText(/company name/i), "Wellness Labs");
+    await userEvent.type(screen.getByPlaceholderText(/email address/i), "riya@example.com");
+    await userEvent.type(screen.getByPlaceholderText(/phone number/i), "+91 99000 00000");
+    await userEvent.click(screen.getByRole("button", { name: /search and select products/i }));
+    await userEvent.click(screen.getByRole("checkbox", { name: /turmeric/i }));
+    await userEvent.click(screen.getByRole("button", { name: /send inquiry/i }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled();
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/inquiries",
+      expect.objectContaining({
+        body: expect.stringContaining("Products: Herbal Extracts: Turmeric"),
       }),
     );
   });

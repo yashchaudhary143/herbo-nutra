@@ -8,14 +8,24 @@ import { z } from "zod";
 import { ProductRequirementPicker, type ProductRequirementGroup } from "@/components/product-requirement-picker";
 import { clientApiFetch } from "@/lib/api";
 
-const inquirySchema = z.object({
-  name: z.string().min(2, "Name is required."),
-  company_name: z.string().min(2, "Company name is required."),
-  email: z.email("Enter a valid email address."),
-  phone: z.string().min(7, "Phone number is required."),
-  product_requirement: z.string().max(255),
-  message: z.string().min(10, "Please add a more detailed requirement."),
-});
+const inquirySchema = z
+  .object({
+    name: z.string().min(2, "Name is required."),
+    company_name: z.string().min(2, "Company name is required."),
+    email: z.email("Enter a valid email address."),
+    phone: z.string().min(7, "Phone number is required."),
+    product_requirement: z.string().max(255),
+    message: z.string().max(4000, "Message is too long."),
+  })
+  .superRefine((values, context) => {
+    if (!values.product_requirement.trim() && !values.message.trim()) {
+      context.addIssue({
+        code: "custom",
+        path: ["product_requirement"],
+        message: "Select a product or add a short message.",
+      });
+    }
+  });
 
 type InquiryFormValues = z.infer<typeof inquirySchema>;
 
@@ -66,7 +76,7 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
       try {
         const composedMessage = [
           values.product_requirement ? `Products: ${values.product_requirement}` : null,
-          values.message,
+          values.message.trim(),
         ]
           .filter(Boolean)
           .join("\n\n");
@@ -138,7 +148,7 @@ export function InquiryForm({ source, productGroups, compact = false }: InquiryF
           <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">Message</label>
           <textarea
             className="field min-h-40 resize-y"
-            placeholder="Share specification, packaging, target market, or timeline."
+            placeholder="Add notes, quantity, or packaging if needed."
             {...register("message")}
           />
           <FieldError message={errors.message?.message} />

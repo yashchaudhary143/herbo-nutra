@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
 class InquiryCreate(BaseModel):
@@ -10,7 +10,13 @@ class InquiryCreate(BaseModel):
     email: EmailStr
     phone: str = Field(min_length=7, max_length=50)
     product_requirement: str = Field(default="", max_length=255)
-    message: str = Field(min_length=10, max_length=4000)
+    message: str = Field(default="", max_length=4000)
+
+    @model_validator(mode="after")
+    def require_product_or_message(self) -> "InquiryCreate":
+        if not self.product_requirement.strip() and not self.message.strip():
+            raise ValueError("Select a product or add a short message.")
+        return self
 
 
 class InquiryRead(BaseModel):

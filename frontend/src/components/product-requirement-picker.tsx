@@ -176,7 +176,7 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
 
       <button
         type="button"
-        className="field flex min-h-14 items-center justify-between gap-3 text-left"
+        className="field flex min-h-12 items-center justify-between gap-3 text-left"
         aria-expanded={open}
         aria-controls={searchId}
         onClick={() => setOpen((current) => !current)}
@@ -213,9 +213,9 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
       {open ? (
         <div
           id={searchId}
-          className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-2xl border border-[var(--line)] bg-white shadow-[var(--shadow-soft)]"
+          className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-lg border border-[var(--line)] bg-white shadow-[var(--shadow-soft)]"
         >
-          <div className="flex items-center gap-3 border-b border-[var(--line)] px-4 py-3">
+          <div className="flex items-center gap-3 border-b border-[var(--line)] px-3 py-2.5">
             <Search className="h-4 w-4 text-[var(--muted)]" />
             <input
               value={query}
@@ -243,10 +243,10 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
             </div>
           </div>
 
-          <div className="max-h-[min(24rem,calc(100dvh-18rem))] space-y-6 overflow-y-auto p-4">
+          <div className="max-h-[min(18rem,calc(100dvh-18rem))] space-y-4 overflow-y-auto p-3">
             {visibleGroups.length ? (
               visibleGroups.map((group) => (
-                <section key={group.category.id} className="space-y-3">
+                <section key={group.category.id} className="space-y-2">
                   <div className="flex items-center justify-between gap-3">
                     <h4 className="text-sm font-semibold text-[var(--foreground)]">{group.category.name}</h4>
                     <span className="text-xs text-[var(--muted)]">{group.products.length} items</span>
@@ -263,7 +263,7 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
                       return (
                         <label
                           key={product.id}
-                          className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                          className={`flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2 transition ${
                             isSelected
                               ? "border-[var(--green-900)] bg-[var(--green-100)]"
                               : "border-[var(--line-strong)] bg-white hover:border-[var(--green-900)]"
@@ -279,7 +279,7 @@ export function ProductRequirementPicker({ groups, onChange }: ProductRequiremen
                             <span className="block text-sm font-semibold text-[var(--foreground)]">
                               {product.common_name}
                             </span>
-                            <span className="block text-xs leading-6 text-[var(--muted)]">
+                            <span className="block text-xs leading-5 text-[var(--muted)]">
                               {product.botanical_name} · {product.specification}
                             </span>
                           </span>
