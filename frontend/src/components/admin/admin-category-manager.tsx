@@ -27,6 +27,7 @@ export function AdminCategoryManager() {
   const [items, setItems] = useState<Category[]>([]);
   const [form, setForm] = useState<CategoryFormState>(emptyState);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   async function reloadCategories() {
     try {
@@ -90,14 +91,12 @@ export function AdminCategoryManager() {
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm("Delete this category and its products?")) {
-      return;
-    }
     setError(null);
     try {
       await clientApiFetch(`/api/admin/categories/${id}`, { method: "DELETE" });
       setItems((current) => current.filter((item) => item.id !== id));
       setForm((current) => (current.id === id ? emptyState : current));
+      setPendingDeleteId(null);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to delete category.");
     }
@@ -216,13 +215,32 @@ export function AdminCategoryManager() {
                     >
                       Edit
                     </button>
-                    <button
-                      type="button"
-                      className="text-sm font-semibold text-red-600"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === item.id ? (
+                      <span className="inline-flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="text-sm font-semibold text-red-600"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          type="button"
+                          className="text-sm font-semibold text-[var(--muted)]"
+                          onClick={() => setPendingDeleteId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-sm font-semibold text-red-600"
+                        onClick={() => setPendingDeleteId(item.id)}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

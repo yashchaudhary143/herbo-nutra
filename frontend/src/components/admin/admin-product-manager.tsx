@@ -37,6 +37,7 @@ export function AdminProductManager() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   async function reloadProducts() {
     try {
@@ -118,14 +119,12 @@ export function AdminProductManager() {
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm("Delete this product?")) {
-      return;
-    }
     setError(null);
     try {
       await clientApiFetch(`/api/admin/products/${id}`, { method: "DELETE" });
       setProducts((current) => current.filter((product) => product.id !== id));
       setForm((current) => (current.id === id ? emptyProduct : current));
+      setPendingDeleteId(null);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to delete product.");
     }
@@ -400,13 +399,32 @@ export function AdminProductManager() {
                     >
                       Edit
                     </button>
-                    <button
-                      type="button"
-                      className="text-sm font-semibold text-red-600"
-                      onClick={() => handleDelete(product.id)}
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === product.id ? (
+                      <span className="inline-flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="text-sm font-semibold text-red-600"
+                          onClick={() => handleDelete(product.id)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          type="button"
+                          className="text-sm font-semibold text-[var(--muted)]"
+                          onClick={() => setPendingDeleteId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-sm font-semibold text-red-600"
+                        onClick={() => setPendingDeleteId(product.id)}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

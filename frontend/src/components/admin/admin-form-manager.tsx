@@ -27,6 +27,7 @@ export function AdminMethodManager() {
   const [items, setItems] = useState<Method[]>([]);
   const [form, setForm] = useState<FormState>(emptyState);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   async function reloadMethods() {
     try {
@@ -91,14 +92,12 @@ export function AdminMethodManager() {
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm("Delete this method?")) {
-      return;
-    }
     setError(null);
     try {
       await clientApiFetch(`/api/admin/methods/${id}`, { method: "DELETE" });
       setItems((current) => current.filter((item) => item.id !== id));
       setForm((current) => (current.id === id ? emptyState : current));
+      setPendingDeleteId(null);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to delete method.");
     }
@@ -217,13 +216,32 @@ export function AdminMethodManager() {
                     >
                       Edit
                     </button>
-                    <button
-                      type="button"
-                      className="text-sm font-semibold text-red-600"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === item.id ? (
+                      <span className="inline-flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="text-sm font-semibold text-red-600"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          type="button"
+                          className="text-sm font-semibold text-[var(--muted)]"
+                          onClick={() => setPendingDeleteId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-sm font-semibold text-red-600"
+                        onClick={() => setPendingDeleteId(item.id)}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
