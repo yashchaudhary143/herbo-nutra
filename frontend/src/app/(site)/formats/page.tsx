@@ -29,16 +29,14 @@ export default async function FormatsPage() {
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {formatsContent.capabilities.map((format) => (
             <article key={format.title} className="format-card">
-              <p className="eyebrow">{format.title}</p>
-              <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
+              <h2 className="font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
                 {format.title}
               </h2>
               <p className="mt-4 text-sm leading-7 text-[var(--muted)]">{format.text}</p>
             </article>
           ))}
           <article className="format-card">
-            <p className="eyebrow">{formatsContent.herbalExtractPowder.title}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
+            <h2 className="font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
               {formatsContent.herbalExtractPowder.title}
             </h2>
             <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
