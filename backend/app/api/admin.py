@@ -62,23 +62,29 @@ def _build_product_template(categories: list[Category], methods: list[Method]) -
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = "Products"
-    sheet.append(PRODUCT_IMPORT_HEADERS)
-    sheet.append(
-        [
-            categories[0].slug if categories else "herbal-extracts",
-            "Ashwagandha Extract",
-            "Withania somnifera",
-            "Withanolides 5%",
-            "HPLC, HPTLC, Microbiological Testing",
-            1,
-            "TRUE",
-        ]
-    )
+    workbook.active = 0
+
+    sample_row = [
+        categories[0].slug if categories else "herbal-extracts",
+        "Ashwagandha Extract",
+        "Withania somnifera",
+        "Withanolides 5%",
+        "HPLC, HPTLC, Microbiological Testing",
+        1,
+        "TRUE",
+    ]
+
+    for column_number, header in enumerate(PRODUCT_IMPORT_HEADERS, start=1):
+        sheet.cell(row=1, column=column_number, value=header)
+    for column_number, value in enumerate(sample_row, start=1):
+        sheet.cell(row=2, column=column_number, value=value)
 
     header_fill = PatternFill("solid", fgColor="1F5937")
     for cell in sheet[1]:
         cell.font = Font(color="FFFFFF", bold=True)
         cell.fill = header_fill
+    sheet.freeze_panes = "A2"
+    sheet.auto_filter.ref = f"A1:G{sheet.max_row}"
     for column, width in {
         "A": 34,
         "B": 28,

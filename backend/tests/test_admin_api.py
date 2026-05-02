@@ -100,8 +100,18 @@ def test_product_excel_template_and_upload(client, admin_cookie):
     template_response = client.get("/api/admin/products/template", cookies=admin_cookie)
     assert template_response.status_code == 200
     workbook = load_workbook(BytesIO(template_response.content))
-    assert workbook["Products"][1][0].value == "category_slug"
-    assert workbook["Products"][1][4].value == "methods"
+    assert workbook.sheetnames[0] == "Products"
+    assert [cell.value for cell in workbook["Products"][1]] == [
+        "category_slug",
+        "common_name",
+        "botanical_name",
+        "specification",
+        "methods",
+        "sort_order",
+        "is_active",
+    ]
+    assert workbook["Products"]["A2"].value
+    assert "Reference" in workbook.sheetnames
 
     workbook = Workbook()
     sheet = workbook.active
