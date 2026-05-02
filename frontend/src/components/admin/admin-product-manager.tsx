@@ -180,14 +180,6 @@ export function AdminProductManager() {
     }
   }
 
-  function getMethodPreviewText(item: Method) {
-    const trimmed = item.description?.trim();
-    if (!trimmed) {
-      return "Visible on the public catalog for testing method filtering.";
-    }
-    return trimmed.length > 88 ? `${trimmed.slice(0, 88).trimEnd()}...` : trimmed;
-  }
-
   const categoryOptions = [
     { value: "", label: "Select category" },
     ...categories.map((category) => ({
@@ -204,7 +196,7 @@ export function AdminProductManager() {
             <p className="eyebrow">Bulk upload</p>
             <h2 className="admin-title mt-1">Upload products from Excel</h2>
             <p className="admin-inline-help mt-1">
-              Use category slug, product details, comma-separated methods, sort order, and active status.
+              Use category slug, product details, comma-separated methods, and active status.
             </p>
           </div>
           <div className="grid flex-1 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] lg:max-w-3xl">
@@ -256,8 +248,8 @@ export function AdminProductManager() {
         >
           <form className="admin-form-grid p-5" onSubmit={handleSubmit}>
             <div className="grid items-start gap-4">
-              <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div className="admin-field-stack">
+              <div className="grid items-start gap-4 md:grid-cols-2">
+                <div className="admin-field-stack md:col-span-2">
                   <label className="admin-field-label">Category</label>
                   <CustomSelect
                     options={categoryOptions}
@@ -290,19 +282,7 @@ export function AdminProductManager() {
                     }
                   />
                 </div>
-                <div className="admin-field-stack">
-                  <label className="admin-field-label">Sort order</label>
-                  <input
-                    className="field"
-                    type="number"
-                    placeholder="Sort order"
-                    value={form.sort_order}
-                    onChange={(event) =>
-                      setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
-                    }
-                  />
-                </div>
-                <div className="admin-field-stack md:col-span-2 xl:col-span-3">
+                <div className="admin-field-stack md:col-span-2">
                   <label className="admin-field-label">Specification</label>
                   <textarea
                     className="field min-h-24"
@@ -313,7 +293,7 @@ export function AdminProductManager() {
                     }
                   />
                 </div>
-                <label className="admin-choice-row text-sm text-[var(--muted)] xl:col-span-1">
+                <label className="admin-choice-row text-sm text-[var(--muted)] md:max-w-md">
                   <input
                     className="admin-checkbox"
                     type="checkbox"
@@ -344,7 +324,7 @@ export function AdminProductManager() {
                 </div>
                 <div className="admin-method-grid mt-3">
                   {methods.map((item) => (
-                    <label key={item.id} className="admin-choice-row text-sm text-[var(--muted)]">
+                    <label key={item.id} className="admin-choice-row admin-method-choice text-sm text-[var(--muted)]">
                       <input
                         className="admin-checkbox"
                         type="checkbox"
@@ -360,7 +340,6 @@ export function AdminProductManager() {
                       />
                       <span>
                         <span className="block font-medium text-[var(--foreground)]">{item.name}</span>
-                        <span className="admin-inline-help">{getMethodPreviewText(item)}</span>
                       </span>
                     </label>
                   ))}

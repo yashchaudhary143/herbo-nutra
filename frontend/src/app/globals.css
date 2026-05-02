@@ -463,6 +463,10 @@ section[id] {
   @apply grid max-h-56 gap-2 overflow-y-auto rounded-md border border-[var(--line-admin)] bg-white p-2.5 sm:grid-cols-2 xl:grid-cols-3;
 }
 
+.admin-method-choice {
+  @apply min-h-0 items-center py-2;
+}
+
 .admin-checkbox {
   @apply mt-1 h-4 w-4 rounded border-[var(--line-admin-strong)] accent-[var(--green-950)];
 }
@@ -565,7 +569,7 @@ section[id] {
 }
 
 .admin-modal {
-  @apply w-full max-w-4xl rounded-lg border border-[var(--line-admin)] bg-white shadow-[0_28px_80px_rgba(18,33,25,0.24)];
+  @apply max-h-[calc(100vh-4rem)] w-full max-w-4xl overflow-y-auto rounded-lg border border-[var(--line-admin)] bg-white shadow-[0_28px_80px_rgba(18,33,25,0.24)];
 }
 
 .admin-modal-header {
