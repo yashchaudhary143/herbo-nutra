@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/categories", label: "Categories" },
-  { href: "/admin/forms", label: "Forms" },
+  { href: "/admin/methods", label: "Methods" },
   { href: "/admin/products", label: "Products" },
   { href: "/admin/inquiries", label: "Inquiries" },
 ];
@@ -36,7 +36,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               Admin Panel
             </p>
             <h1 className="admin-shell-title">Herbo Nutra</h1>
-            <p className="admin-shell-subtitle">Catalog operations, format control, and inbound leads.</p>
+            <p className="admin-shell-subtitle">Catalog operations, method control, and inbound leads.</p>
             <div className="mt-6 flex flex-col gap-2.5">
             {links.map((link) => {
               const active = pathname === link.href;

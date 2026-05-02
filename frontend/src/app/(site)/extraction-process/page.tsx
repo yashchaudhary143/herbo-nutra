@@ -173,7 +173,7 @@ export default function ExtractionProcessPage() {
         <div className="section-shell py-10 md:py-16">
           <SectionIntro
             label="Flowcharts"
-            title="Manufacturing flowcharts across all 8 forms"
+            title="Manufacturing flowcharts across all 7 forms"
             text="Each process family follows a structured sequence designed to support consistency, stability, and application-ready output."
           />
           <div className="mt-8 grid gap-6">

@@ -1,23 +1,27 @@
+from io import BytesIO
+
+from openpyxl import Workbook, load_workbook
+
+
 def test_dashboard_requires_auth(client):
     response = client.get("/api/admin/dashboard")
     assert response.status_code == 401
 
 
 def test_category_and_product_crud(client, admin_cookie):
-    form_response = client.post(
-        "/api/admin/forms",
+    method_response = client.post(
+        "/api/admin/methods",
         json={
-            "name": "Custom Granulation Technology",
-            "slug": "custom-granulation-technology",
-            "description": "Granulated format for improved handling.",
+            "name": "Custom HPLC",
+            "slug": "custom-hplc",
+            "description": "Custom HPLC method for marker assay.",
             "sort_order": 20,
             "is_active": True,
-            "is_npd_featured": True,
         },
         cookies=admin_cookie,
     )
-    assert form_response.status_code == 201
-    form = form_response.json()
+    assert method_response.status_code == 201
+    method = method_response.json()
 
     category_response = client.post(
         "/api/admin/categories",
@@ -40,7 +44,7 @@ def test_category_and_product_crud(client, admin_cookie):
             "common_name": "Moringa Powder",
             "botanical_name": "Moringa oleifera",
             "specification": "80 mesh, low moisture",
-            "form_ids": [form["id"]],
+            "method_ids": [method["id"]],
             "sort_order": 1,
             "is_active": True,
         },
@@ -49,49 +53,102 @@ def test_category_and_product_crud(client, admin_cookie):
     assert product_response.status_code == 201
     product = product_response.json()
     assert product["category"]["slug"] == "botanical-powders"
-    assert product["forms"][0]["slug"] == "custom-granulation-technology"
+    assert product["methods"][0]["slug"] == "custom-hplc"
 
     update_response = client.put(
         f"/api/admin/products/{product['id']}",
-        json={"specification": "100 mesh, low moisture", "form_ids": []},
+        json={"specification": "100 mesh, low moisture", "method_ids": []},
         cookies=admin_cookie,
     )
     assert update_response.status_code == 200
     assert update_response.json()["specification"] == "100 mesh, low moisture"
-    assert update_response.json()["forms"] == []
+    assert update_response.json()["methods"] == []
 
 
-def test_form_crud(client, admin_cookie):
+def test_method_crud(client, admin_cookie):
     create_response = client.post(
-        "/api/admin/forms",
+        "/api/admin/methods",
         json={
-            "name": "Test Liposomal Technology",
-            "slug": "test-liposomal-technology",
-            "description": "Encapsulated delivery format for testing.",
+            "name": "Test LC-MS/MS",
+            "slug": "test-lc-ms-ms",
+            "description": "Tandem mass spectrometry method for testing.",
             "sort_order": 15,
             "is_active": True,
-            "is_npd_featured": True,
         },
         cookies=admin_cookie,
     )
     assert create_response.status_code == 201
     created = create_response.json()
 
-    list_response = client.get("/api/admin/forms", cookies=admin_cookie)
+    list_response = client.get("/api/admin/methods", cookies=admin_cookie)
     assert list_response.status_code == 200
-    assert any(item["slug"] == "test-liposomal-technology" for item in list_response.json())
+    assert any(item["slug"] == "test-lc-ms-ms" for item in list_response.json())
 
     update_response = client.put(
-        f"/api/admin/forms/{created['id']}",
-        json={"description": "Updated form description", "is_npd_featured": False},
+        f"/api/admin/methods/{created['id']}",
+        json={"description": "Updated method description"},
         cookies=admin_cookie,
     )
     assert update_response.status_code == 200
-    assert update_response.json()["description"] == "Updated form description"
-    assert update_response.json()["is_npd_featured"] is False
+    assert update_response.json()["description"] == "Updated method description"
 
-    delete_response = client.delete(f"/api/admin/forms/{created['id']}", cookies=admin_cookie)
+    delete_response = client.delete(f"/api/admin/methods/{created['id']}", cookies=admin_cookie)
     assert delete_response.status_code == 204
+
+
+def test_product_excel_template_and_upload(client, admin_cookie):
+    template_response = client.get("/api/admin/products/template", cookies=admin_cookie)
+    assert template_response.status_code == 200
+    workbook = load_workbook(BytesIO(template_response.content))
+    assert workbook["Products"][1][0].value == "category_slug"
+    assert workbook["Products"][1][4].value == "methods"
+
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Products"
+    sheet.append([
+        "category_slug",
+        "common_name",
+        "botanical_name",
+        "specification",
+        "methods",
+        "sort_order",
+        "is_active",
+    ])
+    sheet.append([
+        "herbal-extracts",
+        "Excel Product",
+        "Excel botanica",
+        "Marker 10%",
+        "HPLC, Microbiological Testing",
+        99,
+        "TRUE",
+    ])
+    buffer = BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+
+    upload_response = client.post(
+        "/api/admin/products/upload",
+        files={
+            "file": (
+                "products.xlsx",
+                buffer.getvalue(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+        },
+        cookies=admin_cookie,
+    )
+    assert upload_response.status_code == 200
+    assert upload_response.json()["created"] == 1
+
+    products_response = client.get("/api/admin/products", cookies=admin_cookie)
+    product = next(item for item in products_response.json() if item["common_name"] == "Excel Product")
+    assert product["sort_order"] == 99
+    assert [method["slug"] for method in product["methods"]] == [
+        "hplc",
+        "microbiological-testing",
+    ]
 
 
 def test_inquiry_status_update(client, admin_cookie):

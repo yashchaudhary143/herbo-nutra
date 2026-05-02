@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.category import CategoryRead
-from app.schemas.form import FormRead
+from app.schemas.method import MethodRead
 
 
 class ProductBase(BaseModel):
@@ -16,7 +16,7 @@ class ProductBase(BaseModel):
 
 
 class ProductCreate(ProductBase):
-    form_ids: list[int] = []
+    method_ids: list[int] = []
 
 
 class ProductUpdate(BaseModel):
@@ -26,7 +26,7 @@ class ProductUpdate(BaseModel):
     specification: str | None = Field(default=None, min_length=2)
     sort_order: int | None = None
     is_active: bool | None = None
-    form_ids: list[int] | None = None
+    method_ids: list[int] | None = None
 
 
 class ProductRead(ProductBase):
@@ -36,7 +36,7 @@ class ProductRead(ProductBase):
     created_at: datetime
     updated_at: datetime
     category: CategoryRead | None = None
-    forms: list[FormRead] = []
+    methods: list[MethodRead] = []
 
 
 class PaginatedProducts(BaseModel):

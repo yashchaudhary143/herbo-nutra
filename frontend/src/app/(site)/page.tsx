@@ -173,7 +173,7 @@ export default async function HomePage() {
               </div>
               <p className="mt-8 text-base leading-8 text-[var(--muted)]">{homeContent.innovation.closing}</p>
               <div className="mt-8">
-                <Link href="/npd" className="button-link">
+                <Link href="/formats" className="button-link">
                   Explore advanced formats
                   <ArrowRight className="h-4 w-4" />
                 </Link>

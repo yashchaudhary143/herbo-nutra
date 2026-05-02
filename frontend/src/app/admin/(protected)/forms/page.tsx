@@ -1,5 +1,5 @@
-import { AdminFormManager } from "@/components/admin/admin-form-manager";
+import { redirect } from "next/navigation";
 
 export default function AdminFormsPage() {
-  return <AdminFormManager />;
+  redirect("/admin/methods");
 }

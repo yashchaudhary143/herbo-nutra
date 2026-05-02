@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { CustomSelect } from "@/components/custom-select";
-import { ApiError, Category, Form, clientApiFetch, Product } from "@/lib/api";
+import { ApiError, Category, Method, clientApiFetch, Product } from "@/lib/api";
 
 type ProductFormState = {
   id?: number;
@@ -12,7 +12,7 @@ type ProductFormState = {
   common_name: string;
   botanical_name: string;
   specification: string;
-  form_ids: number[];
+  method_ids: number[];
   sort_order: number;
   is_active: boolean;
 };
@@ -22,7 +22,7 @@ const emptyProduct: ProductFormState = {
   common_name: "",
   botanical_name: "",
   specification: "",
-  form_ids: [],
+  method_ids: [],
   sort_order: 0,
   is_active: true,
 };
@@ -30,20 +30,23 @@ const emptyProduct: ProductFormState = {
 export function AdminProductManager() {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [forms, setForms] = useState<Form[]>([]);
+  const [methods, setMethods] = useState<Method[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<ProductFormState>(emptyProduct);
   const [error, setError] = useState<string | null>(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   async function reloadProducts() {
     try {
       const [categoryResponse, formResponse, productResponse] = await Promise.all([
         clientApiFetch<Category[]>("/api/admin/categories"),
-        clientApiFetch<Form[]>("/api/admin/forms"),
+        clientApiFetch<Method[]>("/api/admin/methods"),
         clientApiFetch<Product[]>("/api/admin/products"),
       ]);
       setCategories(categoryResponse);
-      setForms(formResponse);
+      setMethods(formResponse);
       setProducts(productResponse);
     } catch (requestError) {
       if (requestError instanceof ApiError && requestError.status === 401) {
@@ -61,12 +64,12 @@ export function AdminProductManager() {
       try {
         const [categoryResponse, formResponse, productResponse] = await Promise.all([
           clientApiFetch<Category[]>("/api/admin/categories"),
-          clientApiFetch<Form[]>("/api/admin/forms"),
+          clientApiFetch<Method[]>("/api/admin/methods"),
           clientApiFetch<Product[]>("/api/admin/products"),
         ]);
         if (!cancelled) {
           setCategories(categoryResponse);
-          setForms(formResponse);
+          setMethods(formResponse);
           setProducts(productResponse);
         }
       } catch (requestError) {
@@ -128,10 +131,57 @@ export function AdminProductManager() {
     }
   }
 
-  function getFormPreviewText(item: Form) {
+  async function handleUpload(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setUploadMessage(null);
+
+    if (!uploadFile) {
+      setError("Choose an Excel file before uploading.");
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append("file", uploadFile);
+
+    setIsUploading(true);
+    try {
+      const response = await fetch("/api/admin/products/upload", {
+        method: "POST",
+        body: payload,
+        credentials: "include",
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        const detail = data?.detail;
+        const message =
+          typeof detail === "string"
+            ? detail
+            : Array.isArray(detail?.errors)
+              ? detail.errors.join(" ")
+              : typeof detail?.message === "string"
+                ? detail.message
+                : "Unable to upload products.";
+        throw new Error(message);
+      }
+
+      setUploadFile(null);
+      setUploadMessage(
+        `Imported ${data.total} rows: ${data.created} created, ${data.updated} updated.`,
+      );
+      await reloadProducts();
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to upload products.");
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  function getMethodPreviewText(item: Method) {
     const trimmed = item.description?.trim();
     if (!trimmed) {
-      return "Visible on the public catalog and inquiry flow.";
+      return "Visible on the public catalog for testing method filtering.";
     }
     return trimmed.length > 88 ? `${trimmed.slice(0, 88).trimEnd()}...` : trimmed;
   }
@@ -146,6 +196,34 @@ export function AdminProductManager() {
 
   return (
     <div className="space-y-6">
+      <form className="admin-card admin-form-grid" onSubmit={handleUpload}>
+        <div className="admin-panel-header">
+          <p className="eyebrow">Bulk upload</p>
+          <h2 className="admin-title">Upload products from Excel</h2>
+          <p className="admin-inline-help">
+            Use the template columns for category slug, product details, comma-separated methods, sort order, and active status.
+          </p>
+        </div>
+        <div className="grid items-end gap-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
+          <div className="admin-field-stack">
+            <label className="admin-field-label">Excel file</label>
+            <input
+              className="field"
+              type="file"
+              accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              onChange={(event) => setUploadFile(event.target.files?.[0] ?? null)}
+            />
+          </div>
+          <a className="button-secondary text-center" href="/api/admin/products/template">
+            Download template
+          </a>
+          <button className="button-primary min-w-[140px]" type="submit" disabled={isUploading}>
+            {isUploading ? "Uploading..." : "Upload Excel"}
+          </button>
+        </div>
+        {uploadMessage ? <p className="text-sm font-medium text-[var(--forest-700)]">{uploadMessage}</p> : null}
+      </form>
+
       <form className="admin-card admin-form-grid" onSubmit={handleSubmit}>
         <div className="admin-panel-header">
           <p className="eyebrow">{form.id ? "Edit product" : "Add product"}</p>
@@ -228,30 +306,30 @@ export function AdminProductManager() {
           </div>
           <div className="admin-section-card h-full">
             <div className="admin-field-stack">
-              <p className="admin-field-label">Available forms</p>
+              <p className="admin-field-label">Available methods</p>
               <p className="admin-inline-help">
-                Link each product to the formats and technologies customers can request from the catalog.
+                Link each product to the testing methods used for specification and quality review.
               </p>
             </div>
             <div className="admin-choice-grid mt-3">
-              {forms.map((item) => (
+              {methods.map((item) => (
                 <label key={item.id} className="admin-choice-row text-sm text-[var(--muted)]">
                   <input
                     className="admin-checkbox"
                     type="checkbox"
-                    checked={form.form_ids.includes(item.id)}
+                    checked={form.method_ids.includes(item.id)}
                     onChange={(event) =>
                       setForm((state) => ({
                         ...state,
-                        form_ids: event.target.checked
-                          ? [...state.form_ids, item.id]
-                          : state.form_ids.filter((id) => id !== item.id),
+                        method_ids: event.target.checked
+                          ? [...state.method_ids, item.id]
+                          : state.method_ids.filter((id) => id !== item.id),
                       }))
                     }
                   />
                   <span>
                     <span className="block font-medium text-[var(--foreground)]">{item.name}</span>
-                    <span className="admin-inline-help">{getFormPreviewText(item)}</span>
+                    <span className="admin-inline-help">{getMethodPreviewText(item)}</span>
                   </span>
                 </label>
               ))}
@@ -283,7 +361,7 @@ export function AdminProductManager() {
               <th>Botanical Name</th>
               <th>Specification</th>
               <th>Category</th>
-              <th>Forms</th>
+              <th>Methods</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -294,7 +372,7 @@ export function AdminProductManager() {
                 <td>{product.botanical_name}</td>
                 <td>{product.specification}</td>
                 <td>{product.category?.name ?? "-"}</td>
-                <td>{product.forms.length ? product.forms.map((item) => item.name).join(", ") : "-"}</td>
+                <td>{product.methods.length ? product.methods.map((item) => item.name).join(", ") : "-"}</td>
                 <td>
                   <div className="flex gap-3">
                     <button
@@ -307,7 +385,7 @@ export function AdminProductManager() {
                           common_name: product.common_name,
                           botanical_name: product.botanical_name,
                           specification: product.specification,
-                          form_ids: product.forms.map((item) => item.id),
+                          method_ids: product.methods.map((item) => item.id),
                           sort_order: product.sort_order,
                           is_active: product.is_active,
                         })

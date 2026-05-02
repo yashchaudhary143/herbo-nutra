@@ -21,7 +21,7 @@ def test_search_products(client):
     payload = response.json()
     assert payload["total"] >= 1
     assert payload["items"][0]["common_name"] == "Ashwagandha Extract"
-    assert isinstance(payload["items"][0]["forms"], list)
+    assert isinstance(payload["items"][0]["methods"], list)
 
 
 def test_category_products(client):
@@ -30,38 +30,39 @@ def test_category_products(client):
     payload = response.json()
     assert payload["category"]["slug"] == "herbal-extracts"
     assert payload["items"]
-    assert "forms" in payload["items"][0]
+    assert "methods" in payload["items"][0]
 
 
-def test_list_forms(client):
-    response = client.get("/api/forms")
+def test_list_methods(client):
+    response = client.get("/api/methods")
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload) == 8
-    assert any(item["slug"] == "liposomal-technology" for item in payload)
+    assert len(payload) == 9
+    assert any(item["slug"] == "hplc" for item in payload)
+    assert any(item["slug"] == "microbiological-testing" for item in payload)
 
 
-def test_filter_products_by_form(client):
-    response = client.get("/api/products", params={"form": "micronization-technology"})
+def test_filter_products_by_method(client):
+    response = client.get("/api/products", params={"method": "hplc"})
     assert response.status_code == 200
     payload = response.json()
     assert payload["total"] >= 1
     assert all(
-        any(form["slug"] == "micronization-technology" for form in item["forms"])
+        any(method["slug"] == "hplc" for method in item["methods"])
         for item in payload["items"]
     )
 
 
-def test_filter_category_products_by_form(client):
+def test_filter_category_products_by_method(client):
     response = client.get(
         "/api/categories/herbal-extracts/products",
-        params={"form": "phytosome-technology"},
+        params={"method": "hptlc"},
     )
     assert response.status_code == 200
     payload = response.json()
     assert payload["items"]
     assert all(
-        any(form["slug"] == "phytosome-technology" for form in item["forms"])
+        any(method["slug"] == "hptlc" for method in item["methods"])
         for item in payload["items"]
     )
 

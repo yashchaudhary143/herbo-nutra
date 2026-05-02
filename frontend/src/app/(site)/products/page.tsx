@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { fetchCategories, fetchForms, fetchProducts } from "@/lib/api";
+import { fetchCategories, fetchMethods, fetchProducts } from "@/lib/api";
 import { MediaPlaceholder } from "@/components/media-placeholder";
 import { ProductCatalog } from "@/components/product-catalog";
 import { SectionIntro } from "@/components/section-intro";
@@ -21,19 +21,19 @@ export const metadata = buildMetadata({
 
 type ProductsPageProps = {
   searchParams?: Promise<{
-    form?: string;
+    method?: string;
     search?: string;
   }>;
 };
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const selectedForm = resolvedSearchParams?.form ?? "";
+  const selectedMethod = resolvedSearchParams?.method ?? "";
   const selectedSearch = resolvedSearchParams?.search ?? "";
-  const [categories, forms, productCatalog] = await Promise.all([
+  const [categories, methods, productCatalog] = await Promise.all([
     fetchCategories(),
-    fetchForms(),
-    fetchProducts({ form: selectedForm, search: selectedSearch }),
+    fetchMethods(),
+    fetchProducts({ method: selectedMethod, search: selectedSearch }),
   ]);
 
   return (
@@ -50,8 +50,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <section id="categories" className="border-t border-[var(--line)] bg-[var(--surface-muted)]">
         <div className="section-shell py-10 md:py-16">
           <SectionIntro
-            title="Browse categories"
-            text="Review categories first to align the right ingredients and formats with your formulation needs."
+          title="Browse categories"
+          text="Review categories first to align the right ingredients, specifications, and testing methods with your formulation needs."
             align="compact"
           />
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -75,9 +75,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <section className="section-shell">
         <ProductCatalog
           categories={categories}
-          forms={forms}
+          methods={methods}
           initialData={productCatalog}
-          initialFormSlug={selectedForm}
+          initialMethodSlug={selectedMethod}
           initialSearchValue={selectedSearch}
         />
       </section>

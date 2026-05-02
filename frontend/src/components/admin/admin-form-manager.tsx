@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ApiError, Form, clientApiFetch } from "@/lib/api";
+import { ApiError, Method, clientApiFetch } from "@/lib/api";
 
 type FormState = {
   id?: number;
@@ -12,7 +12,6 @@ type FormState = {
   description: string;
   sort_order: number;
   is_active: boolean;
-  is_npd_featured: boolean;
 };
 
 const emptyState: FormState = {
@@ -21,25 +20,24 @@ const emptyState: FormState = {
   description: "",
   sort_order: 0,
   is_active: true,
-  is_npd_featured: false,
 };
 
-export function AdminFormManager() {
+export function AdminMethodManager() {
   const router = useRouter();
-  const [items, setItems] = useState<Form[]>([]);
+  const [items, setItems] = useState<Method[]>([]);
   const [form, setForm] = useState<FormState>(emptyState);
   const [error, setError] = useState<string | null>(null);
 
-  async function reloadForms() {
+  async function reloadMethods() {
     try {
-      const response = await clientApiFetch<Form[]>("/api/admin/forms");
+      const response = await clientApiFetch<Method[]>("/api/admin/methods");
       setItems(response);
     } catch (requestError) {
       if (requestError instanceof ApiError && requestError.status === 401) {
         router.push("/admin/login");
         return;
       }
-      setError(requestError instanceof Error ? requestError.message : "Unable to load forms.");
+      setError(requestError instanceof Error ? requestError.message : "Unable to load methods.");
     }
   }
 
@@ -48,7 +46,7 @@ export function AdminFormManager() {
 
     async function loadOnMount() {
       try {
-        const response = await clientApiFetch<Form[]>("/api/admin/forms");
+        const response = await clientApiFetch<Method[]>("/api/admin/methods");
         if (!cancelled) {
           setItems(response);
         }
@@ -58,7 +56,7 @@ export function AdminFormManager() {
           return;
         }
         if (!cancelled) {
-          setError(requestError instanceof Error ? requestError.message : "Unable to load forms.");
+          setError(requestError instanceof Error ? requestError.message : "Unable to load methods.");
         }
       }
     }
@@ -75,34 +73,34 @@ export function AdminFormManager() {
 
     try {
       if (form.id) {
-        await clientApiFetch(`/api/admin/forms/${form.id}`, {
+        await clientApiFetch(`/api/admin/methods/${form.id}`, {
           method: "PUT",
           body: JSON.stringify(form),
         });
       } else {
-        await clientApiFetch("/api/admin/forms", {
+        await clientApiFetch("/api/admin/methods", {
           method: "POST",
           body: JSON.stringify(form),
         });
       }
       setForm(emptyState);
-      await reloadForms();
+      await reloadMethods();
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to save form.");
+      setError(requestError instanceof Error ? requestError.message : "Unable to save method.");
     }
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm("Delete this form?")) {
+    if (!window.confirm("Delete this method?")) {
       return;
     }
     setError(null);
     try {
-      await clientApiFetch(`/api/admin/forms/${id}`, { method: "DELETE" });
+      await clientApiFetch(`/api/admin/methods/${id}`, { method: "DELETE" });
       setItems((current) => current.filter((item) => item.id !== id));
       setForm((current) => (current.id === id ? emptyState : current));
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to delete form.");
+      setError(requestError instanceof Error ? requestError.message : "Unable to delete method.");
     }
   }
 
@@ -110,15 +108,15 @@ export function AdminFormManager() {
     <div className="space-y-6">
       <form className="admin-card admin-form-grid" onSubmit={handleSubmit}>
         <div className="admin-panel-header">
-          <p className="eyebrow">{form.id ? "Edit form" : "Add form"}</p>
-          <h2 className="admin-title">Product forms and technologies</h2>
+          <p className="eyebrow">{form.id ? "Edit method" : "Add method"}</p>
+          <h2 className="admin-title">Testing methods</h2>
         </div>
         <div className="grid items-start gap-4 md:grid-cols-2">
           <div className="admin-field-stack">
-            <label className="admin-field-label">Form name</label>
+            <label className="admin-field-label">Method name</label>
             <input
               className="field"
-              placeholder="Form name"
+              placeholder="Method name"
               value={form.name}
               onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
             />
@@ -166,25 +164,7 @@ export function AdminFormManager() {
               <span>
                 <span className="block font-medium text-[var(--foreground)]">Active</span>
                 <span className="admin-inline-help">
-                  Inactive forms stay available in admin but are removed from public filtering and NPD highlights.
-                </span>
-              </span>
-            </label>
-            <label className="admin-choice-row text-sm text-[var(--muted)]">
-              <input
-                className="admin-checkbox"
-                type="checkbox"
-                checked={form.is_npd_featured}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, is_npd_featured: event.target.checked }))
-                }
-              />
-              <span>
-                <span className="block font-medium text-[var(--foreground)]">
-                  Feature on Formats page
-                </span>
-                <span className="admin-inline-help">
-                  Featured items appear as highlighted technologies on the public NPD experience.
+                  Inactive methods stay available in admin but are removed from public filtering.
                 </span>
               </span>
             </label>
@@ -192,7 +172,7 @@ export function AdminFormManager() {
         </div>
         <div className="admin-actions border-t border-[var(--line-admin)] pt-4">
           <button className="button-primary" type="submit">
-            {form.id ? "Update form" : "Create form"}
+            {form.id ? "Update method" : "Create method"}
           </button>
           {form.id ? (
             <button className="button-secondary" type="button" onClick={() => setForm(emptyState)}>
@@ -209,7 +189,6 @@ export function AdminFormManager() {
             <tr>
               <th>Name</th>
               <th>Slug</th>
-              <th>Formats Page</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -219,7 +198,6 @@ export function AdminFormManager() {
               <tr key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.slug}</td>
-                <td>{item.is_npd_featured ? "Featured" : "-"}</td>
                 <td>{item.is_active ? "Active" : "Inactive"}</td>
                 <td>
                   <div className="flex gap-3">
@@ -234,7 +212,6 @@ export function AdminFormManager() {
                           description: item.description ?? "",
                           sort_order: item.sort_order,
                           is_active: item.is_active,
-                          is_npd_featured: item.is_npd_featured,
                         })
                       }
                     >

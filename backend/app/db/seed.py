@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.core.security import hash_password
-from app.models import AdminUser, Category, Form, Product
+from app.models import AdminUser, Category, Method, Product
 
 CATEGORY_DEFINITIONS = [
     {
@@ -33,62 +33,60 @@ CATEGORY_DEFINITIONS = [
     },
 ]
 
-FORM_DEFINITIONS = [
+METHOD_DEFINITIONS = [
     {
-        "name": "Herbal Extracts",
-        "slug": "herbal-extracts",
-        "description": "We employ advanced hydro-alcoholic extraction and precision concentration technologies to isolate bioactive compounds from selected botanical sources while preserving heat-sensitive phytoconstituents and delivering stable, highly dispersible extracts.",
+        "name": "HPLC",
+        "slug": "hplc",
+        "description": "High-performance liquid chromatography for marker compound assay, potency checks, and identity support.",
         "sort_order": 1,
-        "is_npd_featured": False,
     },
     {
-        "name": "Plant Sourced Vitamins & Minerals",
-        "slug": "natural-sourced-vitamins-minerals",
-        "description": "Our vitamins and minerals are derived using selective extraction and purification technologies from plant-sourced materials, maintaining nutrient structure, purity, stability, and label-friendly positioning.",
+        "name": "LC-MS/MS",
+        "slug": "lc-ms-ms",
+        "description": "Liquid chromatography tandem mass spectrometry for sensitive multi-analyte confirmation and trace-level review.",
         "sort_order": 2,
-        "is_npd_featured": False,
     },
     {
-        "name": "Amino Acids",
-        "slug": "amino-acids",
-        "description": "We utilize controlled fermentation and enzymatic hydrolysis technologies followed by advanced purification and crystallization to deliver amino acids with high purity, consistency, and formulation performance.",
+        "name": "GC-MS",
+        "slug": "gc-ms",
+        "description": "Gas chromatography mass spectrometry for volatile compounds, aroma-linked actives, and residual solvent checks.",
         "sort_order": 3,
-        "is_npd_featured": False,
     },
     {
-        "name": "Liposomal Technology",
-        "slug": "liposomal-technology",
-        "description": "Our liposomal technology uses phospholipid-based encapsulation, high-shear homogenization, and nano-sizing techniques to protect actives from degradation and improve stability, efficacy, and absorption.",
+        "name": "ICP-MS",
+        "slug": "icp-ms",
+        "description": "Inductively coupled plasma mass spectrometry for trace elemental and heavy metal analysis.",
         "sort_order": 4,
-        "is_npd_featured": True,
     },
     {
-        "name": "Micronization Technology",
-        "slug": "micronization-technology",
-        "description": "We apply micronization technologies including jet milling to reduce particle size with micro-level precision, improving surface area, dissolution, solubility, dispersion, and formulation compatibility.",
+        "name": "ICP-OES",
+        "slug": "icp-oes",
+        "description": "Inductively coupled plasma optical emission spectroscopy for elemental assay and mineral profiling.",
         "sort_order": 5,
-        "is_npd_featured": True,
     },
     {
-        "name": "Phytosome Technology",
-        "slug": "phytosome-technology",
-        "description": "Our phytosome technology integrates herbal actives with phospholipids to form bioavailable complexes that significantly improve the absorption, stability, and effective utilization of botanical ingredients.",
+        "name": "HPTLC",
+        "slug": "hptlc",
+        "description": "High-performance thin-layer chromatography for botanical fingerprinting and identity comparison.",
         "sort_order": 6,
-        "is_npd_featured": True,
     },
     {
-        "name": "Granulation Technology",
-        "slug": "granulation-technology",
-        "description": "We use controlled granulation processes to transform fine powders into uniform, free-flowing granules that improve flowability, reduce dust, and support handling, compressibility, and process efficiency.",
+        "name": "UV-Vis",
+        "slug": "uv-vis",
+        "description": "Ultraviolet-visible spectroscopy for absorbance-based assay and routine quality checks.",
         "sort_order": 7,
-        "is_npd_featured": True,
     },
     {
-        "name": "Nucleotide Technology",
-        "slug": "nucleotide-technology",
-        "description": "Our nucleotide production is driven by advanced fermentation and enzymatic processing followed by multi-stage purification to deliver stable, bioactive nucleotide fractions for nutritional and functional formulations.",
+        "name": "AAS",
+        "slug": "aas",
+        "description": "Atomic absorption spectroscopy for targeted elemental and mineral testing.",
         "sort_order": 8,
-        "is_npd_featured": True,
+    },
+    {
+        "name": "Microbiological Testing",
+        "slug": "microbiological-testing",
+        "description": "Microbiological testing for total counts, yeast and mold, and pathogen-related quality review.",
+        "sort_order": 9,
     },
 ]
 
@@ -223,30 +221,28 @@ def infer_category_slug(product: dict[str, str]) -> str:
     return "herbal-extracts"
 
 
-def infer_form_slugs(product: dict[str, str], category_slug: str) -> list[str]:
+def infer_method_slugs(product: dict[str, str], category_slug: str) -> list[str]:
     name = f"{product['common_name']} {product['botanical_name']} {product['specification']}".lower()
-    form_slugs: list[str] = []
+    method_slugs: list[str] = ["microbiological-testing"]
 
     if category_slug == "amino-acids":
-        form_slugs.append("amino-acids")
+        method_slugs.extend(["hplc", "uv-vis"])
     elif category_slug == "plant-sourced-vitamins-minerals":
-        form_slugs.append("natural-sourced-vitamins-minerals")
+        method_slugs.extend(["icp-ms", "icp-oes", "aas"])
     else:
-        form_slugs.append("herbal-extracts")
+        method_slugs.extend(["hplc", "hptlc"])
 
-    if any(keyword in name for keyword in ("turmeric", "green tea", "vitamin c")):
-        form_slugs.append("liposomal-technology")
-    if any(keyword in name for keyword in ("turmeric", "ashwagandha", "arginine", "zinc", "bacopa")):
-        form_slugs.append("micronization-technology")
-    if any(keyword in name for keyword in ("turmeric", "milk thistle", "boswellia", "ginkgo", "green tea")):
-        form_slugs.append("phytosome-technology")
-    if any(keyword in name for keyword in ("vitamin c", "zinc", "carnitine", "garlic", "ginger")):
-        form_slugs.append("granulation-technology")
-    if any(keyword in name for keyword in ("vitamin c", "zinc gluconate")):
-        form_slugs.append("nucleotide-technology")
+    if any(keyword in name for keyword in ("garlic", "ginger", "black pepper")):
+        method_slugs.append("gc-ms")
+    if any(keyword in name for keyword in ("vitamin c", "resveratrol", "green tea")):
+        method_slugs.append("lc-ms-ms")
+    if any(keyword in name for keyword in ("zinc", "mineral")):
+        method_slugs.extend(["icp-ms", "icp-oes", "aas"])
+    if any(keyword in name for keyword in ("mushroom", "polysaccharides", "beta-glucans")):
+        method_slugs.append("uv-vis")
 
     deduped: list[str] = []
-    for slug in form_slugs:
+    for slug in method_slugs:
         if slug not in deduped:
             deduped.append(slug)
     return deduped
@@ -281,15 +277,15 @@ def _upsert_category(session: Session, payload: dict[str, object]) -> Category:
     return category
 
 
-def _upsert_form(session: Session, payload: dict[str, object]) -> Form:
-    item = session.scalar(select(Form).where(Form.slug == payload["slug"]))
+def _upsert_method(session: Session, payload: dict[str, object]) -> Method:
+    item = session.scalar(select(Method).where(Method.slug == payload["slug"]))
     if item:
         for key, value in payload.items():
             setattr(item, key, value)
         session.add(item)
         return item
 
-    item = Form(**payload)
+    item = Method(**payload)
     session.add(item)
     session.flush()
     return item
@@ -299,7 +295,7 @@ def _upsert_product(
     session: Session,
     category_id: int,
     payload: dict[str, object],
-    forms: list[Form],
+    methods: list[Method],
 ) -> None:
     product = session.scalar(
         select(Product).where(
@@ -311,16 +307,16 @@ def _upsert_product(
         product.category_id = category_id
         for key, value in payload.items():
             setattr(product, key, value)
-        product.forms = forms
+        product.methods = methods
         session.add(product)
         return
 
-    session.add(Product(category_id=category_id, forms=forms, **payload))
+    session.add(Product(category_id=category_id, methods=methods, **payload))
 
 
 def seed_sample_catalog(session: Session) -> None:
     categories: dict[str, Category] = {}
-    forms: dict[str, Form] = {}
+    methods: dict[str, Method] = {}
     active_slugs = {payload["slug"] for payload in CATEGORY_DEFINITIONS}
 
     for category_payload in CATEGORY_DEFINITIONS:
@@ -332,21 +328,23 @@ def seed_sample_catalog(session: Session) -> None:
             legacy_category.is_active = False
             session.add(legacy_category)
 
-    for form_payload in FORM_DEFINITIONS:
-        item = _upsert_form(session, form_payload)
-        forms[item.slug] = item
+    for method_payload in METHOD_DEFINITIONS:
+        item = _upsert_method(session, method_payload)
+        methods[item.slug] = item
 
     session.flush()
 
     for index, product_data in enumerate(SEED_PRODUCTS, start=1):
         category_slug = infer_category_slug(product_data)
         category = categories[category_slug]
-        product_forms = [forms[slug] for slug in infer_form_slugs(product_data, category_slug) if slug in forms]
+        product_methods = [
+            methods[slug] for slug in infer_method_slugs(product_data, category_slug) if slug in methods
+        ]
         payload = {
             **product_data,
             "sort_order": index,
             "is_active": True,
         }
-        _upsert_product(session, category.id, payload, product_forms)
+        _upsert_product(session, category.id, payload, product_methods)
 
     session.commit()

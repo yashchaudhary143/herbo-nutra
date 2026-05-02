@@ -8,7 +8,7 @@ import {
   Category,
   CategoryProductsResponse,
   clientApiFetch,
-  Form,
+  Method,
   PaginatedProducts,
   Product,
 } from "@/lib/api";
@@ -16,10 +16,10 @@ import { getPublicCategoryLabel } from "@/lib/site";
 
 type ProductCatalogProps = {
   categories: Category[];
-  forms: Form[];
+  methods: Method[];
   initialData: PaginatedProducts | CategoryProductsResponse;
   lockedCategorySlug?: string;
-  initialFormSlug?: string;
+  initialMethodSlug?: string;
   initialSearchValue?: string;
 };
 
@@ -31,14 +31,14 @@ function isCategoryResponse(
 
 export function ProductCatalog({
   categories,
-  forms,
+  methods,
   initialData,
   lockedCategorySlug,
-  initialFormSlug = "",
+  initialMethodSlug = "",
   initialSearchValue = "",
 }: ProductCatalogProps) {
   const [selectedCategory, setSelectedCategory] = useState(lockedCategorySlug ?? "");
-  const [selectedForm, setSelectedForm] = useState(initialFormSlug);
+  const [selectedMethod, setSelectedMethod] = useState(initialMethodSlug);
   const [searchTerm, setSearchTerm] = useState(initialSearchValue);
   const [response, setResponse] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,8 +87,8 @@ export function ProductCatalog({
     const active = { current: true };
     const params = new URLSearchParams({ limit: "100" });
 
-    if (selectedForm) {
-      params.set("form", selectedForm);
+    if (selectedMethod) {
+      params.set("method", selectedMethod);
     }
     if (searchTerm.trim()) {
       params.set("search", searchTerm.trim());
@@ -108,7 +108,7 @@ export function ProductCatalog({
     return () => {
       active.current = false;
     };
-  }, [lockedCategorySlug, searchTerm, selectedCategory, selectedForm]);
+  }, [lockedCategorySlug, searchTerm, selectedCategory, selectedMethod]);
 
   const items = response.items;
   const categoryOptions = [
@@ -118,9 +118,9 @@ export function ProductCatalog({
       label: getPublicCategoryLabel(category.slug, category.name),
     })),
   ];
-  const formOptions = [
-    { value: "", label: "All forms" },
-    ...forms.map((form) => ({ value: form.slug, label: form.name })),
+  const methodOptions = [
+    { value: "", label: "All methods" },
+    ...methods.map((method) => ({ value: method.slug, label: method.name })),
   ];
 
   return (
@@ -129,7 +129,7 @@ export function ProductCatalog({
         <div>
           <h2 className="section-title text-2xl md:text-4xl">Product table</h2>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
-            Search products, compare specifications, and narrow the range by category or format.
+            Search products, compare specifications, and narrow the range by category or testing method.
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-3 sm:items-start">
@@ -159,10 +159,10 @@ export function ProductCatalog({
             />
           )}
           <CustomSelect
-            options={formOptions}
-            value={selectedForm}
-            onChange={setSelectedForm}
-            ariaLabel="Filter by form"
+            options={methodOptions}
+            value={selectedMethod}
+            onChange={setSelectedMethod}
+            ariaLabel="Filter by testing method"
             triggerClassName="h-14"
           />
         </div>
@@ -183,46 +183,48 @@ export function ProductCatalog({
               <th>Common Name</th>
               <th>Botanical Name</th>
               <th>Specification</th>
-              <th>Forms</th>
+              <th>Methods</th>
               {!lockedCategorySlug ? <th>Category</th> : null}
             </tr>
           </thead>
           <tbody>
             {items.length ? (
-              items.map((product: Product) => (
-                <tr key={product.id}>
-                  <td className="font-semibold text-[var(--foreground)]">{product.common_name}</td>
-                  <td>{product.botanical_name}</td>
-                  <td>{product.specification}</td>
-                  <td>
-                    {product.forms.length ? (
-                      <div className="flex flex-wrap gap-2">
-                        {product.forms.map((form) => (
-                          <span
-                            key={form.id}
-                            className="border border-[var(--line)] bg-[var(--surface-muted)] px-2 py-1 text-xs font-medium text-[var(--foreground)]"
-                          >
-                            {form.name}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  {!lockedCategorySlug ? (
+              items.map((product: Product) => {
+                return (
+                  <tr key={product.id}>
+                    <td className="font-semibold text-[var(--foreground)]">{product.common_name}</td>
+                    <td>{product.botanical_name}</td>
+                    <td>{product.specification}</td>
                     <td>
-                      {product.category ? (
-                        <span className="text-sm font-medium text-[var(--foreground)]">
-                          {getPublicCategoryLabel(product.category.slug, product.category.name)}
-                        </span>
+                      {product.methods.length ? (
+                        <div className="flex flex-wrap gap-2">
+                          {product.methods.map((method) => (
+                            <span
+                              key={method.id}
+                              className="border border-[var(--line)] bg-[var(--surface-muted)] px-2 py-1 text-xs font-medium text-[var(--foreground)]"
+                            >
+                              {method.name}
+                            </span>
+                          ))}
+                        </div>
                       ) : (
                         "-"
                       )}
                     </td>
-                  ) : null}
-                </tr>
-              ))
+                    {!lockedCategorySlug ? (
+                      <td>
+                        {product.category ? (
+                          <span className="text-sm font-medium text-[var(--foreground)]">
+                            {getPublicCategoryLabel(product.category.slug, product.category.name)}
+                          </span>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    ) : null}
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td

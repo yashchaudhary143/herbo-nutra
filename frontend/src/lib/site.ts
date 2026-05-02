@@ -38,7 +38,7 @@ export type MediaSlot = {
 export const navigation = [
   { href: "/about", label: "About Us" },
   { href: "/products", label: "Products" },
-  { href: "/npd", label: "Formats" },
+  { href: "/formats", label: "Formats" },
   { href: "/sustainability", label: "Sustainability" },
   { href: "/extraction-process", label: "Manufacturing" },
   { href: "/contact", label: "Contact Us" },
@@ -586,24 +586,6 @@ export const manufacturingFlowcharts = [
       "Packing",
     ],
   },
-  {
-    title: "Nucleotides",
-    subtitle: "Fermentation And Purification Based",
-    image: "/images/QualityControl.jpg",
-    steps: [
-      "Raw Material Selection (Yeast / Fermentation Base)",
-      "Fermentation / Enzymatic Hydrolysis",
-      "Cell Disruption",
-      "Filtration",
-      "Purification (Chromatography / Ion Exchange)",
-      "Concentration",
-      "Crystallization",
-      "Drying",
-      "Milling / Sieving",
-      "Blending",
-      "Packing",
-    ],
-  },
 ];
 
 export const founderContent = {
@@ -671,10 +653,10 @@ export const sustainabilityContent = {
     "A considered approach balancing responsibility, consistency, and long-term viability.",
 };
 
-export const npdContent = {
+export const formatsContent = {
   title: "Advanced formats for formulation-led ingredient development.",
   summary:
-    "This section brings together the specialized ingredient formats currently available across liposomal, micronized, phytosome, granulated, and nucleotide technologies.",
+    "This section brings together the specialized ingredient formats currently available across liposomal, micronized, phytosome, and granulated technologies.",
   heroMedia: {
     src: "/images/QualityControl.jpg",
     title: "Advanced formats and formulation image",
@@ -713,10 +695,6 @@ export const npdContent = {
     {
       title: "Granulated",
       text: "Granulated ingredient options for improved handling, flow properties, and downstream manufacturing suitability.",
-    },
-    {
-      title: "Nucleotide",
-      text: "Nucleotide-based development support for targeted nutraceutical and functional nutrition programs.",
     },
   ],
   points: [
@@ -813,8 +791,8 @@ export const seoDescriptions = {
     "Learn about Herbo Nutra Extract Pvt. Ltd., its manufacturing profile, quality approach, and B2B ingredient focus.",
   products:
     "Browse herbal extracts, amino acids, vitamins, minerals, and nutraceutical ingredients in a structured B2B catalog.",
-  npd:
-    "Review Herbo Nutra Extract's advanced ingredient formats across liposomal, micronized, phytosome, granulated, and nucleotide technologies.",
+  formats:
+    "Review Herbo Nutra Extract's advanced ingredient formats across liposomal, micronized, phytosome, and granulated technologies.",
   sustainability:
     "Review Herbo Nutra Extract Pvt. Ltd.'s sustainability approach across sourcing, process stability, resource efficiency, and traceable supply systems.",
   process:

@@ -29,9 +29,9 @@ class Product(Base):
     )
 
     category = relationship("Category", back_populates="products")
-    forms = relationship(
-        "Form",
-        secondary="product_forms",
+    methods = relationship(
+        "Method",
+        secondary="product_methods",
         back_populates="products",
-        order_by="Form.sort_order",
+        order_by="Method.sort_order",
     )

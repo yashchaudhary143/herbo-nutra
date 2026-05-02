@@ -25,7 +25,9 @@ def test_alembic_upgrade_head_matches_runtime_tables(tmp_path, monkeypatch):
     engine = create_engine(database_url)
     inspector = inspect(engine)
 
-    assert {"forms", "product_forms"}.issubset(inspector.get_table_names())
+    tables = set(inspector.get_table_names())
+    assert {"methods", "product_methods"}.issubset(tables)
+    assert "product_forms" not in tables
     assert "whatsapp_status" not in {
         column["name"] for column in inspector.get_columns("inquiries")
     }

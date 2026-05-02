@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProductCatalog } from "@/components/product-catalog";
-import type { Category, Form, PaginatedProducts } from "@/lib/api";
+import type { Category, Method, PaginatedProducts } from "@/lib/api";
 
 const categories: Category[] = [
   {
@@ -30,26 +30,24 @@ const categories: Category[] = [
   },
 ];
 
-const forms: Form[] = [
+const methods: Method[] = [
   {
     id: 1,
-    name: "Herbal Extracts",
-    slug: "herbal-extracts",
-    description: "Standardized botanical extract format.",
+    name: "HPLC",
+    slug: "hplc",
+    description: "Marker compound assay.",
     sort_order: 1,
     is_active: true,
-    is_npd_featured: false,
     created_at: "",
     updated_at: "",
   },
   {
     id: 2,
-    name: "Micronization Technology",
-    slug: "micronization-technology",
-    description: "Reduced particle size for improved dispersion.",
+    name: "LC-MS/MS",
+    slug: "lc-ms-ms",
+    description: "Trace-level confirmation.",
     sort_order: 2,
     is_active: true,
-    is_npd_featured: true,
     created_at: "",
     updated_at: "",
   },
@@ -71,7 +69,7 @@ const initialData: PaginatedProducts = {
       created_at: "",
       updated_at: "",
       category: categories[1],
-      forms: [forms[0], forms[1]],
+      methods: [methods[0], methods[1]],
     },
     {
       id: 2,
@@ -84,7 +82,7 @@ const initialData: PaginatedProducts = {
       created_at: "",
       updated_at: "",
       category: categories[1],
-      forms: [forms[0]],
+      methods: [methods[0]],
     },
   ],
 };
@@ -113,7 +111,7 @@ describe("ProductCatalog", () => {
 
     vi.stubGlobal("fetch", fetchMock);
 
-    render(<ProductCatalog categories={categories} forms={forms} initialData={initialData} />);
+    render(<ProductCatalog categories={categories} methods={methods} initialData={initialData} />);
 
     await userEvent.type(screen.getByPlaceholderText(/search product details/i), "ashwa");
 
@@ -141,9 +139,9 @@ describe("ProductCatalog", () => {
     render(
       <ProductCatalog
         categories={categories}
-        forms={forms}
+        methods={methods}
         initialData={initialData}
-        initialFormSlug="micronization-technology"
+        initialMethodSlug="lc-ms-ms"
         initialSearchValue="ashwagandha"
       />,
     );
@@ -153,7 +151,7 @@ describe("ProductCatalog", () => {
     });
 
     expect(fetchMock).toHaveBeenLastCalledWith(
-      expect.stringContaining("form=micronization-technology"),
+      expect.stringContaining("method=lc-ms-ms"),
       expect.any(Object),
     );
     expect(fetchMock).toHaveBeenLastCalledWith(

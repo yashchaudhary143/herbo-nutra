@@ -39,9 +39,9 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
       { label: "Certifications", href: "/about#certifications" },
     ],
     "/products": productSections,
-    "/npd": [
-      { label: "Overview", href: "/npd#formats-hero" },
-      { label: "Available formats", href: "/npd#available-formats" },
+    "/formats": [
+      { label: "Overview", href: "/formats#formats-hero" },
+      { label: "Available formats", href: "/formats#available-formats" },
     ],
     "/sustainability": [
       { label: "Overview", href: "/sustainability" },

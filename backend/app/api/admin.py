@@ -1,17 +1,223 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from io import BytesIO
+
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi.responses import StreamingResponse
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, PatternFill
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 from app.api.deps import get_current_admin
 from app.db.session import get_db
-from app.models import Category, Form, Inquiry, Product
+from app.models import Category, Inquiry, Method, Product
 from app.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
 from app.schemas.dashboard import DashboardStats
-from app.schemas.form import FormCreate, FormRead, FormUpdate
 from app.schemas.inquiry import InquiryRead, InquiryUpdate, PaginatedInquiries
+from app.schemas.method import MethodCreate, MethodRead, MethodUpdate
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+PRODUCT_IMPORT_HEADERS = [
+    "category_slug",
+    "common_name",
+    "botanical_name",
+    "specification",
+    "methods",
+    "sort_order",
+    "is_active",
+]
+
+
+def _normalize_import_value(value: object) -> str:
+    return str(value).strip() if value is not None else ""
+
+
+def _normalize_lookup(value: str) -> str:
+    return value.strip().lower()
+
+
+def _parse_bool(value: object, default: bool = True) -> bool:
+    if value is None or str(value).strip() == "":
+        return default
+    if isinstance(value, bool):
+        return value
+    normalized = str(value).strip().lower()
+    if normalized in {"true", "yes", "y", "1", "active"}:
+        return True
+    if normalized in {"false", "no", "n", "0", "inactive"}:
+        return False
+    raise ValueError("Use TRUE/FALSE, YES/NO, 1/0, Active/Inactive, or leave blank")
+
+
+def _parse_methods(value: object) -> list[str]:
+    raw = _normalize_import_value(value)
+    if not raw:
+        return []
+    normalized = raw.replace("\n", ",").replace(";", ",")
+    return [item.strip() for item in normalized.split(",") if item.strip()]
+
+
+def _build_product_template(categories: list[Category], methods: list[Method]) -> BytesIO:
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Products"
+    sheet.append(PRODUCT_IMPORT_HEADERS)
+    sheet.append(
+        [
+            categories[0].slug if categories else "herbal-extracts",
+            "Ashwagandha Extract",
+            "Withania somnifera",
+            "Withanolides 5%",
+            "HPLC, HPTLC, Microbiological Testing",
+            1,
+            "TRUE",
+        ]
+    )
+
+    header_fill = PatternFill("solid", fgColor="1F5937")
+    for cell in sheet[1]:
+        cell.font = Font(color="FFFFFF", bold=True)
+        cell.fill = header_fill
+    for column, width in {
+        "A": 34,
+        "B": 28,
+        "C": 28,
+        "D": 42,
+        "E": 46,
+        "F": 14,
+        "G": 14,
+    }.items():
+        sheet.column_dimensions[column].width = width
+
+    reference = workbook.create_sheet("Reference")
+    reference.append(["Categories: use category_slug in Products sheet"])
+    for category in categories:
+        reference.append([category.slug, category.name])
+    reference.append([])
+    reference.append(["Methods: use names or slugs, comma-separated"])
+    for method in methods:
+        reference.append([method.slug, method.name])
+    reference.column_dimensions["A"].width = 34
+    reference.column_dimensions["B"].width = 52
+
+    buffer = BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+def _import_products_from_workbook(file_bytes: bytes, db: Session) -> dict[str, object]:
+    try:
+        workbook = load_workbook(BytesIO(file_bytes), data_only=True)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="Upload a valid .xlsx workbook") from exc
+
+    sheet = workbook["Products"] if "Products" in workbook.sheetnames else workbook.active
+    header_row = next(sheet.iter_rows(min_row=1, max_row=1, values_only=True), None)
+    headers = [_normalize_import_value(value).lower() for value in (header_row or [])]
+    missing_headers = [header for header in PRODUCT_IMPORT_HEADERS if header not in headers]
+    if missing_headers:
+        raise HTTPException(status_code=400, detail=f"Missing columns: {', '.join(missing_headers)}")
+
+    column_index = {header: headers.index(header) for header in PRODUCT_IMPORT_HEADERS}
+    categories = db.query(Category).all()
+    methods = db.query(Method).all()
+    category_lookup = {
+        **{_normalize_lookup(category.slug): category for category in categories},
+        **{_normalize_lookup(category.name): category for category in categories},
+    }
+    method_lookup = {
+        **{_normalize_lookup(method.slug): method for method in methods},
+        **{_normalize_lookup(method.name): method for method in methods},
+    }
+
+    rows: list[dict[str, object]] = []
+    errors: list[str] = []
+    for row_number, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+        if not any(_normalize_import_value(value) for value in row):
+            continue
+
+        category_key = _normalize_lookup(_normalize_import_value(row[column_index["category_slug"]]))
+        category = category_lookup.get(category_key)
+        common_name = _normalize_import_value(row[column_index["common_name"]])
+        botanical_name = _normalize_import_value(row[column_index["botanical_name"]])
+        specification = _normalize_import_value(row[column_index["specification"]])
+
+        if not category:
+            errors.append(f"Row {row_number}: unknown category '{category_key or 'blank'}'")
+        if not common_name:
+            errors.append(f"Row {row_number}: common_name is required")
+        if not botanical_name:
+            errors.append(f"Row {row_number}: botanical_name is required")
+        if not specification:
+            errors.append(f"Row {row_number}: specification is required")
+
+        row_methods: list[Method] = []
+        for method_name in _parse_methods(row[column_index["methods"]]):
+            method = method_lookup.get(_normalize_lookup(method_name))
+            if not method:
+                errors.append(f"Row {row_number}: unknown method '{method_name}'")
+                continue
+            if method not in row_methods:
+                row_methods.append(method)
+
+        try:
+            sort_order_raw = row[column_index["sort_order"]]
+            sort_order = int(sort_order_raw) if _normalize_import_value(sort_order_raw) else 0
+        except (TypeError, ValueError):
+            errors.append(f"Row {row_number}: sort_order must be a number")
+            sort_order = 0
+
+        try:
+            is_active = _parse_bool(row[column_index["is_active"]])
+        except ValueError as exc:
+            errors.append(f"Row {row_number}: is_active {exc}")
+            is_active = True
+
+        if category and common_name and botanical_name and specification:
+            rows.append(
+                {
+                    "category": category,
+                    "common_name": common_name,
+                    "botanical_name": botanical_name,
+                    "specification": specification,
+                    "methods": row_methods,
+                    "sort_order": sort_order,
+                    "is_active": is_active,
+                }
+            )
+
+    if errors:
+        raise HTTPException(status_code=400, detail={"message": "Product import failed", "errors": errors})
+    if not rows:
+        raise HTTPException(status_code=400, detail="No product rows found in workbook")
+
+    created = 0
+    updated = 0
+    for row in rows:
+        product = db.query(Product).filter(
+            Product.common_name == row["common_name"],
+            Product.botanical_name == row["botanical_name"],
+        ).first()
+        if product:
+            updated += 1
+        else:
+            product = Product(
+                common_name=str(row["common_name"]),
+                botanical_name=str(row["botanical_name"]),
+            )
+            created += 1
+
+        product.category_id = row["category"].id
+        product.specification = str(row["specification"])
+        product.sort_order = int(row["sort_order"])
+        product.is_active = bool(row["is_active"])
+        product.methods = row["methods"]
+        db.add(product)
+
+    db.commit()
+    return {"created": created, "updated": updated, "total": len(rows)}
 
 
 @router.get("/dashboard", response_model=DashboardStats)
@@ -24,57 +230,57 @@ def dashboard(_: object = Depends(get_current_admin), db: Session = Depends(get_
     )
 
 
-@router.get("/forms", response_model=list[FormRead])
-def admin_forms(_: object = Depends(get_current_admin), db: Session = Depends(get_db)) -> list[FormRead]:
-    items = db.query(Form).order_by(Form.sort_order.asc(), Form.name.asc()).all()
-    return [FormRead.model_validate(item) for item in items]
+@router.get("/methods", response_model=list[MethodRead])
+def admin_methods(_: object = Depends(get_current_admin), db: Session = Depends(get_db)) -> list[MethodRead]:
+    items = db.query(Method).order_by(Method.sort_order.asc(), Method.name.asc()).all()
+    return [MethodRead.model_validate(item) for item in items]
 
 
-@router.post("/forms", response_model=FormRead, status_code=status.HTTP_201_CREATED)
-def create_form(
-    payload: FormCreate,
+@router.post("/methods", response_model=MethodRead, status_code=status.HTTP_201_CREATED)
+def create_method(
+    payload: MethodCreate,
     _: object = Depends(get_current_admin),
     db: Session = Depends(get_db),
-) -> FormRead:
-    existing = db.query(Form).filter((Form.slug == payload.slug) | (Form.name == payload.name)).first()
+) -> MethodRead:
+    existing = db.query(Method).filter((Method.slug == payload.slug) | (Method.name == payload.name)).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Form name or slug already exists")
+        raise HTTPException(status_code=400, detail="Method name or slug already exists")
 
-    item = Form(**payload.model_dump())
+    item = Method(**payload.model_dump())
     db.add(item)
     db.commit()
     db.refresh(item)
-    return FormRead.model_validate(item)
+    return MethodRead.model_validate(item)
 
 
-@router.put("/forms/{form_id}", response_model=FormRead)
-def update_form(
-    form_id: int,
-    payload: FormUpdate,
+@router.put("/methods/{method_id}", response_model=MethodRead)
+def update_method(
+    method_id: int,
+    payload: MethodUpdate,
     _: object = Depends(get_current_admin),
     db: Session = Depends(get_db),
-) -> FormRead:
-    item = db.get(Form, form_id)
+) -> MethodRead:
+    item = db.get(Method, method_id)
     if not item:
-        raise HTTPException(status_code=404, detail="Form not found")
+        raise HTTPException(status_code=404, detail="Method not found")
 
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     db.add(item)
     db.commit()
     db.refresh(item)
-    return FormRead.model_validate(item)
+    return MethodRead.model_validate(item)
 
 
-@router.delete("/forms/{form_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_form(
-    form_id: int,
+@router.delete("/methods/{method_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_method(
+    method_id: int,
     _: object = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ) -> None:
-    item = db.get(Form, form_id)
+    item = db.get(Method, method_id)
     if not item:
-        raise HTTPException(status_code=404, detail="Form not found")
+        raise HTTPException(status_code=404, detail="Method not found")
     db.delete(item)
     db.commit()
 
@@ -151,11 +357,40 @@ def admin_products(
 ) -> list[ProductRead]:
     items = (
         db.query(Product)
-        .options(joinedload(Product.category), joinedload(Product.forms))
+        .options(joinedload(Product.category), joinedload(Product.methods))
         .order_by(Product.sort_order.asc(), Product.common_name.asc())
         .all()
     )
     return [ProductRead.model_validate(item) for item in items]
+
+
+@router.get("/products/template")
+def product_import_template(
+    _: object = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    categories = db.query(Category).order_by(Category.sort_order.asc(), Category.name.asc()).all()
+    methods = db.query(Method).order_by(Method.sort_order.asc(), Method.name.asc()).all()
+    buffer = _build_product_template(categories, methods)
+    headers = {"Content-Disposition": 'attachment; filename="product-upload-template.xlsx"'}
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers,
+    )
+
+
+@router.post("/products/upload")
+async def upload_products(
+    file: UploadFile = File(...),
+    _: object = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, object]:
+    if not file.filename or not file.filename.lower().endswith(".xlsx"):
+        raise HTTPException(status_code=400, detail="Upload an .xlsx file")
+
+    result = _import_products_from_workbook(await file.read(), db)
+    return {"message": "Products imported successfully", **result}
 
 
 @router.post("/products", response_model=ProductRead, status_code=status.HTTP_201_CREATED)
@@ -168,19 +403,19 @@ def create_product(
     if not category:
         raise HTTPException(status_code=400, detail="Category not found")
 
-    form_ids = payload.form_ids
-    forms = db.query(Form).filter(Form.id.in_(form_ids)).all() if form_ids else []
-    if form_ids and len(forms) != len(set(form_ids)):
-        raise HTTPException(status_code=400, detail="One or more forms were not found")
+    method_ids = payload.method_ids
+    methods = db.query(Method).filter(Method.id.in_(method_ids)).all() if method_ids else []
+    if method_ids and len(methods) != len(set(method_ids)):
+        raise HTTPException(status_code=400, detail="One or more methods were not found")
 
-    product = Product(**payload.model_dump(exclude={"form_ids"}))
-    product.forms = forms
+    product = Product(**payload.model_dump(exclude={"method_ids"}))
+    product.methods = methods
     db.add(product)
     db.commit()
     db.refresh(product)
     product = (
         db.query(Product)
-        .options(joinedload(Product.category), joinedload(Product.forms))
+        .options(joinedload(Product.category), joinedload(Product.methods))
         .filter(Product.id == product.id)
         .first()
     )
@@ -201,12 +436,12 @@ def update_product(
     updates = payload.model_dump(exclude_unset=True)
     if "category_id" in updates and not db.get(Category, updates["category_id"]):
         raise HTTPException(status_code=400, detail="Category not found")
-    if "form_ids" in updates:
-        form_ids = updates.pop("form_ids") or []
-        forms = db.query(Form).filter(Form.id.in_(form_ids)).all() if form_ids else []
-        if len(forms) != len(set(form_ids)):
-            raise HTTPException(status_code=400, detail="One or more forms were not found")
-        product.forms = forms
+    if "method_ids" in updates:
+        method_ids = updates.pop("method_ids") or []
+        methods = db.query(Method).filter(Method.id.in_(method_ids)).all() if method_ids else []
+        if len(methods) != len(set(method_ids)):
+            raise HTTPException(status_code=400, detail="One or more methods were not found")
+        product.methods = methods
 
     for key, value in updates.items():
         setattr(product, key, value)
@@ -214,7 +449,7 @@ def update_product(
     db.commit()
     refreshed = (
         db.query(Product)
-        .options(joinedload(Product.category), joinedload(Product.forms))
+        .options(joinedload(Product.category), joinedload(Product.methods))
         .filter(Product.id == product.id)
         .first()
     )

@@ -1,11 +1,11 @@
-import { fetchCategories, fetchCategoryProducts, fetchForms } from "@/lib/api";
+import { fetchCategories, fetchCategoryProducts, fetchMethods } from "@/lib/api";
 import { ProductCatalog } from "@/components/product-catalog";
 import { PublicHero } from "@/components/public-hero";
 import { buildMetadata, getCategoryMedia, getPublicCategoryLabel } from "@/lib/site";
 
 type CategoryPageProps = {
   params: Promise<{ categorySlug: string }>;
-  searchParams?: Promise<{ form?: string; search?: string }>;
+  searchParams?: Promise<{ method?: string; search?: string }>;
 };
 
 export async function generateMetadata({ params }: CategoryPageProps) {
@@ -25,12 +25,12 @@ export async function generateMetadata({ params }: CategoryPageProps) {
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { categorySlug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const selectedForm = resolvedSearchParams?.form;
+  const selectedMethod = resolvedSearchParams?.method;
   const selectedSearch = resolvedSearchParams?.search;
-  const [categories, forms, response] = await Promise.all([
+  const [categories, methods, response] = await Promise.all([
     fetchCategories(),
-    fetchForms(),
-    fetchCategoryProducts(categorySlug, { form: selectedForm, search: selectedSearch }),
+    fetchMethods(),
+    fetchCategoryProducts(categorySlug, { method: selectedMethod, search: selectedSearch }),
   ]);
 
   const fallbackName = categorySlug
@@ -67,7 +67,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       <section className="section-shell">
         <ProductCatalog
           categories={categories}
-          forms={forms}
+          methods={methods}
           initialData={
             response ?? {
               items: [],
@@ -78,7 +78,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             }
           }
           lockedCategorySlug={category.slug}
-          initialFormSlug={selectedForm}
+          initialMethodSlug={selectedMethod}
           initialSearchValue={selectedSearch}
         />
       </section>
