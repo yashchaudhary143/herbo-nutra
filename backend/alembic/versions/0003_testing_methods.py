@@ -14,6 +14,18 @@ def _table_exists(table_name: str) -> bool:
     return table_name in inspector.get_table_names()
 
 
+def _index_exists(table_name: str, index_name: str) -> bool:
+    if not _table_exists(table_name):
+        return False
+    inspector = sa.inspect(op.get_bind())
+    return any(index["name"] == index_name for index in inspector.get_indexes(table_name))
+
+
+def _drop_index_if_exists(index_name: str, table_name: str) -> None:
+    if _index_exists(table_name, index_name):
+        op.drop_index(index_name, table_name=table_name)
+
+
 def upgrade() -> None:
     if not _table_exists("methods"):
         op.create_table(
@@ -44,9 +56,9 @@ def upgrade() -> None:
     if _table_exists("product_forms"):
         op.drop_table("product_forms")
     if _table_exists("forms"):
-        op.drop_index("ix_forms_name", table_name="forms")
-        op.drop_index("ix_forms_slug", table_name="forms")
-        op.drop_index("ix_forms_id", table_name="forms")
+        _drop_index_if_exists("ix_forms_name", table_name="forms")
+        _drop_index_if_exists("ix_forms_slug", table_name="forms")
+        _drop_index_if_exists("ix_forms_id", table_name="forms")
         op.drop_table("forms")
 
 
@@ -81,7 +93,7 @@ def downgrade() -> None:
     if _table_exists("product_methods"):
         op.drop_table("product_methods")
     if _table_exists("methods"):
-        op.drop_index("ix_methods_name", table_name="methods")
-        op.drop_index("ix_methods_slug", table_name="methods")
-        op.drop_index("ix_methods_id", table_name="methods")
+        _drop_index_if_exists("ix_methods_name", table_name="methods")
+        _drop_index_if_exists("ix_methods_slug", table_name="methods")
+        _drop_index_if_exists("ix_methods_id", table_name="methods")
         op.drop_table("methods")
