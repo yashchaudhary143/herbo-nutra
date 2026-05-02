@@ -30,14 +30,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="admin-layout min-h-screen">
       <div className="section-shell grid admin-shell-grid">
-        <aside className="admin-card admin-sidebar h-fit">
+        <aside className="admin-sidebar">
           <div className="admin-sidebar-content">
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[var(--forest-700)]">
-              Admin Panel
-            </p>
-            <h1 className="admin-shell-title">Herbo Nutra</h1>
-            <p className="admin-shell-subtitle">Catalog, methods, and inquiry operations.</p>
-            <div className="mt-5 flex flex-col gap-1.5">
+            <div className="border-b border-[var(--line-admin)] px-4 py-4">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[var(--forest-700)]">
+                Admin Panel
+              </p>
+              <h1 className="admin-shell-title">Herbo Nutra</h1>
+              <p className="admin-shell-subtitle">Catalog and inquiry operations.</p>
+            </div>
+            <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Admin navigation">
             {links.map((link) => {
               const active = pathname === link.href;
               const Icon = link.icon;
@@ -55,11 +57,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
-            </div>
+            </nav>
             <button
               type="button"
               onClick={handleLogout}
-              className="button-secondary mt-6 flex w-full items-center justify-center gap-2 border-[var(--line-admin)] bg-white py-2.5 text-[var(--forest-900)] hover:bg-[var(--surface-muted)]"
+              className="button-secondary m-3 mt-auto flex w-[calc(100%-1.5rem)] items-center justify-center gap-2 border-[var(--line-admin)] bg-white py-2.5 text-[var(--forest-900)] hover:bg-[var(--surface-muted)]"
             >
               <LogOut className="h-4 w-4" />
               Logout

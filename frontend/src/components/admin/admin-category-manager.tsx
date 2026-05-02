@@ -180,7 +180,7 @@ export function AdminCategoryManager() {
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
       </form>
 
-      <div className="admin-card overflow-x-auto">
+      <div className="admin-card admin-table-card overflow-x-auto">
         <table className="data-table min-w-full">
           <thead>
             <tr>

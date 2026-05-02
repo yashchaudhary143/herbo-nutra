@@ -393,30 +393,24 @@ section[id] {
 }
 
 .admin-layout {
-  background:
-    linear-gradient(180deg, #f6f8f3 0%, #f8faf5 100%);
+  background: #f6f8f3;
   font-size: 16px;
 }
 
 .admin-shell-grid {
-  @apply gap-4 py-4 md:gap-5 md:py-5 lg:grid-cols-[240px_minmax(0,1fr)];
+  @apply gap-0 py-0 lg:grid-cols-[248px_minmax(0,1fr)];
 }
 
 .admin-sidebar {
-  @apply sticky top-5 overflow-hidden;
+  @apply sticky top-0 flex h-screen flex-col overflow-hidden border-r border-[var(--line-admin)] bg-white;
 }
 
 .admin-sidebar::after {
-  content: "";
-  position: absolute;
-  inset: auto 1.5rem 0.75rem;
-  height: 3.5rem;
-  background: linear-gradient(180deg, rgba(247, 250, 245, 0), rgba(247, 250, 245, 0.92));
-  pointer-events: none;
+  content: none;
 }
 
 .admin-sidebar-content {
-  @apply relative z-10;
+  @apply flex min-h-0 flex-1 flex-col;
 }
 
 .admin-shell-title {
@@ -424,22 +418,20 @@ section[id] {
 }
 
 .admin-shell-subtitle {
-  @apply mt-2 text-xs leading-5 text-[var(--muted)];
+  @apply mt-1 text-xs leading-5 text-[var(--muted)];
 }
 
 .admin-shell-link {
-  @apply flex items-center rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium text-[var(--muted)] transition hover:border-[var(--line-admin)] hover:bg-white hover:text-[var(--green-900)];
+  @apply flex items-center rounded-md border border-transparent px-3 py-2.5 text-sm font-medium text-[var(--muted)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--green-900)];
 }
 
 .admin-shell-link-active {
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
-    0 16px 28px rgba(31, 89, 55, 0.18);
-  @apply border-[var(--green-900)] bg-[linear-gradient(135deg,var(--green-900),var(--green-950))] text-white hover:border-[var(--green-900)] hover:bg-[linear-gradient(135deg,var(--green-900),var(--green-950))] hover:text-white;
+  box-shadow: inset 3px 0 0 var(--green-950);
+  @apply border-transparent bg-[var(--green-100)] text-[var(--green-950)] hover:bg-[var(--green-100)] hover:text-[var(--green-950)];
 }
 
 .admin-panel-header {
-  @apply flex flex-col gap-1.5 border-b border-[var(--line-admin)] pb-3;
+  @apply flex flex-col gap-1 border-b border-[var(--line-admin)] pb-3;
 }
 
 .admin-form-grid {
@@ -460,15 +452,15 @@ section[id] {
 }
 
 .admin-choice-row {
-  @apply flex items-start gap-2.5 rounded-lg border border-[var(--line-admin)] bg-white px-3 py-2.5 transition hover:border-[var(--line-admin-strong)] hover:bg-[var(--surface-muted)];
+  @apply flex items-start gap-2.5 rounded-md border border-[var(--line-admin)] bg-white px-3 py-2.5 transition hover:border-[var(--line-admin-strong)] hover:bg-[var(--surface-muted)];
 }
 
 .admin-choice-grid {
-  @apply grid max-h-64 gap-2 overflow-y-auto rounded-lg border border-[var(--line-admin)] bg-white p-2.5;
+  @apply grid max-h-64 gap-2 overflow-y-auto rounded-md border border-[var(--line-admin)] bg-white p-2.5;
 }
 
 .admin-method-grid {
-  @apply grid max-h-56 gap-2 overflow-y-auto rounded-lg border border-[var(--line-admin)] bg-white p-2.5 sm:grid-cols-2 xl:grid-cols-3;
+  @apply grid max-h-56 gap-2 overflow-y-auto rounded-md border border-[var(--line-admin)] bg-white p-2.5 sm:grid-cols-2 xl:grid-cols-3;
 }
 
 .admin-checkbox {
@@ -484,7 +476,7 @@ section[id] {
 }
 
 .admin-title {
-  @apply font-display text-2xl font-semibold leading-tight tracking-[-0.02em] text-[var(--forest-900)] md:text-3xl;
+  @apply font-display text-2xl font-semibold leading-tight tracking-[-0.02em] text-[var(--forest-900)];
 }
 
 .admin-lead {
@@ -492,11 +484,11 @@ section[id] {
 }
 
 .admin-metric-card {
-  @apply rounded-[1.75rem] border border-[var(--line-admin)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(247,250,245,0.96))] p-5 shadow-[var(--shadow-admin-soft)];
+  @apply rounded-lg border border-[var(--line-admin)] bg-white p-4 shadow-[var(--shadow-admin-soft)];
 }
 
 .admin-metric-value {
-  @apply mt-4 font-display text-4xl font-semibold tracking-[-0.05em] text-[var(--forest-900)];
+  @apply mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--forest-900)];
 }
 
 .data-table {
@@ -520,18 +512,53 @@ section[id] {
 }
 
 .admin-layout .section-shell {
-  @apply max-w-[92rem] px-4 sm:px-5 lg:px-6;
+  @apply max-w-none px-0;
 }
 
 .admin-layout .admin-card {
-  @apply rounded-xl bg-white p-4 shadow-[0_10px_28px_rgba(18,33,25,0.06)] md:p-5;
+  @apply rounded-lg bg-white p-4 shadow-[0_8px_20px_rgba(18,33,25,0.045)] md:p-5;
+}
+
+.admin-layout .admin-table-card {
+  @apply p-0 md:p-0;
 }
 
 .admin-layout .field {
-  @apply rounded-lg px-3.5 py-2.5 text-sm;
+  @apply rounded-md px-3.5 py-2.5 text-sm shadow-none;
 }
 
 .admin-layout .button-primary,
 .admin-layout .button-secondary {
-  @apply rounded-lg px-4 py-2.5;
+  @apply rounded-md px-4 py-2.5;
+}
+
+.admin-layout main {
+  @apply min-w-0 px-4 py-4 md:px-5 lg:px-6;
+}
+
+.admin-layout .filter-trigger {
+  @apply min-h-0 rounded-md px-3.5 py-2.5 text-sm shadow-none;
+}
+
+.admin-layout .filter-menu {
+  @apply max-h-72 rounded-md p-1.5 shadow-[0_12px_28px_rgba(18,33,25,0.12)];
+}
+
+.admin-layout .filter-option {
+  @apply rounded px-3 py-2 text-sm;
+}
+
+.admin-status-select {
+  @apply w-full min-w-32 rounded-md border border-[var(--line-admin-strong)] bg-white px-3 py-2 text-sm font-medium capitalize text-[var(--foreground)] focus:border-[var(--green-900)] focus:outline-none focus:ring-2 focus:ring-[rgba(35,72,48,0.1)];
+}
+
+@media (max-width: 1023px) {
+  .admin-sidebar {
+    position: static;
+    height: auto;
+  }
+
+  .admin-sidebar-content {
+    display: block;
+  }
 }

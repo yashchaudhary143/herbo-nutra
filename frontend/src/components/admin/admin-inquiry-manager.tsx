@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { CustomSelect } from "@/components/custom-select";
 import { ApiError, clientApiFetch, PaginatedInquiries } from "@/lib/api";
 
 const statuses = ["new", "contacted", "qualified", "closed"];
@@ -61,18 +60,18 @@ export function AdminInquiryManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="admin-card">
         <div className="admin-panel-header">
           <p className="eyebrow">Lead Pipeline</p>
-          <h2 className="admin-title">Every inquiry stays visible even if notifications fail.</h2>
+          <h2 className="admin-title">Inquiry pipeline</h2>
           <p className="admin-lead">
             Update lead status here even when downstream email delivery is delayed or skipped.
           </p>
         </div>
       </div>
       {error ? <div className="admin-card text-sm text-red-600">{error}</div> : null}
-      <div className="admin-card overflow-x-auto">
+      <div className="admin-card admin-table-card overflow-x-auto">
         <table className="data-table min-w-full">
           <thead>
             <tr>
@@ -105,17 +104,18 @@ export function AdminInquiryManager() {
                   <span className="text-[0.92rem] text-[var(--muted)]">{item.email_status}</span>
                 </td>
                 <td>
-                  <div className="min-w-[170px]">
-                    <CustomSelect
-                      options={statuses.map((status) => ({
-                        value: status,
-                        label: status,
-                      }))}
+                  <select
+                    className="admin-status-select"
                     value={item.status}
-                      onChange={(value) => handleStatusChange(item.id, value)}
-                      ariaLabel={`Update status for ${item.name}`}
-                    />
-                  </div>
+                    aria-label={`Update status for ${item.name}`}
+                    onChange={(event) => handleStatusChange(item.id, event.target.value)}
+                  >
+                    {statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
                 </td>
               </tr>
             )) ?? (
