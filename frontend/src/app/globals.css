@@ -394,17 +394,16 @@ section[id] {
 
 .admin-layout {
   background:
-    radial-gradient(circle at top left, rgba(226, 239, 227, 0.9), transparent 24rem),
-    radial-gradient(circle at right center, rgba(243, 231, 204, 0.38), transparent 28rem),
-    linear-gradient(180deg, #f7f4eb 0%, #f5f9f1 20rem, #f7f6ef 100%);
+    linear-gradient(180deg, #f6f8f3 0%, #f8faf5 100%);
+  font-size: 16px;
 }
 
 .admin-shell-grid {
-  @apply gap-5 py-6 md:gap-6 md:py-8 lg:grid-cols-[292px_minmax(0,1fr)];
+  @apply gap-4 py-4 md:gap-5 md:py-5 lg:grid-cols-[240px_minmax(0,1fr)];
 }
 
 .admin-sidebar {
-  @apply sticky top-24 overflow-hidden;
+  @apply sticky top-5 overflow-hidden;
 }
 
 .admin-sidebar::after {
@@ -421,15 +420,15 @@ section[id] {
 }
 
 .admin-shell-title {
-  @apply mt-3 font-display text-[2rem] font-semibold leading-none tracking-[-0.04em] text-[var(--forest-900)];
+  @apply mt-2 font-display text-2xl font-semibold leading-none tracking-[-0.02em] text-[var(--forest-900)];
 }
 
 .admin-shell-subtitle {
-  @apply mt-1 text-sm leading-6 text-[var(--muted)];
+  @apply mt-2 text-xs leading-5 text-[var(--muted)];
 }
 
 .admin-shell-link {
-  @apply flex items-center rounded-[1.25rem] border border-transparent px-4 py-3 text-sm font-medium text-[var(--muted)] transition hover:border-[var(--line-admin)] hover:bg-white/70 hover:text-[var(--green-900)];
+  @apply flex items-center rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium text-[var(--muted)] transition hover:border-[var(--line-admin)] hover:bg-white hover:text-[var(--green-900)];
 }
 
 .admin-shell-link-active {
@@ -440,16 +439,16 @@ section[id] {
 }
 
 .admin-panel-header {
-  @apply flex flex-col gap-3 border-b border-[var(--line-admin)] pb-4;
+  @apply flex flex-col gap-1.5 border-b border-[var(--line-admin)] pb-3;
 }
 
 .admin-form-grid {
   align-content: start;
-  @apply grid self-start gap-3.5;
+  @apply grid self-start gap-4;
 }
 
 .admin-section-card {
-  @apply rounded-[1.5rem] border border-[var(--line-admin)] bg-[var(--surface-admin-strong)] p-4;
+  @apply rounded-lg border border-[var(--line-admin)] bg-[var(--surface-admin-strong)] p-4;
 }
 
 .admin-field-stack {
@@ -461,11 +460,15 @@ section[id] {
 }
 
 .admin-choice-row {
-  @apply flex items-start gap-2.5 rounded-[1rem] border border-[var(--line-admin)] bg-white/68 px-3 py-2.5 transition hover:border-[var(--line-admin-strong)] hover:bg-white/88;
+  @apply flex items-start gap-2.5 rounded-lg border border-[var(--line-admin)] bg-white px-3 py-2.5 transition hover:border-[var(--line-admin-strong)] hover:bg-[var(--surface-muted)];
 }
 
 .admin-choice-grid {
-  @apply grid max-h-72 gap-2 overflow-y-auto rounded-[1.25rem] border border-[var(--line-admin)] bg-[rgba(255,255,255,0.56)] p-3;
+  @apply grid max-h-64 gap-2 overflow-y-auto rounded-lg border border-[var(--line-admin)] bg-white p-2.5;
+}
+
+.admin-method-grid {
+  @apply grid max-h-56 gap-2 overflow-y-auto rounded-lg border border-[var(--line-admin)] bg-white p-2.5 sm:grid-cols-2 xl:grid-cols-3;
 }
 
 .admin-checkbox {
@@ -477,11 +480,11 @@ section[id] {
 }
 
 .admin-actions {
-  @apply flex flex-wrap items-center gap-3 pt-1;
+  @apply flex flex-wrap items-center gap-2 border-t border-[var(--line-admin)] pt-3;
 }
 
 .admin-title {
-  @apply font-display text-[2.15rem] font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--forest-900)];
+  @apply font-display text-2xl font-semibold leading-tight tracking-[-0.02em] text-[var(--forest-900)] md:text-3xl;
 }
 
 .admin-lead {
@@ -501,11 +504,11 @@ section[id] {
 }
 
 .data-table thead th {
-  @apply border-b border-[var(--line-admin-strong)] bg-[rgba(241,247,238,0.92)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--foreground)];
+  @apply border-b border-[var(--line-admin-strong)] bg-[rgba(241,247,238,0.92)] px-3.5 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--foreground)];
 }
 
 .data-table tbody td {
-  @apply border-b border-[var(--line-admin)] bg-transparent px-4 py-3.5 align-top text-sm leading-6 text-[var(--muted)];
+  @apply border-b border-[var(--line-admin)] bg-transparent px-3.5 py-3 align-top text-sm leading-6 text-[var(--muted)];
 }
 
 .data-table tbody tr:last-child td {
@@ -514,4 +517,21 @@ section[id] {
 
 .data-table tbody tr:hover td {
   @apply bg-white/35;
+}
+
+.admin-layout .section-shell {
+  @apply max-w-[92rem] px-4 sm:px-5 lg:px-6;
+}
+
+.admin-layout .admin-card {
+  @apply rounded-xl bg-white p-4 shadow-[0_10px_28px_rgba(18,33,25,0.06)] md:p-5;
+}
+
+.admin-layout .field {
+  @apply rounded-lg px-3.5 py-2.5 text-sm;
+}
+
+.admin-layout .button-primary,
+.admin-layout .button-secondary {
+  @apply rounded-lg px-4 py-2.5;
 }

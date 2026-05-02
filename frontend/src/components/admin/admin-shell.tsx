@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { FolderTree, Gauge, FlaskConical, Inbox, LogOut, PackageSearch } from "lucide-react";
 
 import { clientApiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/categories", label: "Categories" },
-  { href: "/admin/methods", label: "Methods" },
-  { href: "/admin/products", label: "Products" },
-  { href: "/admin/inquiries", label: "Inquiries" },
+  { href: "/admin", label: "Dashboard", icon: Gauge },
+  { href: "/admin/categories", label: "Categories", icon: FolderTree },
+  { href: "/admin/methods", label: "Methods", icon: FlaskConical },
+  { href: "/admin/products", label: "Products", icon: PackageSearch },
+  { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -32,23 +32,25 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div className="section-shell grid admin-shell-grid">
         <aside className="admin-card admin-sidebar h-fit">
           <div className="admin-sidebar-content">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--forest-700)]">
+            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[var(--forest-700)]">
               Admin Panel
             </p>
             <h1 className="admin-shell-title">Herbo Nutra</h1>
-            <p className="admin-shell-subtitle">Catalog operations, method control, and inbound leads.</p>
-            <div className="mt-6 flex flex-col gap-2.5">
+            <p className="admin-shell-subtitle">Catalog, methods, and inquiry operations.</p>
+            <div className="mt-5 flex flex-col gap-1.5">
             {links.map((link) => {
               const active = pathname === link.href;
+              const Icon = link.icon;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "admin-shell-link",
+                    "admin-shell-link gap-2.5",
                     active && "admin-shell-link-active",
                   )}
                 >
+                  <Icon className="h-4 w-4" />
                   {link.label}
                 </Link>
               );
@@ -57,7 +59,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={handleLogout}
-              className="button-secondary mt-8 flex w-full items-center justify-center gap-2 rounded-[1.35rem] border-[var(--line-admin)] bg-white/72 py-3 text-[var(--forest-900)] hover:bg-[var(--surface-muted)]"
+              className="button-secondary mt-6 flex w-full items-center justify-center gap-2 border-[var(--line-admin)] bg-white py-2.5 text-[var(--forest-900)] hover:bg-[var(--surface-muted)]"
             >
               <LogOut className="h-4 w-4" />
               Logout
