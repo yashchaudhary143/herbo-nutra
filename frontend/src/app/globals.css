@@ -552,6 +552,30 @@ section[id] {
   @apply w-full min-w-32 rounded-md border border-[var(--line-admin-strong)] bg-white px-3 py-2 text-sm font-medium capitalize text-[var(--foreground)] focus:border-[var(--green-900)] focus:outline-none focus:ring-2 focus:ring-[rgba(35,72,48,0.1)];
 }
 
+.admin-page-toolbar {
+  @apply flex flex-col gap-3 rounded-lg border border-[var(--line-admin)] bg-white p-4 shadow-[0_8px_20px_rgba(18,33,25,0.045)] sm:flex-row sm:items-center sm:justify-between;
+}
+
+.admin-row-actions {
+  @apply flex min-w-[168px] items-center gap-3 whitespace-nowrap;
+}
+
+.admin-modal-backdrop {
+  @apply fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(16,28,21,0.42)] px-4 py-8 backdrop-blur-[2px];
+}
+
+.admin-modal {
+  @apply w-full max-w-4xl rounded-lg border border-[var(--line-admin)] bg-white shadow-[0_28px_80px_rgba(18,33,25,0.24)];
+}
+
+.admin-modal-header {
+  @apply flex items-start justify-between gap-4 border-b border-[var(--line-admin)] px-5 py-4;
+}
+
+.admin-icon-button {
+  @apply inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--line-admin)] bg-white text-[var(--foreground)] transition hover:bg-[var(--surface-muted)];
+}
+
 @media (max-width: 1023px) {
   .admin-sidebar {
     position: static;

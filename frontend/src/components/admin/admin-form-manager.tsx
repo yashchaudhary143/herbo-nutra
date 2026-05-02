@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { AdminModal } from "@/components/admin/admin-modal";
 import { ApiError, Method, clientApiFetch } from "@/lib/api";
 
 type FormState = {
@@ -28,6 +29,7 @@ export function AdminMethodManager() {
   const [form, setForm] = useState<FormState>(emptyState);
   const [error, setError] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function reloadMethods() {
     try {
@@ -85,6 +87,7 @@ export function AdminMethodManager() {
         });
       }
       setForm(emptyState);
+      setIsModalOpen(false);
       await reloadMethods();
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to save method.");
@@ -104,83 +107,110 @@ export function AdminMethodManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <form className="admin-card admin-form-grid" onSubmit={handleSubmit}>
-        <div className="admin-panel-header">
-          <p className="eyebrow">{form.id ? "Edit method" : "Add method"}</p>
-          <h2 className="admin-title">Testing methods</h2>
+    <div className="space-y-4">
+      <div className="admin-page-toolbar">
+        <div>
+          <p className="eyebrow">Methods</p>
+          <h2 className="admin-title mt-1">Testing methods</h2>
         </div>
-        <div className="grid items-start gap-4 md:grid-cols-2">
-          <div className="admin-field-stack">
-            <label className="admin-field-label">Method name</label>
-            <input
-              className="field"
-              placeholder="Method name"
-              value={form.name}
-              onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
-            />
-          </div>
-          <div className="admin-field-stack">
-            <label className="admin-field-label">Slug</label>
-            <input
-              className="field"
-              placeholder="Slug"
-              value={form.slug}
-              onChange={(event) => setForm((state) => ({ ...state, slug: event.target.value }))}
-            />
-          </div>
-          <div className="admin-field-stack md:col-span-2">
-            <label className="admin-field-label">Description</label>
-            <textarea
-              className="field min-h-36"
-              placeholder="Description"
-              value={form.description}
-              onChange={(event) => setForm((state) => ({ ...state, description: event.target.value }))}
-            />
-          </div>
-          <div className="admin-field-stack">
-            <label className="admin-field-label">Sort order</label>
-            <input
-              className="field"
-              type="number"
-              placeholder="Sort order"
-              value={form.sort_order}
-              onChange={(event) =>
-                setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
-              }
-            />
-          </div>
-          <div className="grid gap-3 md:col-span-1">
-            <label className="admin-choice-row text-sm text-[var(--muted)]">
-              <input
-                className="admin-checkbox"
-                type="checkbox"
-                checked={form.is_active}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, is_active: event.target.checked }))
-                }
-              />
-              <span>
-                <span className="block font-medium text-[var(--foreground)]">Active</span>
-                <span className="admin-inline-help">
-                  Inactive methods stay available in admin but are removed from public filtering.
+        <button
+          className="button-primary"
+          type="button"
+          onClick={() => {
+            setForm(emptyState);
+            setIsModalOpen(true);
+          }}
+        >
+          Create method
+        </button>
+      </div>
+
+      {isModalOpen ? (
+        <AdminModal
+          eyebrow={form.id ? "Edit method" : "Add method"}
+          title={form.id ? "Edit method" : "Create method"}
+          onClose={() => {
+            setForm(emptyState);
+            setIsModalOpen(false);
+          }}
+        >
+          <form className="admin-form-grid p-5" onSubmit={handleSubmit}>
+            <div className="grid items-start gap-4 md:grid-cols-2">
+              <div className="admin-field-stack">
+                <label className="admin-field-label">Method name</label>
+                <input
+                  className="field"
+                  placeholder="Method name"
+                  value={form.name}
+                  onChange={(event) => setForm((state) => ({ ...state, name: event.target.value }))}
+                />
+              </div>
+              <div className="admin-field-stack">
+                <label className="admin-field-label">Slug</label>
+                <input
+                  className="field"
+                  placeholder="Slug"
+                  value={form.slug}
+                  onChange={(event) => setForm((state) => ({ ...state, slug: event.target.value }))}
+                />
+              </div>
+              <div className="admin-field-stack md:col-span-2">
+                <label className="admin-field-label">Description</label>
+                <textarea
+                  className="field min-h-36"
+                  placeholder="Description"
+                  value={form.description}
+                  onChange={(event) => setForm((state) => ({ ...state, description: event.target.value }))}
+                />
+              </div>
+              <div className="admin-field-stack">
+                <label className="admin-field-label">Sort order</label>
+                <input
+                  className="field"
+                  type="number"
+                  placeholder="Sort order"
+                  value={form.sort_order}
+                  onChange={(event) =>
+                    setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
+                  }
+                />
+              </div>
+              <label className="admin-choice-row text-sm text-[var(--muted)]">
+                <input
+                  className="admin-checkbox"
+                  type="checkbox"
+                  checked={form.is_active}
+                  onChange={(event) =>
+                    setForm((state) => ({ ...state, is_active: event.target.checked }))
+                  }
+                />
+                <span>
+                  <span className="block font-medium text-[var(--foreground)]">Active</span>
+                  <span className="admin-inline-help">
+                    Inactive methods stay available in admin but are removed from public filtering.
+                  </span>
                 </span>
-              </span>
-            </label>
-          </div>
-        </div>
-        <div className="admin-actions border-t border-[var(--line-admin)] pt-4">
-          <button className="button-primary" type="submit">
-            {form.id ? "Update method" : "Create method"}
-          </button>
-          {form.id ? (
-            <button className="button-secondary" type="button" onClick={() => setForm(emptyState)}>
-              Cancel edit
-            </button>
-          ) : null}
-        </div>
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      </form>
+              </label>
+            </div>
+            <div className="admin-actions">
+              <button className="button-primary" type="submit">
+                {form.id ? "Update method" : "Create method"}
+              </button>
+              <button
+                className="button-secondary"
+                type="button"
+                onClick={() => {
+                  setForm(emptyState);
+                  setIsModalOpen(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+            {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          </form>
+        </AdminModal>
+      ) : null}
 
       <div className="admin-card admin-table-card overflow-x-auto">
         <table className="data-table min-w-full">
@@ -199,11 +229,11 @@ export function AdminMethodManager() {
                 <td>{item.slug}</td>
                 <td>{item.is_active ? "Active" : "Inactive"}</td>
                 <td>
-                  <div className="flex gap-3">
+                  <div className="admin-row-actions">
                     <button
                       type="button"
                       className="text-sm font-semibold text-[var(--forest-700)]"
-                      onClick={() =>
+                      onClick={() => {
                         setForm({
                           id: item.id,
                           name: item.name,
@@ -211,8 +241,9 @@ export function AdminMethodManager() {
                           description: item.description ?? "",
                           sort_order: item.sort_order,
                           is_active: item.is_active,
-                        })
-                      }
+                        });
+                        setIsModalOpen(true);
+                      }}
                     >
                       Edit
                     </button>

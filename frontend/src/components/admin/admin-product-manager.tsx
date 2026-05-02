@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { AdminModal } from "@/components/admin/admin-modal";
 import { CustomSelect } from "@/components/custom-select";
 import { ApiError, Category, Method, clientApiFetch, Product } from "@/lib/api";
 
@@ -38,6 +39,7 @@ export function AdminProductManager() {
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function reloadProducts() {
     try {
@@ -112,6 +114,7 @@ export function AdminProductManager() {
         });
       }
       setForm(emptyProduct);
+      setIsModalOpen(false);
       await reloadProducts();
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to save product.");
@@ -225,139 +228,164 @@ export function AdminProductManager() {
         {uploadMessage ? <p className="text-sm font-medium text-[var(--forest-700)]">{uploadMessage}</p> : null}
       </form>
 
-      <form className="admin-card admin-form-grid" onSubmit={handleSubmit}>
-        <div className="admin-panel-header">
-          <p className="eyebrow">{form.id ? "Edit product" : "Add product"}</p>
-          <h2 className="admin-title">Structured catalog entries</h2>
+      <div className="admin-page-toolbar">
+        <div>
+          <p className="eyebrow">Products</p>
+          <h2 className="admin-title mt-1">Structured catalog entries</h2>
         </div>
-        <div className="grid items-start gap-4">
-          <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div className="admin-field-stack">
-              <label className="admin-field-label">Category</label>
-              <CustomSelect
-                options={categoryOptions}
-                value={form.category_id === "" ? "" : String(form.category_id)}
-                onChange={(value) =>
-                  setForm((state) => ({ ...state, category_id: value ? Number(value) : "" }))
-                }
-                ariaLabel="Select product category"
-              />
-            </div>
-            <div className="admin-field-stack">
-              <label className="admin-field-label">Common name</label>
-              <input
-                className="field"
-                placeholder="Common name"
-                value={form.common_name}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, common_name: event.target.value }))
-                }
-              />
-            </div>
-            <div className="admin-field-stack">
-              <label className="admin-field-label">Botanical name</label>
-              <input
-                className="field"
-                placeholder="Botanical name"
-                value={form.botanical_name}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, botanical_name: event.target.value }))
-                }
-              />
-            </div>
-            <div className="admin-field-stack">
-              <label className="admin-field-label">Sort order</label>
-              <input
-                className="field"
-                type="number"
-                placeholder="Sort order"
-                value={form.sort_order}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
-                }
-              />
-            </div>
-            <div className="admin-field-stack md:col-span-2 xl:col-span-3">
-              <label className="admin-field-label">Specification</label>
-              <textarea
-                className="field min-h-24"
-                placeholder="Specification"
-                value={form.specification}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, specification: event.target.value }))
-                }
-              />
-            </div>
-            <label className="admin-choice-row text-sm text-[var(--muted)] xl:col-span-1">
-              <input
-                className="admin-checkbox"
-                type="checkbox"
-                checked={form.is_active}
-                onChange={(event) =>
-                  setForm((state) => ({ ...state, is_active: event.target.checked }))
-                }
-              />
-              <span>
-                <span className="block font-medium text-[var(--foreground)]">Active</span>
-                <span className="admin-inline-help">
-                  Inactive products stay in the database but disappear from the live catalog and inquiry flow.
-                </span>
-              </span>
-            </label>
-          </div>
-          <div className="admin-section-card">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="admin-field-label">Available methods</p>
-                <p className="admin-inline-help">
-                  Select the testing methods used for specification and quality review.
-                </p>
-              </div>
-              <p className="text-xs font-medium text-[var(--muted)]">
-                {form.method_ids.length} selected
-              </p>
-            </div>
-            <div className="admin-method-grid mt-3">
-              {methods.map((item) => (
-                <label key={item.id} className="admin-choice-row text-sm text-[var(--muted)]">
+        <button
+          className="button-primary"
+          type="button"
+          onClick={() => {
+            setForm(emptyProduct);
+            setIsModalOpen(true);
+          }}
+        >
+          Create product
+        </button>
+      </div>
+
+      {isModalOpen ? (
+        <AdminModal
+          eyebrow={form.id ? "Edit product" : "Add product"}
+          title={form.id ? "Edit product" : "Create product"}
+          onClose={() => {
+            setForm(emptyProduct);
+            setIsModalOpen(false);
+          }}
+        >
+          <form className="admin-form-grid p-5" onSubmit={handleSubmit}>
+            <div className="grid items-start gap-4">
+              <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="admin-field-stack">
+                  <label className="admin-field-label">Category</label>
+                  <CustomSelect
+                    options={categoryOptions}
+                    value={form.category_id === "" ? "" : String(form.category_id)}
+                    onChange={(value) =>
+                      setForm((state) => ({ ...state, category_id: value ? Number(value) : "" }))
+                    }
+                    ariaLabel="Select product category"
+                  />
+                </div>
+                <div className="admin-field-stack">
+                  <label className="admin-field-label">Common name</label>
+                  <input
+                    className="field"
+                    placeholder="Common name"
+                    value={form.common_name}
+                    onChange={(event) =>
+                      setForm((state) => ({ ...state, common_name: event.target.value }))
+                    }
+                  />
+                </div>
+                <div className="admin-field-stack">
+                  <label className="admin-field-label">Botanical name</label>
+                  <input
+                    className="field"
+                    placeholder="Botanical name"
+                    value={form.botanical_name}
+                    onChange={(event) =>
+                      setForm((state) => ({ ...state, botanical_name: event.target.value }))
+                    }
+                  />
+                </div>
+                <div className="admin-field-stack">
+                  <label className="admin-field-label">Sort order</label>
+                  <input
+                    className="field"
+                    type="number"
+                    placeholder="Sort order"
+                    value={form.sort_order}
+                    onChange={(event) =>
+                      setForm((state) => ({ ...state, sort_order: Number(event.target.value) }))
+                    }
+                  />
+                </div>
+                <div className="admin-field-stack md:col-span-2 xl:col-span-3">
+                  <label className="admin-field-label">Specification</label>
+                  <textarea
+                    className="field min-h-24"
+                    placeholder="Specification"
+                    value={form.specification}
+                    onChange={(event) =>
+                      setForm((state) => ({ ...state, specification: event.target.value }))
+                    }
+                  />
+                </div>
+                <label className="admin-choice-row text-sm text-[var(--muted)] xl:col-span-1">
                   <input
                     className="admin-checkbox"
                     type="checkbox"
-                    checked={form.method_ids.includes(item.id)}
+                    checked={form.is_active}
                     onChange={(event) =>
-                      setForm((state) => ({
-                        ...state,
-                        method_ids: event.target.checked
-                          ? [...state.method_ids, item.id]
-                          : state.method_ids.filter((id) => id !== item.id),
-                      }))
+                      setForm((state) => ({ ...state, is_active: event.target.checked }))
                     }
                   />
                   <span>
-                    <span className="block font-medium text-[var(--foreground)]">{item.name}</span>
-                    <span className="admin-inline-help">{getMethodPreviewText(item)}</span>
+                    <span className="block font-medium text-[var(--foreground)]">Active</span>
+                    <span className="admin-inline-help">
+                      Inactive products disappear from the live catalog and inquiry flow.
+                    </span>
                   </span>
                 </label>
-              ))}
+              </div>
+              <div className="admin-section-card">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="admin-field-label">Available methods</p>
+                    <p className="admin-inline-help">
+                      Select the testing methods used for specification and quality review.
+                    </p>
+                  </div>
+                  <p className="text-xs font-medium text-[var(--muted)]">
+                    {form.method_ids.length} selected
+                  </p>
+                </div>
+                <div className="admin-method-grid mt-3">
+                  {methods.map((item) => (
+                    <label key={item.id} className="admin-choice-row text-sm text-[var(--muted)]">
+                      <input
+                        className="admin-checkbox"
+                        type="checkbox"
+                        checked={form.method_ids.includes(item.id)}
+                        onChange={(event) =>
+                          setForm((state) => ({
+                            ...state,
+                            method_ids: event.target.checked
+                              ? [...state.method_ids, item.id]
+                              : state.method_ids.filter((id) => id !== item.id),
+                          }))
+                        }
+                      />
+                      <span>
+                        <span className="block font-medium text-[var(--foreground)]">{item.name}</span>
+                        <span className="admin-inline-help">{getMethodPreviewText(item)}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="admin-actions border-t border-[var(--line-admin)] pt-4">
-          <button className="button-primary min-w-[152px]" type="submit">
-            {form.id ? "Update product" : "Create product"}
-          </button>
-          {form.id ? (
-            <button
-              className="button-secondary min-w-[140px]"
-              type="button"
-              onClick={() => setForm(emptyProduct)}
-            >
-              Cancel edit
-            </button>
-          ) : null}
-        </div>
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      </form>
+            <div className="admin-actions">
+              <button className="button-primary min-w-[152px]" type="submit">
+                {form.id ? "Update product" : "Create product"}
+              </button>
+              <button
+                className="button-secondary min-w-[140px]"
+                type="button"
+                onClick={() => {
+                  setForm(emptyProduct);
+                  setIsModalOpen(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+            {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          </form>
+        </AdminModal>
+      ) : null}
 
       <div className="admin-card admin-table-card overflow-x-auto">
         <table className="data-table min-w-full">
@@ -380,11 +408,11 @@ export function AdminProductManager() {
                 <td>{product.category?.name ?? "-"}</td>
                 <td>{product.methods.length ? product.methods.map((item) => item.name).join(", ") : "-"}</td>
                 <td>
-                  <div className="flex gap-3">
+                  <div className="admin-row-actions">
                     <button
                       type="button"
                       className="text-sm font-semibold text-[var(--forest-700)]"
-                      onClick={() =>
+                      onClick={() => {
                         setForm({
                           id: product.id,
                           category_id: product.category_id,
@@ -394,8 +422,9 @@ export function AdminProductManager() {
                           method_ids: product.methods.map((item) => item.id),
                           sort_order: product.sort_order,
                           is_active: product.is_active,
-                        })
-                      }
+                        });
+                        setIsModalOpen(true);
+                      }}
                     >
                       Edit
                     </button>
