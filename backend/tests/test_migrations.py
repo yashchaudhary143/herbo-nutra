@@ -2,7 +2,7 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 
 from app.core.config import get_settings
 
@@ -31,3 +31,11 @@ def test_alembic_upgrade_head_matches_runtime_tables(tmp_path, monkeypatch):
     assert "whatsapp_status" not in {
         column["name"] for column in inspector.get_columns("inquiries")
     }
+    with engine.connect() as connection:
+        method_slugs = {
+            row[0]
+            for row in connection.execute(
+                text("SELECT slug FROM methods WHERE slug IN ('titration', 'gravimetry', 'elisa', 'kjeldahl-method')")
+            )
+        }
+    assert method_slugs == {"titration", "gravimetry", "elisa", "kjeldahl-method"}

@@ -130,9 +130,18 @@ def test_product_excel_template_and_upload(client, admin_cookie):
         "Excel Product",
         "Excel botanica",
         "Marker 10%",
-        "HPLC, Microbiological Testing",
+        "HPLC & UV",
         99,
         "TRUE",
+    ])
+    sheet.append([
+        "Herbal Extracts (Food Ingredients / Nutraceutical Ingredients)",
+        "Excel Alias Product",
+        "-",
+        "Protein 10%",
+        "Kjeldahl method",
+        100,
+        "Active",
     ])
     buffer = BytesIO()
     workbook.save(buffer)
@@ -150,15 +159,18 @@ def test_product_excel_template_and_upload(client, admin_cookie):
         cookies=admin_cookie,
     )
     assert upload_response.status_code == 200
-    assert upload_response.json()["created"] == 1
+    assert upload_response.json()["created"] == 2
 
     products_response = client.get("/api/admin/products", cookies=admin_cookie)
     product = next(item for item in products_response.json() if item["common_name"] == "Excel Product")
     assert product["sort_order"] == 99
     assert [method["slug"] for method in product["methods"]] == [
         "hplc",
-        "microbiological-testing",
+        "uv-vis",
     ]
+    alias_product = next(item for item in products_response.json() if item["common_name"] == "Excel Alias Product")
+    assert alias_product["botanical_name"] == "-"
+    assert [method["slug"] for method in alias_product["methods"]] == ["kjeldahl-method"]
 
 
 def test_inquiry_status_update(client, admin_cookie):

@@ -88,6 +88,30 @@ METHOD_DEFINITIONS = [
         "description": "Microbiological testing for total counts, yeast and mold, and pathogen-related quality review.",
         "sort_order": 9,
     },
+    {
+        "name": "Titration",
+        "slug": "titration",
+        "description": "Titration-based assay for routine active marker and compound strength checks.",
+        "sort_order": 10,
+    },
+    {
+        "name": "Gravimetry",
+        "slug": "gravimetry",
+        "description": "Gravimetric analysis for residue, solids, ash, and weight-based quality measurements.",
+        "sort_order": 11,
+    },
+    {
+        "name": "ELISA",
+        "slug": "elisa",
+        "description": "Enzyme-linked immunosorbent assay for targeted protein and bioactive screening.",
+        "sort_order": 12,
+    },
+    {
+        "name": "Kjeldahl Method",
+        "slug": "kjeldahl-method",
+        "description": "Kjeldahl nitrogen analysis for protein and nitrogen content estimation.",
+        "sort_order": 13,
+    },
 ]
 
 SEED_PRODUCTS = [

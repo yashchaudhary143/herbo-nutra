@@ -37,9 +37,11 @@ def test_list_methods(client):
     response = client.get("/api/methods")
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload) == 9
+    assert len(payload) == 13
     assert any(item["slug"] == "hplc" for item in payload)
     assert any(item["slug"] == "microbiological-testing" for item in payload)
+    assert any(item["slug"] == "titration" for item in payload)
+    assert any(item["slug"] == "gravimetry" for item in payload)
 
 
 def test_filter_products_by_method(client):

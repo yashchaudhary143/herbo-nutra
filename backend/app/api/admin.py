@@ -1,3 +1,4 @@
+from datetime import time
 from io import BytesIO
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
@@ -28,9 +29,30 @@ PRODUCT_IMPORT_HEADERS = [
     "is_active",
 ]
 
+METHOD_IMPORT_ALIASES = {
+    "by hplc": "hplc",
+    "by uv": "uv-vis",
+    "gc": "gc-ms",
+    "gv": "gravimetry",
+    "uv": "uv-vis",
+}
+
 
 def _normalize_import_value(value: object) -> str:
-    return str(value).strip() if value is not None else ""
+    if isinstance(value, time):
+        return f"{value.hour}:{value.minute}"
+    return str(value).strip().lstrip("\ufeff") if value is not None else ""
+
+
+def _normalize_import_cell_value(cell: object) -> str:
+    value = getattr(cell, "value", None)
+    number_format = str(getattr(cell, "number_format", ""))
+    if isinstance(value, (int, float)) and "%" in number_format:
+        percentage = value * 100
+        if percentage.is_integer():
+            return f"{int(percentage)}%"
+        return f"{percentage:g}%"
+    return _normalize_import_value(value)
 
 
 def _normalize_lookup(value: str) -> str:
@@ -54,8 +76,13 @@ def _parse_methods(value: object) -> list[str]:
     raw = _normalize_import_value(value)
     if not raw:
         return []
-    normalized = raw.replace("\n", ",").replace(";", ",")
+    normalized = raw.replace("\n", ",").replace(";", ",").replace("&", ",")
     return [item.strip() for item in normalized.split(",") if item.strip()]
+
+
+def _normalize_method_lookup_key(value: str) -> str:
+    key = _normalize_lookup(value)
+    return METHOD_IMPORT_ALIASES.get(key, key)
 
 
 def _build_product_template(categories: list[Category], methods: list[Method]) -> BytesIO:
@@ -140,15 +167,15 @@ def _import_products_from_workbook(file_bytes: bytes, db: Session) -> dict[str, 
 
     rows: list[dict[str, object]] = []
     errors: list[str] = []
-    for row_number, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-        if not any(_normalize_import_value(value) for value in row):
+    for row_number, row in enumerate(sheet.iter_rows(min_row=2), start=2):
+        if not any(_normalize_import_cell_value(cell) for cell in row):
             continue
 
-        category_key = _normalize_lookup(_normalize_import_value(row[column_index["category_slug"]]))
+        category_key = _normalize_lookup(_normalize_import_cell_value(row[column_index["category_slug"]]))
         category = category_lookup.get(category_key)
-        common_name = _normalize_import_value(row[column_index["common_name"]])
-        botanical_name = _normalize_import_value(row[column_index["botanical_name"]])
-        specification = _normalize_import_value(row[column_index["specification"]])
+        common_name = _normalize_import_cell_value(row[column_index["common_name"]])
+        botanical_name = _normalize_import_cell_value(row[column_index["botanical_name"]])
+        specification = _normalize_import_cell_value(row[column_index["specification"]])
 
         if not category:
             errors.append(f"Row {row_number}: unknown category '{category_key or 'blank'}'")
@@ -160,8 +187,8 @@ def _import_products_from_workbook(file_bytes: bytes, db: Session) -> dict[str, 
             errors.append(f"Row {row_number}: specification is required")
 
         row_methods: list[Method] = []
-        for method_name in _parse_methods(row[column_index["methods"]]):
-            method = method_lookup.get(_normalize_lookup(method_name))
+        for method_name in _parse_methods(row[column_index["methods"]].value):
+            method = method_lookup.get(_normalize_method_lookup_key(method_name))
             if not method:
                 errors.append(f"Row {row_number}: unknown method '{method_name}'")
                 continue
@@ -169,14 +196,14 @@ def _import_products_from_workbook(file_bytes: bytes, db: Session) -> dict[str, 
                 row_methods.append(method)
 
         try:
-            sort_order_raw = row[column_index["sort_order"]]
+            sort_order_raw = row[column_index["sort_order"]].value
             sort_order = int(sort_order_raw) if _normalize_import_value(sort_order_raw) else 0
         except (TypeError, ValueError):
             errors.append(f"Row {row_number}: sort_order must be a number")
             sort_order = 0
 
         try:
-            is_active = _parse_bool(row[column_index["is_active"]])
+            is_active = _parse_bool(row[column_index["is_active"]].value)
         except ValueError as exc:
             errors.append(f"Row {row_number}: is_active {exc}")
             is_active = True
