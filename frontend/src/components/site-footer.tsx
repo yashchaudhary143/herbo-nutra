@@ -20,9 +20,11 @@ export function SiteFooter() {
               <p>
                 <a href={`tel:${company.phone}`}>{company.phone}</a>
               </p>
-              <p>
-                <a href={`mailto:${company.email}`}>{company.email}</a>
-              </p>
+              {company.emails.map((email) => (
+                <p key={email}>
+                  <a href={`mailto:${email}`}>{email}</a>
+                </p>
+              ))}
             </div>
           </div>
         </div>

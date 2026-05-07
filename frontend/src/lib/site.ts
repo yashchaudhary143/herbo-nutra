@@ -4,10 +4,17 @@ import type { Category } from "@/lib/api";
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://herbonutraextract.com";
 
+const rawCompanyEmail = process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? process.env.COMPANY_EMAIL ?? "info@herbonutraextract.com";
+const companyEmails = rawCompanyEmail
+  .split(",")
+  .map((email) => email.trim())
+  .filter(Boolean);
+
 export const company = {
   name: process.env.NEXT_PUBLIC_COMPANY_NAME ?? process.env.COMPANY_NAME ?? "Herbo Nutra Extract Pvt. Ltd.",
   shortName: process.env.NEXT_PUBLIC_COMPANY_SHORT_NAME ?? process.env.COMPANY_SHORT_NAME ?? "Herbo Nutra Extract",
-  email: process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? process.env.COMPANY_EMAIL ?? "info@herbonutraextract.com",
+  email: companyEmails[0] ?? "info@herbonutraextract.com",
+  emails: companyEmails,
   phone: process.env.NEXT_PUBLIC_COMPANY_PHONE ?? process.env.COMPANY_PHONE ?? "+91 98765 43210",
   address:
     process.env.NEXT_PUBLIC_COMPANY_ADDRESS ??
