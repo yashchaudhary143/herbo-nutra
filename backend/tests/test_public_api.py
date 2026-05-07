@@ -24,6 +24,12 @@ def test_search_products(client):
     assert isinstance(payload["items"][0]["methods"], list)
 
 
+def test_products_accept_larger_limit(client):
+    response = client.get("/api/products", params={"limit": 500})
+    assert response.status_code == 200
+    assert response.json()["limit"] == 500
+
+
 def test_category_products(client):
     response = client.get("/api/categories/herbal-extracts/products")
     assert response.status_code == 200

@@ -85,7 +85,7 @@ export function ProductCatalog({
 
   useEffect(() => {
     const active = { current: true };
-    const params = new URLSearchParams({ limit: "100" });
+    const params = new URLSearchParams({ limit: "500" });
 
     if (selectedMethod) {
       params.set("method", selectedMethod);

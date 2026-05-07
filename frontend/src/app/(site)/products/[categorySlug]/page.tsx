@@ -73,7 +73,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               items: [],
               total: 0,
               page: 1,
-              limit: 100,
+              limit: 500,
               category,
             }
           }

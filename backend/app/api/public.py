@@ -64,7 +64,7 @@ def list_products(
     category: str | None = None,
     method: str | None = None,
     page: int = Query(default=1, ge=1),
-    limit: int = Query(default=20, ge=1, le=100),
+    limit: int = Query(default=20, ge=1, le=500),
     db: Session = Depends(get_db),
 ) -> PaginatedProducts:
     query = db.query(Product).options(joinedload(Product.category), joinedload(Product.methods)).join(Category)
@@ -100,7 +100,7 @@ def category_products(
     search: str | None = None,
     method: str | None = None,
     page: int = Query(default=1, ge=1),
-    limit: int = Query(default=20, ge=1, le=100),
+    limit: int = Query(default=20, ge=1, le=500),
     db: Session = Depends(get_db),
 ) -> CategoryProductsResponse:
     category = db.query(Category).filter(Category.slug == slug, Category.is_active.is_(True)).first()

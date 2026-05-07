@@ -138,7 +138,7 @@ def test_product_excel_template_and_upload(client, admin_cookie):
         "Herbal Extracts (Food Ingredients / Nutraceutical Ingredients)",
         "Excel Alias Product",
         "-",
-        "Protein 10%",
+        "-",
         "Kjeldahl method",
         100,
         "Active",
@@ -170,6 +170,7 @@ def test_product_excel_template_and_upload(client, admin_cookie):
     ]
     alias_product = next(item for item in products_response.json() if item["common_name"] == "Excel Alias Product")
     assert alias_product["botanical_name"] == "-"
+    assert alias_product["specification"] == "-"
     assert [method["slug"] for method in alias_product["methods"]] == ["kjeldahl-method"]
 
 

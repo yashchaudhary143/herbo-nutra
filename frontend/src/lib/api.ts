@@ -107,7 +107,7 @@ export async function fetchCategories() {
 
 export async function fetchProducts(params?: { search?: string; category?: string; method?: string }) {
   const query = new URLSearchParams();
-  query.set("limit", "100");
+  query.set("limit", "500");
   if (params?.search) {
     query.set("search", params.search);
   }
@@ -121,13 +121,13 @@ export async function fetchProducts(params?: { search?: string; category?: strin
   try {
     return await serverApiFetch<PaginatedProducts>(`/api/products?${query.toString()}`);
   } catch {
-    return { items: [], total: 0, page: 1, limit: 100 } satisfies PaginatedProducts;
+    return { items: [], total: 0, page: 1, limit: 500 } satisfies PaginatedProducts;
   }
 }
 
 export async function fetchCategoryProducts(slug: string, params?: { method?: string; search?: string }) {
   const query = new URLSearchParams();
-  query.set("limit", "100");
+  query.set("limit", "500");
   if (params?.method) {
     query.set("method", params.method);
   }
